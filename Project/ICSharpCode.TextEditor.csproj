@@ -21,7 +21,7 @@
     <BaseAddress>98041856</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -41,12 +41,13 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>False</Optimize>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;DATACONSISTENCYTEST</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisRules>
@@ -57,7 +58,7 @@
     <Optimize>True</Optimize>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -160,7 +161,7 @@
     <Compile Include="Src\Document\ITextEditorProperties.cs" />
     <Compile Include="Src\Gui\Caret.cs" />
     <Compile Include="Src\Gui\TextArea.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Src\Gui\TextEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -202,7 +203,7 @@
     </Compile>
     <Compile Include="Src\Gui\BrushRegistry.cs" />
     <Compile Include="Src\Gui\HRuler.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Src\Document\BookmarkManager\Bookmark.cs" />
     <Compile Include="Src\Document\BookmarkManager\BookmarkEventHandler.cs" />
@@ -213,7 +214,6 @@
     <EmbeddedResource Include="Resources\Coco-Mode.xshd" />
     <EmbeddedResource Include="Resources\CSharp-Mode.xshd" />
     <EmbeddedResource Include="Resources\HTML-Mode.xshd" />
-    <None Include="Migrated rules for ICSharpCode.TextEditor.ruleset" />
     <None Include="Resources\ICSharpCode.TextEditor.snk" />
     <EmbeddedResource Include="Resources\TextEditorControl.bmp" />
     <EmbeddedResource Include="Resources\Java-Mode.xshd" />
@@ -229,9 +229,6 @@
     <EmbeddedResource Include="Resources\Boo.xshd" />
     <Compile Include="Src\Gui\DrawableLine.cs" />
     <Compile Include="Src\Gui\ToolTipRequestEventArgs.cs" />
-    <Compile Include="..\..\..\Main\GlobalAssemblyInfo.cs">
-      <Link>Configuration\GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Src\Document\HighlightingStrategy\SpanStack.cs" />
     <Compile Include="Src\Util\WeakCollection.cs" />
     <EmbeddedResource Include="Resources\Patch-Mode.xshd" />
@@ -255,6 +252,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>..\src\Tools\UpdateAssemblyInfo\bin\Debug\UpdateAssemblyInfo.exe</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
