@@ -31,8 +31,8 @@ namespace ICSharpCode.TextEditor.Document
 			try {
 				List<ValidationEventArgs> errors = null;
 				XmlReaderSettings settings = new XmlReaderSettings();
-                //TODO-XXX was: Stream schemaStream = typeof(HighlightingDefinitionParser).Assembly.GetManifestResourceStream("ICSharpCode.TextEditor.Resources.Mode.xsd");
-       			string schemaStreamFile = Path.Combine("SyntaxDefinition", "Mode.xsd"); // TODO-XXX this dir needs to come from?
+                //TODO-texteditor-ch was: Stream schemaStream = typeof(HighlightingDefinitionParser).Assembly.GetManifestResourceStream("ICSharpCode.TextEditor.Resources.Mode.xsd");
+                string schemaStreamFile = Path.Combine("SyntaxDefinition", "Mode.xsd"); // TODO-texteditor-ch this dir needs to come from?
                 Stream schemaStream = File.OpenRead(schemaStreamFile);
                 settings.Schemas.Add("", new XmlTextReader(schemaStream));
 				settings.Schemas.ValidationEventHandler += delegate(object sender, ValidationEventArgs args) {
