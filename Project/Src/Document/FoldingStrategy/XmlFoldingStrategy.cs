@@ -55,7 +55,8 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public int Column
         {
-            get {
+            get
+            {
                 return col;
             }
         }
@@ -65,11 +66,13 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public string FoldText
         {
-            get {
+            get
+            {
                 return foldText;
             }
 
-            set {
+            set
+            {
                 foldText = value;
             }
         }
@@ -79,7 +82,8 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public int Line
         {
-            get {
+            get
+            {
                 return line;
             }
         }
@@ -89,10 +93,14 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public string Name
         {
-            get {
-                if (prefix.Length > 0) {
+            get
+            {
+                if (prefix.Length > 0)
+                {
                     return String.Concat(prefix, ":", name);
-                } else {
+                }
+                else
+                {
                     return name;
                 }
             }
@@ -142,13 +150,17 @@ namespace ICSharpCode.TextEditor.Document
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
             Stack stack = new Stack();
 
-            try {
+            try
+            {
                 string xml = document.TextContent;
                 XmlTextReader reader = new XmlTextReader(new StringReader(xml));
-                while (reader.Read()) {
-                    switch (reader.NodeType) {
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
                         case XmlNodeType.Element:
-                            if (!reader.IsEmptyElement) {
+                            if (!reader.IsEmptyElement)
+                            {
                                 XmlFoldStart newFoldStart = CreateElementFoldStart(reader);
                                 stack.Push(newFoldStart);
                             }
@@ -164,7 +176,9 @@ namespace ICSharpCode.TextEditor.Document
                             break;
                     }
                 }
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // If the xml is not well formed keep the foldings
                 // that already exist in the document.
                 return new List<FoldMarker>(document.FoldingManager.FoldMarker);
@@ -186,9 +200,12 @@ namespace ICSharpCode.TextEditor.Document
             encodedValue.Replace("<", "&lt;");
             encodedValue.Replace(">", "&gt;");
 
-            if (quoteChar == '"') {
+            if (quoteChar == '"')
+            {
                 encodedValue.Replace("\"", "&quot;");
-            } else {
+            }
+            else
+            {
                 encodedValue.Replace("'", "&apos;");
             }
 
@@ -202,10 +219,12 @@ namespace ICSharpCode.TextEditor.Document
         /// line of the comment.</remarks>
         void CreateCommentFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader)
         {
-            if (reader.Value != null) {
+            if (reader.Value != null)
+            {
                 string comment = reader.Value.Replace("\r\n", "\n");
                 string[] lines = comment.Split('\n');
-                if (lines.Length > 1) {
+                if (lines.Length > 1)
+                {
 
                     // Take off 5 chars to get the actual comment start (takes
                     // into account the <!-- chars.
@@ -230,7 +249,8 @@ namespace ICSharpCode.TextEditor.Document
         void CreateElementFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader, XmlFoldStart foldStart)
         {
             int endLine = reader.LineNumber - 1;
-            if (endLine > foldStart.Line) {
+            if (endLine > foldStart.Line)
+            {
                 int endCol = reader.LinePosition + foldStart.Name.Length;
                 FoldMarker foldMarker = new FoldMarker(document, foldStart.Line, foldStart.Column, endLine, endCol, FoldType.TypeBody, foldStart.FoldText);
                 foldMarkers.Add(foldMarker);
@@ -248,9 +268,12 @@ namespace ICSharpCode.TextEditor.Document
             // tag.
             XmlFoldStart newFoldStart = new XmlFoldStart(reader.Prefix, reader.LocalName, reader.LineNumber - 1, reader.LinePosition - 2);
 
-            if (showAttributesWhenFolded && reader.HasAttributes) {
+            if (showAttributesWhenFolded && reader.HasAttributes)
+            {
                 newFoldStart.FoldText = String.Concat("<", newFoldStart.Name, " ", GetAttributeFoldText(reader), ">");
-            } else {
+            }
+            else
+            {
                 newFoldStart.FoldText = String.Concat("<", newFoldStart.Name, ">");
             }
 
@@ -270,7 +293,8 @@ namespace ICSharpCode.TextEditor.Document
         {
             StringBuilder text = new StringBuilder();
 
-            for (int i = 0; i < reader.AttributeCount; ++i) {
+            for (int i = 0; i < reader.AttributeCount; ++i)
+            {
                 reader.MoveToAttribute(i);
 
                 text.Append(reader.Name);
@@ -281,7 +305,8 @@ namespace ICSharpCode.TextEditor.Document
 
                 // Append a space if this is not the
                 // last attribute.
-                if (i < reader.AttributeCount - 1) {
+                if (i < reader.AttributeCount - 1)
+                {
                     text.Append(" ");
                 }
             }
