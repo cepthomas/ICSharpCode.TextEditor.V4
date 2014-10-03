@@ -17,9 +17,9 @@ namespace ICSharpCode.TextEditor.Document
 {
     using System.Collections.Generic;
 
-    /// <summary>
-    /// Description of CodeFoldingStrategy.
-    /// </summary>
+/// <summary>
+/// Description of CodeFoldingStrategy.
+/// </summary>
     public class CodeFoldingStrategy : IFoldingStrategy
     {
         #region Methods

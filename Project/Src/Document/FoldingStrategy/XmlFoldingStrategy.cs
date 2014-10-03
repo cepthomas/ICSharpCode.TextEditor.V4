@@ -21,9 +21,9 @@ namespace ICSharpCode.TextEditor.Document
     using System.Xml;
 
 
-    /// <summary>
-    /// Holds information about the start of a fold in an xml string.
-    /// </summary>
+/// <summary>
+/// Holds information about the start of a fold in an xml string.
+/// </summary>
     public class XmlFoldStart
     {
         #region Fields
@@ -109,9 +109,9 @@ namespace ICSharpCode.TextEditor.Document
         #endregion Properties
     }
 
-    /// <summary>
-    /// Determines folds for an xml string in the editor.
-    /// </summary>
+/// <summary>
+/// Determines folds for an xml string in the editor.
+/// </summary>
     public class XmlFoldingStrategy : IFoldingStrategy
     {
         #region Fields
@@ -138,8 +138,8 @@ namespace ICSharpCode.TextEditor.Document
         /// Adds folds to the text editor around each start-end element pair.
         /// </summary>
         /// <remarks>
-        /// <para>If the xml is not well formed then no folds are created.</para> 
-        /// <para>Note that the xml text reader lines and positions start 
+        /// <para>If the xml is not well formed then no folds are created.</para>
+        /// <para>Note that the xml text reader lines and positions start
         /// from 1 and the SharpDevelop text editor line information starts
         /// from 0.</para>
         /// </remarks>
@@ -158,22 +158,22 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     switch (reader.NodeType)
                     {
-                        case XmlNodeType.Element:
-                            if (!reader.IsEmptyElement)
-                            {
-                                XmlFoldStart newFoldStart = CreateElementFoldStart(reader);
-                                stack.Push(newFoldStart);
-                            }
-                            break;
+                    case XmlNodeType.Element:
+                        if (!reader.IsEmptyElement)
+                        {
+                            XmlFoldStart newFoldStart = CreateElementFoldStart(reader);
+                            stack.Push(newFoldStart);
+                        }
+                        break;
 
-                        case XmlNodeType.EndElement:
-                            XmlFoldStart foldStart = (XmlFoldStart)stack.Pop();
-                            CreateElementFold(document, foldMarkers, reader, foldStart);
-                            break;
+                    case XmlNodeType.EndElement:
+                        XmlFoldStart foldStart = (XmlFoldStart)stack.Pop();
+                        CreateElementFold(document, foldMarkers, reader, foldStart);
+                        break;
 
-                        case XmlNodeType.Comment:
-                            CreateCommentFold(document, foldMarkers, reader);
-                            break;
+                    case XmlNodeType.Comment:
+                        CreateCommentFold(document, foldMarkers, reader);
+                        break;
                     }
                 }
             }
@@ -215,7 +215,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a comment fold if the comment spans more than one line.
         /// </summary>
-        /// <remarks>The text displayed when the comment is folded is the first 
+        /// <remarks>The text displayed when the comment is folded is the first
         /// line of the comment.</remarks>
         void CreateCommentFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader)
         {
@@ -243,7 +243,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <summary>
-        /// Create an element fold if the start and end tag are on 
+        /// Create an element fold if the start and end tag are on
         /// different lines.
         /// </summary>
         void CreateElementFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader, XmlFoldStart foldStart)

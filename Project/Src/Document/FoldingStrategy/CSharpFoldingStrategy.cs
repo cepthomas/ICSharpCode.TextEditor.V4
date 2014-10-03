@@ -3,7 +3,7 @@ namespace ICSharpCode.TextEditor.Document
 {
     using System.Collections.Generic;
 
-    /// <summary>CSharpFoldingStrategy TODO_format combine with region stuff below.</summary>
+/// <summary>CSharpFoldingStrategy TODO_format combine with region stuff below.</summary>
     public class CSharpFoldingStrategy : IFoldingStrategy
     {
         public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
@@ -71,7 +71,7 @@ namespace ICSharpCode.TextEditor.Document
                         // Add a new FoldMarker to the list.
                         int start = startLines.Pop();
                         list.Add(new FoldMarker(document, start, document.GetLineSegment(start).Length,
-                            i, spaceCount + "#endregion".Length));
+                                                i, spaceCount + "#endregion".Length));
                     }
                 }
             }
