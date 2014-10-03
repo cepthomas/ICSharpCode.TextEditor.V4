@@ -39,8 +39,9 @@ namespace ICSharpCode.TextEditor.Document
 		static HighlightingManager()
 		{
 			highlightingManager = new HighlightingManager();
-			highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
-		}
+            //TODO-XXX was: highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
+            highlightingManager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider("SyntaxDefinition"));
+        }
 		
 		public HighlightingManager()
 		{

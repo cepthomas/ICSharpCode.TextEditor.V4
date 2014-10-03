@@ -184,7 +184,6 @@
     <Compile Include="Src\Gui\TextAreaMouseHandler.cs" />
     <Compile Include="Src\Document\HighlightingStrategy\SyntaxModes\ISyntaxModeFileProvider.cs" />
     <Compile Include="Src\Document\HighlightingStrategy\SyntaxModes\SyntaxMode.cs" />
-    <Compile Include="Src\Document\HighlightingStrategy\SyntaxModes\ResourceSyntaxModeProvider.cs" />
     <Compile Include="Src\Gui\IconBarMargin.cs" />
     <Compile Include="Src\Gui\FoldMargin.cs" />
     <Compile Include="Src\Document\HighlightingStrategy\SyntaxModes\FileSyntaxModeProvider.cs" />
@@ -282,14 +281,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="SyntaxDefinition\New Text Document.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\SyntaxModes.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
