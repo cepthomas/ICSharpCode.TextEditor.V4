@@ -9,21 +9,18 @@
 
 #endregion Header
 
-//TODO_2 gotten from https://code.google.com/p/codingeditor
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml;
+
+// From https://code.google.com/p/codingeditor
 
 namespace ICSharpCode.TextEditor.Document
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
-    using System.Xml;
-
-
-/// <summary>
-/// Holds information about the start of a fold in an xml string.
-/// </summary>
+    /// <summary>Holds information about the start of a fold in an xml string.</summary>
     public class XmlFoldStart
     {
         #region Fields
@@ -109,9 +106,7 @@ namespace ICSharpCode.TextEditor.Document
         #endregion Properties
     }
 
-/// <summary>
-/// Determines folds for an xml string in the editor.
-/// </summary>
+    /// <summary>Determines folds for an xml string in the editor.</summary>
     public class XmlFoldingStrategy : IFoldingStrategy
     {
         #region Fields

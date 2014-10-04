@@ -3,7 +3,7 @@ namespace ICSharpCode.TextEditor.Document
 {
     using System.Collections.Generic;
 
-    /// <summary>CSharpFoldingStrategy TODO_2 combine with region stuff below.</summary>
+    /// <summary>CSharpFoldingStrategy TODO2 combine with region stuff below.</summary>
     public class CSharpFoldingStrategy : IFoldingStrategy
     {
         public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)

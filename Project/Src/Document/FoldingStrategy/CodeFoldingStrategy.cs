@@ -11,15 +11,13 @@
 
 #endregion Header
 
-//TODO_2 gotten from https://code.google.com/p/codingeditor
+using System.Collections.Generic;
+
+// From https://code.google.com/p/codingeditor
 
 namespace ICSharpCode.TextEditor.Document
 {
-    using System.Collections.Generic;
-
-/// <summary>
-/// Description of CodeFoldingStrategy.
-/// </summary>
+    /// <summary>Description of CodeFoldingStrategy. Generic bracket folding.</summary>
     public class CodeFoldingStrategy : IFoldingStrategy
     {
         #region Methods
@@ -27,8 +25,7 @@ namespace ICSharpCode.TextEditor.Document
         public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
         {
             // This is a simple folding strategy.
-            // It searches for matching brackets ('{', '}') and creates folds
-            // for each region.
+            // It searches for matching brackets ('{', '}') and creates folds for each region.
 
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
             for (int offset = 0; offset < document.TextLength; ++offset)
