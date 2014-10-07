@@ -14,9 +14,9 @@ using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// A color used for highlighting
-/// </summary>
+    /// <summary>
+    /// A color used for highlighting
+    /// </summary>
     public class HighlightColor
     {
         Color  color;

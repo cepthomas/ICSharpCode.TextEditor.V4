@@ -101,6 +101,7 @@ namespace ICSharpCode.TextEditor.Document
             reader.Close();
             return syntaxModes;
         }
+        
         public override string ToString()
         {
             return String.Format("[SyntaxMode: FileName={0}, Name={1}, Extensions=({2})]", fileName, name, String.Join(",", extensions));

@@ -13,9 +13,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// A class that is able to draw a line on any control (outside the text editor)
-/// </summary>
+    /// <summary>
+    /// A class that is able to draw a line on any control (outside the text editor)
+    /// </summary>
     public class DrawableLine
     {
         static StringFormat sf = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();

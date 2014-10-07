@@ -12,20 +12,20 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Data structure for efficient management of the line segments (most operations are O(lg n)).
-/// This implements an augmented red-black tree where each node has fields for the number of
-/// nodes in its subtree (like an order statistics tree) for access by index(=line number).
-/// Additionally, each node knows the total length of all segments in its subtree.
-/// This means we can find nodes by offset in O(lg n) time. Since the offset itself is not stored in
-/// the line segment but computed from the lengths stored in the tree, we adjusting the offsets when
-/// text is inserted in one line means we just have to increment the totalLength of the affected line and
-/// its parent nodes - an O(lg n) operation.
-/// However this means getting the line number or offset from a LineSegment is not a constant time
-/// operation, but takes O(lg n).
-///
-/// NOTE: The tree is never empty, Clear() causes it to contain an empty segment.
-/// </summary>
+    /// <summary>
+    /// Data structure for efficient management of the line segments (most operations are O(lg n)).
+    /// This implements an augmented red-black tree where each node has fields for the number of
+    /// nodes in its subtree (like an order statistics tree) for access by index(=line number).
+    /// Additionally, each node knows the total length of all segments in its subtree.
+    /// This means we can find nodes by offset in O(lg n) time. Since the offset itself is not stored in
+    /// the line segment but computed from the lengths stored in the tree, we adjusting the offsets when
+    /// text is inserted in one line means we just have to increment the totalLength of the affected line and
+    /// its parent nodes - an O(lg n) operation.
+    /// However this means getting the line number or offset from a LineSegment is not a constant time
+    /// operation, but takes O(lg n).
+    ///
+    /// NOTE: The tree is never empty, Clear() causes it to contain an empty segment.
+    /// </summary>
     sealed class LineSegmentTree : IList<LineSegment>
     {
         internal struct RBNode

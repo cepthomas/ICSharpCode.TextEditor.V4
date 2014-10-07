@@ -10,9 +10,9 @@ using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Used for mark next token
-/// </summary>
+    /// <summary>
+    /// Used for mark next token
+    /// </summary>
     public class NextMarker
     {
         string      what;

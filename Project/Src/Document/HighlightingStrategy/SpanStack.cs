@@ -10,10 +10,10 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// A stack of Span instances. Works like Stack&lt;Span&gt;, but can be cloned quickly
-/// because it is implemented as linked list.
-/// </summary>
+    /// <summary>
+    /// A stack of Span instances. Works like Stack&lt;Span&gt;, but can be cloned quickly
+    /// because it is implemented as linked list.
+    /// </summary>
     public sealed class SpanStack : ICloneable, IEnumerable<Span>
     {
         internal sealed class StackNode

@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// Used internally, not for own use.
-/// </summary>
+    /// <summary>
+    /// Used internally, not for own use.
+    /// </summary>
     internal class Ime
     {
         public Ime(IntPtr hWnd, Font font)

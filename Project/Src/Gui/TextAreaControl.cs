@@ -14,9 +14,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// This class paints the textarea.
-/// </summary>
+    /// <summary>
+    /// This class paints the textarea.
+    /// </summary>
     [ToolboxItem(false)]
     public class TextAreaControl : Panel
     {

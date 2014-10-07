@@ -11,9 +11,9 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Default implementation of the <see cref="ICSharpCode.TextEditor.Document.ISelection"/> interface.
-/// </summary>
+    /// <summary>
+    /// Default implementation of the <see cref="ICSharpCode.TextEditor.Document.ISelection"/> interface.
+    /// </summary>
     public class DefaultSelection : ISelection
     {
         IDocument document;

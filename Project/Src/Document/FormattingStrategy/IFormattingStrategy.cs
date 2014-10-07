@@ -9,11 +9,11 @@ using System;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This interface handles the auto and smart indenting and formating
-/// in the document while  you type. Language bindings could overwrite this
-/// interface and define their own indentation/formating.
-/// </summary>
+    /// <summary>
+    /// This interface handles the auto and smart indenting and formating
+    /// in the document while  you type. Language bindings could overwrite this
+    /// interface and define their own indentation/formating.
+    /// </summary>
     public interface IFormattingStrategy
     {
         /// <summary>

@@ -9,10 +9,10 @@ using System;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// A line/column position.
-/// Text editor lines/columns are counting from zero.
-/// </summary>
+    /// <summary>
+    /// A line/column position.
+    /// Text editor lines/columns are counting from zero.
+    /// </summary>
     public struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
         /// <summary>

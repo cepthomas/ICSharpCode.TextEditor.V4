@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Util
 {
-/// <summary>
-/// Accumulates mouse wheel deltas and reports the actual number of lines to scroll.
-/// </summary>
+    /// <summary>
+    /// Accumulates mouse wheel deltas and reports the actual number of lines to scroll.
+    /// </summary>
     class MouseWheelHandler
     {
         // CODE DUPLICATION: See ICSharpCode.SharpDevelop.Widgets.MouseWheelHandler

@@ -10,10 +10,10 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Util
 {
-/// <summary>
-/// This class implements a keyword map. It implements a digital search trees (tries) to find
-/// a word.
-/// </summary>
+    /// <summary>
+    /// This class implements a keyword map. It implements a digital search trees (tries) to find
+    /// a word.
+    /// </summary>
     public class LookupTable
     {
         Node root = new Node(null, null);

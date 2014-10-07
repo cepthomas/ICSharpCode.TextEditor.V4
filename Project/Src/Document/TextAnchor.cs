@@ -23,9 +23,9 @@ namespace ICSharpCode.TextEditor.Document
         AfterInsertion
     }
 
-/// <summary>
-/// An anchor that can be put into a document and moves around when the document is changed.
-/// </summary>
+    /// <summary>
+    /// An anchor that can be put into a document and moves around when the document is changed.
+    /// </summary>
     public sealed class TextAnchor
     {
         static Exception AnchorDeletedError()

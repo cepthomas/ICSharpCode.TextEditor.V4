@@ -55,9 +55,9 @@ namespace ICSharpCode.TextEditor.Util
         void UpdateAfterRotateRight(RedBlackTreeNode<T> node);
     }
 
-/// <summary>
-/// Description of RedBlackTree.
-/// </summary>
+    /// <summary>
+    /// Description of RedBlackTree.
+    /// </summary>
     internal sealed class AugmentableRedBlackTree<T, Host> : ICollection<T> where Host : IRedBlackTreeHost<T>
     {
         readonly Host host;

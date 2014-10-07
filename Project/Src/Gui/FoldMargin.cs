@@ -14,9 +14,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// This class views the line numbers and folding markers.
-/// </summary>
+    /// <summary>
+    /// This class views the line numbers and folding markers.
+    /// </summary>
     public class FoldMargin : AbstractMargin
     {
         int selectedFoldLine = -1;

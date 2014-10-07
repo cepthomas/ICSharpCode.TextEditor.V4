@@ -14,9 +14,9 @@ using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Describes the caret marker
-/// </summary>
+    /// <summary>
+    /// Describes the caret marker
+    /// </summary>
     public enum LineViewerStyle
     {
         /// <summary>
@@ -30,9 +30,9 @@ namespace ICSharpCode.TextEditor.Document
         FullRow
     }
 
-/// <summary>
-/// Describes the indent style
-/// </summary>
+    /// <summary>
+    /// Describes the indent style
+    /// </summary>
     public enum IndentStyle
     {
         /// <summary>
@@ -52,9 +52,9 @@ namespace ICSharpCode.TextEditor.Document
         Smart
     }
 
-/// <summary>
-/// Describes the bracket highlighting style
-/// </summary>
+    /// <summary>
+    /// Describes the bracket highlighting style
+    /// </summary>
     public enum BracketHighlightingStyle
     {
 
@@ -74,9 +74,9 @@ namespace ICSharpCode.TextEditor.Document
         AfterBracket
     }
 
-/// <summary>
-/// Describes the selection mode of the text area
-/// </summary>
+    /// <summary>
+    /// Describes the selection mode of the text area
+    /// </summary>
     public enum DocumentSelectionMode
     {
         /// <summary>
@@ -91,9 +91,9 @@ namespace ICSharpCode.TextEditor.Document
         Additive
     }
 
-/// <summary>
-/// The default <see cref="IDocument"/> implementation.
-/// </summary>
+    /// <summary>
+    /// The default <see cref="IDocument"/> implementation.
+    /// </summary>
     internal sealed class DefaultDocument : IDocument
     {
         bool readOnly = false;
@@ -130,6 +130,7 @@ namespace ICSharpCode.TextEditor.Document
                 lineTrackingStrategy.LineLengthChanged -= value;
             }
         }
+
         public event EventHandler<LineCountChangeEventArgs> LineCountChanged
         {
             add
@@ -141,6 +142,7 @@ namespace ICSharpCode.TextEditor.Document
                 lineTrackingStrategy.LineCountChanged -= value;
             }
         }
+
         public event EventHandler<LineEventArgs> LineDeleted
         {
             add

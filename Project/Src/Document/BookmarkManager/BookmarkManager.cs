@@ -17,9 +17,9 @@ namespace ICSharpCode.TextEditor.Document
         Bookmark CreateBookmark(IDocument document, TextLocation location);
     }
 
-/// <summary>
-/// This class handles the bookmarks for a buffer
-/// </summary>
+    /// <summary>
+    /// This class handles the bookmarks for a buffer
+    /// </summary>
     public class BookmarkManager
     {
         IDocument      document;

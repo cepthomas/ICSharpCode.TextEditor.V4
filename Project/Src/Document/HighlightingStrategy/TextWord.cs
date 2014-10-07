@@ -18,10 +18,10 @@ namespace ICSharpCode.TextEditor.Document
         Tab
     }
 
-/// <summary>
-/// This class represents single words with color information, two special versions of a word are
-/// spaces and tabs.
-/// </summary>
+    /// <summary>
+    /// This class represents single words with color information, two special versions of a word are
+    /// spaces and tabs.
+    /// </summary>
     public class TextWord
     {
         HighlightColor  color;

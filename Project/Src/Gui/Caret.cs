@@ -15,9 +15,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// In this enumeration are all caret modes listed.
-/// </summary>
+    /// <summary>
+    /// In this enumeration are all caret modes listed.
+    /// </summary>
     public enum CaretMode
     {
         /// <summary>

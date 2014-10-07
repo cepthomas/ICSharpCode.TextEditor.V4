@@ -58,8 +58,8 @@ namespace ICSharpCode.TextEditor.Actions
 
                 // this bit is optional - but useful if you are using block tabbing to sort out
                 // a source file with a mixture of tabs and spaces
-//				string newLine = document.GetText(line.Offset,line.Length);
-//				document.Replace(line.Offset,line.Length,newLine);
+				// string newLine = document.GetText(line.Offset,line.Length);
+				// document.Replace(line.Offset,line.Length,newLine);
 
                 document.Insert(line.Offset, indentationString);
             }
@@ -860,12 +860,12 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-/// <summary>
-/// handles the ctrl-backspace key
-/// functionality attempts to roughly mimic MS Developer studio
-/// I will implement this as deleting back to the point that ctrl-leftarrow would
-/// take you to
-/// </summary>
+    /// <summary>
+    /// handles the ctrl-backspace key
+    /// functionality attempts to roughly mimic MS Developer studio
+    /// I will implement this as deleting back to the point that ctrl-leftarrow would
+    /// take you to
+    /// </summary>
     public class WordBackspace : AbstractEditAction
     {
         /// <remarks>
@@ -925,12 +925,12 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-/// <summary>
-/// handles the ctrl-delete key
-/// functionality attempts to mimic MS Developer studio
-/// I will implement this as deleting forwardto the point that
-/// ctrl-leftarrow would take you to
-/// </summary>
+    /// <summary>
+    /// handles the ctrl-delete key
+    /// functionality attempts to mimic MS Developer studio
+    /// I will implement this as deleting forwardto the point that
+    /// ctrl-leftarrow would take you to
+    /// </summary>
     public class DeleteWord : Delete
     {
         /// <remarks>

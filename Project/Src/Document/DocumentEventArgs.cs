@@ -9,14 +9,14 @@ using System;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This delegate is used for document events.
-/// </summary>
+    /// <summary>
+    /// This delegate is used for document events.
+    /// </summary>
     public delegate void DocumentEventHandler(object sender, DocumentEventArgs e);
 
-/// <summary>
-/// This class contains more information on a document event
-/// </summary>
+    /// <summary>
+    /// This class contains more information on a document event
+    /// </summary>
     public class DocumentEventArgs : EventArgs
     {
         IDocument document;

@@ -11,9 +11,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Undo
 {
-/// <summary>
-/// This class is for the undo of Document insert operations
-/// </summary>
+    /// <summary>
+    /// This class is for the undo of Document insert operations
+    /// </summary>
     public class UndoableInsert : IUndoableOperation
     {
         IDocument document;

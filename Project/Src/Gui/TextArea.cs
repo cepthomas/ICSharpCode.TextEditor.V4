@@ -23,9 +23,9 @@ namespace ICSharpCode.TextEditor
     public delegate bool KeyEventHandler(char ch);
     public delegate bool DialogKeyProcessor(Keys keyData);
 
-/// <summary>
-/// This class paints the textarea.
-/// </summary>
+    /// <summary>
+    /// This class paints the textarea.
+    /// </summary>
     [ToolboxItem(false)]
     public class TextArea : Control
     {
@@ -260,6 +260,7 @@ namespace ICSharpCode.TextEditor
             Caret.Position = new TextLocation(0, 0);
             SelectionManager.SelectionCollection.Clear();
         }
+
         void SearchMatchingBracket(object sender, EventArgs e)
         {
             if (!TextEditorProperties.ShowMatchingBracket)

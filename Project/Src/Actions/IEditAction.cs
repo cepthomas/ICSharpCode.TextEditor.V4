@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-/// <summary>
-/// To define a new key for the textarea, you must write a class which
-/// implements this interface.
-/// </summary>
+    /// <summary>
+    /// To define a new key for the textarea, you must write a class which
+    /// implements this interface.
+    /// </summary>
     public interface IEditAction
     {
         /// <value>
@@ -31,10 +31,10 @@ namespace ICSharpCode.TextEditor.Actions
         void Execute(TextArea textArea);
     }
 
-/// <summary>
-/// To define a new key for the textarea, you must write a class which
-/// implements this interface.
-/// </summary>
+    /// <summary>
+    /// To define a new key for the textarea, you must write a class which
+    /// implements this interface.
+    /// </summary>
     public abstract class AbstractEditAction : IEditAction
     {
         Keys[] keys = null;

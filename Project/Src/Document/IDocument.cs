@@ -13,10 +13,10 @@ using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This interface represents a container which holds a text sequence and
-/// all necessary information about it. It is used as the base for a text editor.
-/// </summary>
+    /// <summary>
+    /// This interface represents a container which holds a text sequence and
+    /// all necessary information about it. It is used as the base for a text editor.
+    /// </summary>
     public interface IDocument
     {
         ITextEditorProperties TextEditorProperties

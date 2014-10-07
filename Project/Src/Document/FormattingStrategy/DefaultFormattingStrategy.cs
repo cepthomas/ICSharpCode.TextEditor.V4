@@ -10,10 +10,10 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This class handles the auto and smart indenting in the textbuffer while
-/// you type.
-/// </summary>
+    /// <summary>
+    /// This class handles the auto and smart indenting in the textbuffer while
+    /// you type.
+    /// </summary>
     public class DefaultFormattingStrategy : IFormattingStrategy
     {
         /// <summary>

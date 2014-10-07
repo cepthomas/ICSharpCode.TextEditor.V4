@@ -18,9 +18,9 @@ namespace ICSharpCode.TextEditor.Document
         WaveLine
     }
 
-/// <summary>
-/// Marks a part of a document.
-/// </summary>
+    /// <summary>
+    /// Marks a part of a document.
+    /// </summary>
     public class TextMarker : AbstractSegment
     {
         TextMarkerType textMarkerType;

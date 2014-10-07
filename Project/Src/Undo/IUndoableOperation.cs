@@ -7,10 +7,10 @@
 
 namespace ICSharpCode.TextEditor.Undo
 {
-/// <summary>
-/// This Interface describes a the basic Undo/Redo operation
-/// all Undo Operations must implement this interface.
-/// </summary>
+    /// <summary>
+    /// This Interface describes a the basic Undo/Redo operation
+    /// all Undo Operations must implement this interface.
+    /// </summary>
     public interface IUndoableOperation
     {
         /// <summary>

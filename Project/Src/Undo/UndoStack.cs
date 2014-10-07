@@ -11,9 +11,9 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Undo
 {
-/// <summary>
-/// This class implements an undo stack
-/// </summary>
+    /// <summary>
+    /// This class implements an undo stack
+    /// </summary>
     public class UndoStack
     {
         Stack<IUndoableOperation> undostack = new Stack<IUndoableOperation>();

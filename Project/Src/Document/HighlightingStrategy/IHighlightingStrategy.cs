@@ -10,9 +10,9 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// A highlighting strategy for a buffer.
-/// </summary>
+    /// <summary>
+    /// A highlighting strategy for a buffer.
+    /// </summary>
     public interface IHighlightingStrategy
     {
         /// <value>

@@ -231,9 +231,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-/// <summary>
-/// This is a sample editaction plugin, it indents the selected area.
-/// </summary>
+    /// <summary>
+    /// This is a sample editaction plugin, it indents the selected area.
+    /// </summary>
     public class IndentSelection : AbstractLineFormatAction
     {
         protected override void Convert(IDocument document, int startLine, int endLine)

@@ -15,9 +15,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// This class handles all mouse stuff for a textArea.
-/// </summary>
+    /// <summary>
+    /// This class handles all mouse stuff for a textArea.
+    /// </summary>
     public class TextAreaMouseHandler
     {
         TextArea  textArea;

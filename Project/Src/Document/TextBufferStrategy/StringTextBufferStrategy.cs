@@ -11,11 +11,11 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Simple implementation of the ITextBuffer interface implemented using a
-/// string.
-/// Only for fall-back purposes.
-/// </summary>
+    /// <summary>
+    /// Simple implementation of the ITextBuffer interface implemented using a
+    /// string.
+    /// Only for fall-back purposes.
+    /// </summary>
     public class StringTextBufferStrategy : ITextBufferStrategy
     {
         string storedText = "";

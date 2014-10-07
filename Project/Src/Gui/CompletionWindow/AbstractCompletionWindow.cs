@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
-/// <summary>
-/// Description of AbstractCompletionWindow.
-/// </summary>
+    /// <summary>
+    /// Description of AbstractCompletionWindow.
+    /// </summary>
     public abstract class AbstractCompletionWindow : System.Windows.Forms.Form
     {
         protected TextEditorControl control;

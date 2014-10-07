@@ -7,9 +7,9 @@
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This interface is used to describe a span inside a text sequence
-/// </summary>
+    /// <summary>
+    /// This interface is used to describe a span inside a text sequence
+    /// </summary>
     public interface ISegment
     {
         /// <value>

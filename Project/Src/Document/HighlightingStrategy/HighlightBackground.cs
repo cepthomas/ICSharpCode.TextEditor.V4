@@ -11,9 +11,9 @@ using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Extens the highlighting color with a background image.
-/// </summary>
+    /// <summary>
+    /// Extens the highlighting color with a background image.
+    /// </summary>
     public class HighlightBackground : HighlightColor
     {
         Image backgroundImage;

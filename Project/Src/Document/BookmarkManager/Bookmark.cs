@@ -11,9 +11,9 @@ using SWF = System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Description of Bookmark.
-/// </summary>
+    /// <summary>
+    /// Description of Bookmark.
+    /// </summary>
     public class Bookmark
     {
         IDocument document;

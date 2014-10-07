@@ -11,10 +11,10 @@ using System.Diagnostics;
 
 namespace ICSharpCode.TextEditor.Undo
 {
-/// <summary>
-/// This class stacks the last x operations from the undostack and makes
-/// one undo/redo operation from it.
-/// </summary>
+    /// <summary>
+    /// This class stacks the last x operations from the undostack and makes
+    /// one undo/redo operation from it.
+    /// </summary>
     internal sealed class UndoQueue : IUndoableOperation
     {
         List<IUndoableOperation> undolist = new List<IUndoableOperation>();

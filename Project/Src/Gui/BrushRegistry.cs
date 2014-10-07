@@ -13,10 +13,10 @@ using System.Drawing.Drawing2D;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// Contains brushes/pens for the text editor to speed up drawing. Re-Creation of brushes and pens
-/// seems too costly.
-/// </summary>
+    /// <summary>
+    /// Contains brushes/pens for the text editor to speed up drawing. Re-Creation of brushes and pens
+    /// seems too costly.
+    /// </summary>
     public class BrushRegistry
     {
         static Dictionary<Color, Brush> brushes = new Dictionary<Color, Brush>();

@@ -10,10 +10,10 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This class is used to generate bold, italic and bold/italic fonts out
-/// of a base font.
-/// </summary>
+    /// <summary>
+    /// This class is used to generate bold, italic and bold/italic fonts out
+    /// of a base font.
+    /// </summary>
     public class FontContainer
     {
         Font defaultFont;

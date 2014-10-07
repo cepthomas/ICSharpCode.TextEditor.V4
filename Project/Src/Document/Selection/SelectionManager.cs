@@ -12,9 +12,9 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// This class manages the selections in a document.
-/// </summary>
+    /// <summary>
+    /// This class manages the selections in a document.
+    /// </summary>
     public class SelectionManager : IDisposable
     {
         TextLocation selectionStart;
@@ -508,7 +508,7 @@ namespace ICSharpCode.TextEditor.Document
         public event EventHandler SelectionChanged;
     }
 
-// selection initiated from...
+    // selection initiated from...
     internal class SelectFrom
     {
         public int where = WhereFrom.None; // last selection initiator
@@ -519,7 +519,7 @@ namespace ICSharpCode.TextEditor.Document
         }
     }
 
-// selection initiated from type...
+    // selection initiated from type...
     internal class WhereFrom
     {
         public const int None = 0;

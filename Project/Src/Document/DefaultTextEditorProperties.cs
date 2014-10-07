@@ -127,6 +127,7 @@ namespace ICSharpCode.TextEditor.Document
                 documentSelectionMode = value;
             }
         }
+
         public bool AllowCaretBeyondEOL
         {
             get
@@ -138,6 +139,7 @@ namespace ICSharpCode.TextEditor.Document
                 allowCaretBeyondEOL = value;
             }
         }
+
         public bool ShowMatchingBracket
         {
             get
@@ -149,6 +151,7 @@ namespace ICSharpCode.TextEditor.Document
                 showMatchingBracket = value;
             }
         }
+
         public bool ShowLineNumbers
         {
             get
@@ -160,6 +163,7 @@ namespace ICSharpCode.TextEditor.Document
                 showLineNumbers = value;
             }
         }
+
         public bool ShowSpaces
         {
             get
@@ -171,6 +175,7 @@ namespace ICSharpCode.TextEditor.Document
                 showSpaces = value;
             }
         }
+
         public bool ShowTabs
         {
             get
@@ -182,6 +187,7 @@ namespace ICSharpCode.TextEditor.Document
                 showTabs = value;
             }
         }
+
         public bool ShowEOLMarker
         {
             get
@@ -193,6 +199,7 @@ namespace ICSharpCode.TextEditor.Document
                 showEOLMarker = value;
             }
         }
+
         public bool ShowInvalidLines
         {
             get
@@ -204,6 +211,7 @@ namespace ICSharpCode.TextEditor.Document
                 showInvalidLines = value;
             }
         }
+
         public bool IsIconBarVisible
         {
             get
@@ -215,6 +223,7 @@ namespace ICSharpCode.TextEditor.Document
                 isIconBarVisible = value;
             }
         }
+
         public bool EnableFolding
         {
             get
@@ -226,6 +235,7 @@ namespace ICSharpCode.TextEditor.Document
                 enableFolding = value;
             }
         }
+
         public bool ShowHorizontalRuler
         {
             get
@@ -237,6 +247,7 @@ namespace ICSharpCode.TextEditor.Document
                 showHorizontalRuler = value;
             }
         }
+
         public bool ShowVerticalRuler
         {
             get
@@ -248,6 +259,7 @@ namespace ICSharpCode.TextEditor.Document
                 showVerticalRuler = value;
             }
         }
+
         public bool ConvertTabsToSpaces
         {
             get
@@ -259,6 +271,7 @@ namespace ICSharpCode.TextEditor.Document
                 convertTabsToSpaces = value;
             }
         }
+
         public System.Drawing.Text.TextRenderingHint TextRenderingHint
         {
             get
@@ -282,6 +295,7 @@ namespace ICSharpCode.TextEditor.Document
                 mouseWheelScrollDown = value;
             }
         }
+
         public bool MouseWheelTextZoom
         {
             get
@@ -329,6 +343,7 @@ namespace ICSharpCode.TextEditor.Document
                 encoding = value;
             }
         }
+
         public int VerticalRulerRow
         {
             get
@@ -340,6 +355,7 @@ namespace ICSharpCode.TextEditor.Document
                 verticalRulerRow = value;
             }
         }
+
         public LineViewerStyle LineViewerStyle
         {
             get
@@ -351,6 +367,7 @@ namespace ICSharpCode.TextEditor.Document
                 lineViewerStyle = value;
             }
         }
+
         public string LineTerminator
         {
             get
@@ -362,6 +379,7 @@ namespace ICSharpCode.TextEditor.Document
                 lineTerminator = value;
             }
         }
+
         public bool AutoInsertCurlyBracket
         {
             get

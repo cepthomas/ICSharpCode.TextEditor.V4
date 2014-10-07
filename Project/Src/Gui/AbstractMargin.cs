@@ -16,9 +16,9 @@ namespace ICSharpCode.TextEditor
     public delegate void MarginMouseEventHandler(AbstractMargin sender, Point mousepos, MouseButtons mouseButtons);
     public delegate void MarginPaintEventHandler(AbstractMargin sender, Graphics g, Rectangle rect);
 
-/// <summary>
-/// This class views the line numbers and folding markers.
-/// </summary>
+    /// <summary>
+    /// This class views the line numbers and folding markers.
+    /// </summary>
     public abstract class AbstractMargin
     {
         Cursor cursor = Cursors.Default;

@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// Horizontal ruler - text column measuring ruler at the top of the text area.
-/// </summary>
+    /// <summary>
+    /// Horizontal ruler - text column measuring ruler at the top of the text area.
+    /// </summary>
     public class HRuler : Control
     {
         TextArea textArea;

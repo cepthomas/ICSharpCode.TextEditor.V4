@@ -11,10 +11,10 @@ using System.Threading;
 
 namespace ICSharpCode.TextEditor.Util
 {
-/// <summary>
-/// A IList{T} that checks that it is only accessed on the thread that created it, and that
-/// it is not modified while an enumerator is running.
-/// </summary>
+    /// <summary>
+    /// A IList{T} that checks that it is only accessed on the thread that created it, and that
+    /// it is not modified while an enumerator is running.
+    /// </summary>
     sealed class CheckedList<T> : IList<T>
     {
         readonly int threadID;

@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
-/// <summary>
-/// Description of CodeCompletionListView.
-/// </summary>
+    /// <summary>
+    /// Description of CodeCompletionListView.
+    /// </summary>
     public class CodeCompletionListView : System.Windows.Forms.UserControl
     {
         ICompletionData[] completionData;

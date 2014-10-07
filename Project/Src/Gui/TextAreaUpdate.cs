@@ -10,9 +10,9 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor
 {
-/// <summary>
-/// This enum describes all implemented request types
-/// </summary>
+    /// <summary>
+    /// This enum describes all implemented request types
+    /// </summary>
     public enum TextAreaUpdateType
     {
         WholeTextArea,
@@ -23,9 +23,9 @@ namespace ICSharpCode.TextEditor
         LinesBetween
     }
 
-/// <summary>
-/// This class is used to request an update of the textarea
-/// </summary>
+    /// <summary>
+    /// This class is used to request an update of the textarea
+    /// </summary>
     public class TextAreaUpdate
     {
         TextLocation position;

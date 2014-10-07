@@ -10,9 +10,9 @@ using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
-/// <summary>
-/// Used for mark previous token
-/// </summary>
+    /// <summary>
+    /// Used for mark previous token
+    /// </summary>
     public class PrevMarker
     {
         string      what;
