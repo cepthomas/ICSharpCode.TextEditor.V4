@@ -15,9 +15,11 @@ namespace ICSharpCode.TextEditor.Document
             for (int offset = 0; offset < document.TextLength; ++offset)
             {
                 char c = document.GetCharAt(offset);
+
                 if (c == '{')
                 {
                     int offsetOfClosingBracket = document.FormattingStrategy.SearchBracketForward(document, offset + 1, '{', '}');
+
                     if (offsetOfClosingBracket > 0)
                     {
                         int length = offsetOfClosingBracket - offset + 1;
@@ -25,6 +27,7 @@ namespace ICSharpCode.TextEditor.Document
                     }
                 }
             }
+
             return foldMarkers;
         }
 
@@ -35,7 +38,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <returns>A list of FoldMarkers.</returns>
         public List<FoldMarker> GenerateFoldMarkersRegion(IDocument document, string fileName, object parseInformation)
         {
-            List<FoldMarker> list = new List<FoldMarker>();
+            List<FoldMarker> foldMarkers = new List<FoldMarker>();
 
             Stack<int> startLines = new Stack<int>();
 
@@ -43,7 +46,8 @@ namespace ICSharpCode.TextEditor.Document
             for (int i = 0; i < document.TotalNumberOfLines; i++)
             {
                 var seg = document.GetLineSegment(i);
-                int offs, end = document.TextLength;
+                int offs = 0;
+                int end = document.TextLength;
                 char c;
 
                 for (offs = seg.Offset; offs < end && ((c = document.GetCharAt(offs)) == ' ' || c == '\t'); offs++)
@@ -70,13 +74,12 @@ namespace ICSharpCode.TextEditor.Document
                     {
                         // Add a new FoldMarker to the list.
                         int start = startLines.Pop();
-                        list.Add(new FoldMarker(document, start, document.GetLineSegment(start).Length,
-                                                i, spaceCount + "#endregion".Length));
+                        foldMarkers.Add(new FoldMarker(document, start, document.GetLineSegment(start).Length, i, spaceCount + "#endregion".Length));
                     }
                 }
             }
 
-            return list;
+            return foldMarkers;
         }
     }
 }
