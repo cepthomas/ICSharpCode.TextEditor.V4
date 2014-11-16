@@ -6,8 +6,14 @@
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+
 using ICSharpCode.TextEditor.Document;
+//using ICSharpCode.TextEditor;
+//using ICSharpCode.TextEditor.Document;
+//using ICSharpCode.TextEditor.Actions;
 
 namespace ICSharpCode.TextEditor.Actions
 {
@@ -112,7 +118,6 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
     }
-
 
     public class ToUpperCase : AbstractSelectionFormatAction
     {
@@ -241,4 +246,215 @@ namespace ICSharpCode.TextEditor.Actions
             document.FormattingStrategy.IndentLines(textArea, startLine, endLine);
         }
     }
+
+    /// <summary>Pretty it up.</summary>
+    public class FixXml : AbstractSelectionFormatAction
+    {
+        protected override void Convert(IDocument document, int startOffset, int length)
+        {
+            string sin = document.GetText(startOffset, length);
+            string sout = "";
+
+            try
+            {
+                XDocument doc = XDocument.Parse(sin);
+                sout = doc.ToString();
+            }
+            catch (Exception)
+            {
+                sout = sin;
+            }
+
+            document.Replace(startOffset, length, sout);
+        }
+    }
+
+    /// <summary>General purpose sorter, with options.</summary>
+    public class SortSelection : AbstractSelectionFormatAction
+    {
+        public enum SortDirection { Ascending, Descending }
+
+        public SortDirection Direction { get; set; }
+        public bool CaseSensitive { get; set; }
+        public bool IgnoreWhitespace { get; set; }
+        public bool RemoveDuplicates { get; set; }
+
+        int Compare(string x, string y)
+        {
+            if (x == null || y == null)
+            {
+                return -1;
+            }
+            string str1;
+            string str2;
+
+            if (Direction == SortDirection.Ascending)
+            {
+                str1 = x.ToString();
+                str2 = y.ToString();
+            }
+            else
+            {
+                str1 = y.ToString();
+                str2 = x.ToString();
+            }
+
+            if (IgnoreWhitespace)
+            {
+                str1 = str1.Trim();
+                str2 = str2.Trim();
+            }
+
+            if (!CaseSensitive)
+            {
+                str1 = str1.ToUpper();
+                str2 = str2.ToUpper();
+            }
+
+            return str1.CompareTo(str2);
+        }
+
+        protected override void Convert(IDocument document, int startLine, int endLine)
+        {
+            List<string> lines = new List<string>();
+            for (int i = startLine; i <= endLine; ++i)
+            {
+                LineSegment line = document.GetLineSegment(i);
+                lines.Add(document.GetText(line.Offset, line.Length));
+            }
+
+            lines.Sort(Compare);
+
+            if (RemoveDuplicates)
+            {
+                for (int i = 0; i < lines.Count - 1; ++i)
+                {
+                    if (lines[i].Equals(lines[i + 1]))
+                    {
+                        lines.RemoveAt(i);
+                        --i;
+                    }
+                }
+            }
+
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                LineSegment line = document.GetLineSegment(startLine + i);
+                document.Replace(line.Offset, line.Length, lines[i].ToString());
+            }
+
+            // remove removed duplicate lines
+            for (int i = startLine + lines.Count; i <= endLine; ++i)
+            {
+                LineSegment line = document.GetLineSegment(startLine + lines.Count);
+                document.Remove(line.Offset, line.TotalLength);
+            }
+        }
+    }
+
+    /// <summary>Convert a (typically) db view or field name such as a_big_dog or A_BIG_DOG into A Big Dog.</summary>
+    public class ConvertUnderscoredToReadable : AbstractSelectionFormatAction
+    {
+        protected override void Convert(IDocument document, int startOffset, int length)
+        {
+            StringBuilder sb = new StringBuilder();
+            string sin = document.GetText(startOffset, length);
+            char lastChar = '_';
+
+            // Fix any errant spaces.
+            sin = sin.Replace(' ', '_');
+
+            if (sin != null)
+            {
+                foreach (char c in sin)
+                {
+                    if (c == '_')
+                        sb.Append(' ');
+                    else if (lastChar == '_')
+                        sb.Append(char.ToUpper(c));
+                    else
+                        sb.Append(char.ToLower(c));
+
+                    lastChar = c;
+                }
+            }
+
+            document.Replace(startOffset, length, sb.ToString());
+        }
+    }
+
+    /// <summary>Convert a readable name into its db equivalent. Opposite of ConvertUnderscoredToReadable().</summary>
+    public class ConvertReadableToUnderscored : AbstractSelectionFormatAction
+    {
+        protected override void Convert(IDocument document, int startOffset, int length)
+        {
+            string sin = document.GetText(startOffset, length);
+            document.Replace(startOffset, length, sin.Replace(' ', '_').ToUpper());
+        }
+    }
+
+    /// <summary>Lower to upper case transitions get a space.</summary>
+    public class ConvertCamelcaseToReadable : AbstractSelectionFormatAction
+    {
+        protected override void Convert(IDocument document, int startOffset, int length)
+        {
+            StringBuilder sb = new StringBuilder();
+            string sin = document.GetText(startOffset, length);
+            char lastChar = sin[0];
+
+            foreach (char c in sin)
+            {
+                if (Char.IsUpper(c) && Char.IsLower(lastChar))
+                {
+                    sb.Append(' ');
+                    sb.Append(c);
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
+                lastChar = c;
+            }
+
+            document.Replace(startOffset, length, sb.ToString());
+        }
+    }
+
+    /// <summary>No comment needed.</summary>
+    public class RemoveBlankLines : AbstractSelectionFormatAction
+    {
+        protected override void Convert(IDocument document, int startLine, int endLine)
+        {
+            List<string> lines = new List<string>();
+            for (int i = startLine; i <= endLine; ++i)
+            {
+                LineSegment line = document.GetLineSegment(i);
+                lines.Add(document.GetText(line.Offset, line.Length));
+            }
+
+            for (int i = 0; i < lines.Count - 1; ++i)
+            {
+                if (lines[i] == "")
+                {
+                    lines.RemoveAt(i);
+                    --i;
+                }
+            }
+
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                LineSegment line = document.GetLineSegment(startLine + i);
+                document.Replace(line.Offset, line.Length, lines[i].ToString());
+            }
+
+            // remove removed lines
+            for (int i = startLine + lines.Count; i <= endLine; ++i)
+            {
+                LineSegment line = document.GetLineSegment(startLine + lines.Count);
+                document.Remove(line.Offset, line.TotalLength);
+            }
+        }
+    }
+
 }

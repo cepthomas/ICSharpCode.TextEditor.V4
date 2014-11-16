@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public void UpdateSyntaxModeList()
         {
-            string syntaxModeFile = Path.Combine(directory, "SyntaxModes.xml"); // TODO-texteditor-ch this can go
+            string syntaxModeFile = Path.Combine(directory, "SyntaxModes.xml"); // TODO-texteditor this can go
             if (File.Exists(syntaxModeFile))
             {
                 Stream s = File.OpenRead(syntaxModeFile);
