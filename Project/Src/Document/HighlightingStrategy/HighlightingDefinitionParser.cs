@@ -32,7 +32,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 List<ValidationEventArgs> errors = null;
                 XmlReaderSettings settings = new XmlReaderSettings();
-                //CET-ch was: Stream schemaStream = typeof(HighlightingDefinitionParser).Assembly.GetManifestResourceStream("ICSharpCode.TextEditor.Resources.Mode.xsd");
+                // was: Stream schemaStream = typeof(HighlightingDefinitionParser).Assembly.GetManifestResourceStream("ICSharpCode.TextEditor.Resources.Mode.xsd");
                 string schemaStreamFile = Path.Combine("SyntaxDefinition", "Mode.xsd");
                 Stream schemaStream = File.OpenRead(schemaStreamFile);
                 settings.Schemas.Add("", new XmlTextReader(schemaStream));

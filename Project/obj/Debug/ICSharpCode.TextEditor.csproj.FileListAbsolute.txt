@@ -19,7 +19,6 @@ C:\Dev\Tide\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.dll
 C:\Dev\Tide\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.pdb
 C:\Dev\Tide\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.csprojResolveAssemblyReference.cache
 C:\Dev\Tide\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Lua.xshd
-C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\ASPX.xshd
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\BAT-Mode.xshd
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Boo.xshd
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Coco-Mode.xshd
@@ -37,6 +36,7 @@ C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\XML-Mode.xshd
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Lua.xshd
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.dll
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.pdb
-C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.csprojResolveAssemblyReference.cache
 C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.dll
 C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.pdb
+C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.csprojResolveAssemblyReference.cache
+C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Markdown.xshd

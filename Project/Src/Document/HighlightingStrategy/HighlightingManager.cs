@@ -43,7 +43,7 @@ namespace ICSharpCode.TextEditor.Document
         static HighlightingManager()
         {
             highlightingManager = new HighlightingManager();
-            //CET-ch was: highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
+            // was: highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
             highlightingManager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider("SyntaxDefinition"));
         }
 

@@ -85,6 +85,7 @@
     <Compile Include="Src\Document\DocumentFactory.cs" />
     <Compile Include="Src\Document\FoldingStrategy\CodeFoldingStrategy.cs" />
     <Compile Include="Src\Document\FoldingStrategy\CSharpFoldingStrategy.cs" />
+    <Compile Include="Src\Document\FoldingStrategy\MarkdownFoldingStrategy.cs" />
     <Compile Include="Src\Document\FoldingStrategy\XmlFoldingStrategy.cs" />
     <Compile Include="Src\Document\HighlightingStrategy\HighlightingDefinitionInvalidException.cs" />
     <Compile Include="Src\Document\IDocument.cs" />
@@ -220,9 +221,6 @@
     <Compile Include="Src\Gui\ToolTipRequestEventArgs.cs" />
     <Compile Include="Src\Document\HighlightingStrategy\SpanStack.cs" />
     <Compile Include="Src\Util\WeakCollection.cs" />
-    <Content Include="SyntaxDefinition\ASPX.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="SyntaxDefinition\BAT-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -267,6 +265,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SyntaxDefinition\Lua.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SyntaxDefinition\Markdown.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -3,7 +3,7 @@ namespace ICSharpCode.TextEditor.Document
 {
     using System.Collections.Generic;
 
-    /// <summary>CSharpFoldingStrategy TODO1 combine with region stuff below.</summary>
+    /// <summary>CSharpFoldingStrategy TODO1 combine with region stuff below. Then fix up CodeFoldingStrategy. Maybe a cpp/h strategy too with base class.</summary>
     public class CSharpFoldingStrategy : IFoldingStrategy
     {
         public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
@@ -81,5 +81,44 @@ namespace ICSharpCode.TextEditor.Document
 
             return foldMarkers;
         }
+
+
+        //public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText)
+
+
+        //    public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
+        //{
+        //    var newFoldings = new List<NewFolding>();
+
+        //    var startOffsets = new Stack<int>();
+        //    int lastNewLineOffset = 0;
+        //    char openingBrace = this.OpeningBrace;
+        //    char closingBrace = this.ClosingBrace;
+        //    for (int i = 0; i < document.TextLength; i++)
+        //    {
+        //        char c = document.GetCharAt(i);
+        //        if (c == openingBrace)
+        //        {
+        //            startOffsets.Push(i);
+        //        }
+        //        else if (c == closingBrace && startOffsets.Count > 0)
+        //        {
+        //            int startOffset = startOffsets.Pop();
+        //            // don't fold if opening and closing brace are on the same line
+        //            if (startOffset < lastNewLineOffset)
+        //            {
+        //                newFoldings.Add(new NewFolding(startOffset, i + 1));
+        //            }
+        //        }
+        //        else if (c == '\n' || c == '\r')
+        //        {
+        //            lastNewLineOffset = i + 1;
+        //        }
+        //    }
+        //    newFoldings.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));
+        //    return newFoldings;
+        //}
+
+
     }
 }
