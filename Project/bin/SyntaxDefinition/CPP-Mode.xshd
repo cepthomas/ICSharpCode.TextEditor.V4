@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for C/C++ 2001 by Andrea Paatz and Mike Krueger -->
 
-<SyntaxDefinition name = "C++.NET" extensions = ".c;.h;.cc;.C;.cpp;.hpp">
+<SyntaxDefinition name = "C++" folding="Code" extensions = ".c;.h;.cc;.C;.cpp;.hpp">
 	
 	<Properties>
 		<Property name="LineComment" value="//"/>
@@ -64,33 +64,6 @@
 				<Key word = "&amp;" />
 			</KeyWords>
 			
-			<KeyWords name = "ManagedKeyWords" bold="true" italic="false" color="Black">
-				<Key word = "__abstract" />
-				<Key word = "__box" />
-				<Key word = "__delegate" />
-				<Key word = "__gc" />
-				<Key word = "__identifier" />
-				<Key word = "__nogc" />
-				<Key word = "__pin" />
-				<Key word = "__property" />
-				<Key word = "__sealed" />
-				<Key word = "__try_cast" />
-				<Key word = "__typeof" />
-				<Key word = "__value" />
-				
-				
-				<Key word = "__event" />
-				<Key word = "__hook" />
-				<Key word = "__raise" />
-				<Key word = "__unhook" />
-				
-				<Key word = "__interface" />
-			</KeyWords>
-			
-			<KeyWords name = "AccessKeywords" bold="true" italic="false" color="Black">
-				<Key word = "this" />
-			</KeyWords>
-			
 			<KeyWords name = "OperatorKeywords" bold="true" italic="false" color="DarkCyan">
 				<Key word = "and" />
 				<Key word = "and_eq" />
@@ -105,11 +78,6 @@
 				<Key word = "or_eq" />
 				<Key word = "xor" />
 				<Key word = "xor_eq" />
-			</KeyWords>
-			
-			<KeyWords name = "NameSpaces" bold="true" italic="false" color="Green">
-				<Key word = "using" />
-				<Key word = "namespace" />
 			</KeyWords>
 			
 			<KeyWords name = "Friends" bold="false" italic="false" color="Brown">

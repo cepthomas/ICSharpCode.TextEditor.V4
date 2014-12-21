@@ -66,9 +66,15 @@ namespace ICSharpCode.TextEditor.Document
                         if (highlighter == null) return null;
                     }
                 }
+
                 if (doc.DocumentElement.HasAttribute("extensions"))
                 {
                     highlighter.Extensions = doc.DocumentElement.GetAttribute("extensions").Split(new char[] { ';', '|' });
+                }
+
+                if (doc.DocumentElement.HasAttribute("folding"))
+                {
+                    highlighter.Folding = doc.DocumentElement.GetAttribute("folding");
                 }
 
                 XmlElement environment = doc.DocumentElement["Environment"];

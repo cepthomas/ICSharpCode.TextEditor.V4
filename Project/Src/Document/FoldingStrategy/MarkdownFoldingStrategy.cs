@@ -8,7 +8,7 @@ namespace ICSharpCode.TextEditor.Document
     {
         #region Methods
 
-        // TODO1 Subset of markdown heading folding. Also Markdown.xshd.
+        // TODO1 Subset of markdown heading folding.
 
         //This is an H1
         //=============

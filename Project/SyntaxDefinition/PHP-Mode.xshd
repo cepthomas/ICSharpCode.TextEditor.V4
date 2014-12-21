@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for PHP 2001 by Chad Smith & Mike Krueger -->
 
-<SyntaxDefinition name ="PHP" extensions = ".php">
+<SyntaxDefinition name ="PHP" folding="Code" extensions = ".php">
 	
 	<Digits name ="Digits" bold ="false" italic ="false" color ="DarkBlue"/>
 	

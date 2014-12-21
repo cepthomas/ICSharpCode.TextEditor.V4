@@ -2,7 +2,7 @@
 
 <!-- syntaxdefinition for HTML 2000 by Mike Krueger -->
 
-<SyntaxDefinition name = "HTML" extensions = ".htm;.html">
+<SyntaxDefinition name = "HTML" folding="Xml" extensions = ".htm;.html">
 	
 	<Digits   name = "Digits"   bold = "false" italic = "false" color = "DarkBlue"/>
 

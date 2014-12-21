@@ -38,5 +38,6 @@ C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.dll
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\ICSharpCode.TextEditor.pdb
 C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.dll
 C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.pdb
-C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.csprojResolveAssemblyReference.cache
 C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\Markdown.xshd
+C:\Dev\ICSharpCode.TextEditor.V4\Project\bin\SyntaxDefinition\CPP.NET-Mode.xshd
+C:\Dev\ICSharpCode.TextEditor.V4\Project\obj\Debug\ICSharpCode.TextEditor.csprojResolveAssemblyReference.cache

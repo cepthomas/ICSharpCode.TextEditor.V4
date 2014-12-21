@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for JavaScript 2.0 by Svante Lidman -->
 
-<SyntaxDefinition name ="JavaScript" extensions = ".js">
+<SyntaxDefinition name ="JavaScript" folding="Code" extensions = ".js">
 	
 	<Properties>
 		<Property name="LineComment" value="//"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for C# 2000 by Mike Krueger -->
 
-<SyntaxDefinition name = "C#" extensions = ".cs">
+<SyntaxDefinition name="C#" folding="CSharp" extensions=".cs">
 	
 	<Environment>
 		<Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />

@@ -15,41 +15,34 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class FileSyntaxModeProvider : ISyntaxModeFileProvider
     {
-        string    directory;
-        List<SyntaxMode> syntaxModes = null;
+        string _directory;
 
-        public ICollection<SyntaxMode> SyntaxModes
-        {
-            get
-            {
-                return syntaxModes;
-            }
-        }
+        public ICollection<SyntaxMode> SyntaxModes { get; private set; }
 
         public FileSyntaxModeProvider(string directory)
         {
-            this.directory = directory;
+            _directory = directory;
             UpdateSyntaxModeList();
         }
 
         public void UpdateSyntaxModeList()
         {
-            string syntaxModeFile = Path.Combine(directory, "SyntaxModes.xml"); // TODO-texteditor this can go
-            if (File.Exists(syntaxModeFile))
-            {
-                Stream s = File.OpenRead(syntaxModeFile);
-                syntaxModes = SyntaxMode.GetSyntaxModes(s);
-                s.Close();
-            }
-            else
-            {
-                syntaxModes = ScanDirectory(directory);
-            }
+            //string syntaxModeFile = Path.Combine(directory, "SyntaxModes.xml"); // TODO-texteditor this can go
+            //if (File.Exists(syntaxModeFile))
+            //{
+            //    Stream s = File.OpenRead(syntaxModeFile);
+            //    syntaxModes = SyntaxMode.GetSyntaxModes(s);
+            //    s.Close();
+            //}
+            //else
+            //{
+                SyntaxModes = ScanDirectory(_directory);
+            //}
         }
 
         public XmlTextReader GetSyntaxModeFile(SyntaxMode syntaxMode)
         {
-            string syntaxModeFile = Path.Combine(directory, syntaxMode.FileName);
+            string syntaxModeFile = Path.Combine(_directory, syntaxMode.FileName);
             if (!File.Exists(syntaxModeFile))
             {
                 throw new HighlightingDefinitionInvalidException("Can't load highlighting definition " + syntaxModeFile + " (file not found)!");
@@ -61,32 +54,30 @@ namespace ICSharpCode.TextEditor.Document
         {
             string[] files = Directory.GetFiles(directory);
             List<SyntaxMode> modes = new List<SyntaxMode>();
+
             foreach (string file in files)
             {
-                if (Path.GetExtension(file).Equals(".XSHD", StringComparison.OrdinalIgnoreCase))
+                if (Path.GetExtension(file).ToUpper() == ".XSHD")
                 {
-                    XmlTextReader reader = new XmlTextReader(file);
-                    while (reader.Read())
+                    using (XmlTextReader reader = new XmlTextReader(file))
                     {
-                        if (reader.NodeType == XmlNodeType.Element)
+                        while (reader.Read())
                         {
-                            switch (reader.Name)
+                            if (reader.NodeType == XmlNodeType.Element)
                             {
-                            case "SyntaxDefinition":
-                                string name       = reader.GetAttribute("name");
-                                string extensions = reader.GetAttribute("extensions");
-                                modes.Add(new SyntaxMode(Path.GetFileName(file),
-                                                         name,
-                                                         extensions));
-                                goto bailout;
-                            default:
-                                throw new HighlightingDefinitionInvalidException("Unknown root node in syntax highlighting file :" + reader.Name);
+                                switch (reader.Name)
+                                {
+                                    case "SyntaxDefinition":
+                                        modes.Add(new SyntaxMode(Path.GetFileName(file),
+                                            reader.GetAttribute("name"), reader.GetAttribute("folding"), reader.GetAttribute("extensions")));
+                                        break;
+
+                                    default:
+                                        break; //throw new HighlightingDefinitionInvalidException("Unknown root node in syntax highlighting file :" + reader.Name);
+                                }
                             }
                         }
                     }
-                    bailout:
-                    reader.Close();
-
                 }
             }
             return modes;

@@ -285,6 +285,8 @@
 				 mode. I.e., one that is defined in an external file. For an example of this see the HTML-Mode that
 				 uses the JavaScript-mode this way. -->
 			<xsd:attribute name="name" type="xsd:string" />
+			<!-- The folding type of the mode. -->
+			<xsd:attribute name="folding" type="xsd:string" />
 			<!-- The file extensions that the mode is applicable for. Extensions must be written with lower case and
 				 should include the ., as in .txt. If several extensions are applicable they should be separeated with | -->
 			<xsd:attribute name="extensions" type="xsd:string" />

@@ -18,29 +18,25 @@ namespace ICSharpCode.TextEditor.Document
         /// <value>
         /// The name of the highlighting strategy, must be unique
         /// </value>
-        string Name
-        {
-            get;
-        }
+        string Name { get; }
 
         /// <value>
-        /// The file extenstions on which this highlighting strategy gets
-        /// used
+        /// The name of the folding type. Not technically part of highlighting but best place to keep it.
         /// </value>
-        string[] Extensions
-        {
-            get;
-        }
+        string Folding { get; }
 
-        Dictionary<string, string> Properties
-        {
-            get;
-        }
+        /// <value>
+        /// The file extenstions on which this highlighting strategy gets used
+        /// </value>
+        string[] Extensions { get; }
 
-        // returns special color. (BackGround Color, Cursor Color and so on)
+        /// <summary>
+        /// ???
+        /// </summary>
+        Dictionary<string, string> Properties { get; }
 
         /// <remarks>
-        /// Gets the color of an Environment element.
+        /// Gets the color of an Environment element.  (BackGround Color, Cursor Color and so on)
         /// </remarks>
         HighlightColor GetColorFor(string name);
 

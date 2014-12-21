@@ -15,46 +15,38 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class DefaultHighlightingStrategy : IHighlightingStrategyUsingRuleSets
     {
-        string    name;
-        List<HighlightRuleSet> rules = new List<HighlightRuleSet>();
 
-        Dictionary<string, HighlightColor> environmentColors = new Dictionary<string, HighlightColor>();
-        Dictionary<string, string> properties       = new Dictionary<string, string>();
-        string[]  extensions;
-
-        HighlightColor   digitColor;
         HighlightRuleSet defaultRuleSet = null;
 
-        public HighlightColor DigitColor
-        {
-            get
-            {
-                return digitColor;
-            }
-            set
-            {
-                digitColor = value;
-            }
-        }
+        public string Folding { get; set; }
 
+        public HighlightColor DigitColor { get; set; }
+
+        public Dictionary<string, string> Properties { get; private set; }
+
+        public string Name { get; private set; }
+
+        public string[] Extensions { get; set; }
+
+        public List<HighlightRuleSet> Rules { get; private set; }
+
+        Dictionary<string, HighlightColor> environmentColors = new Dictionary<string, HighlightColor>();
         public IEnumerable<KeyValuePair<string, HighlightColor>> EnvironmentColors
         {
-            get
-            {
-                return environmentColors;
-            }
+            get { return environmentColors; }
         }
 
         protected void ImportSettingsFrom(DefaultHighlightingStrategy source)
         {
             if (source == null)
                 throw new ArgumentNullException("source");
-            properties = source.properties;
-            extensions = source.extensions;
-            digitColor = source.digitColor;
+            Properties = source.Properties;
+            Extensions = source.Extensions;
+            DigitColor = source.DigitColor;
             defaultRuleSet = source.defaultRuleSet;
-            name = source.name;
-            rules = source.rules;
+            Name = source.Name;
+            Folding = source.Folding;
+            Rules = source.Rules;
             environmentColors = source.environmentColors;
             defaultTextColor = source.defaultTextColor;
         }
@@ -65,68 +57,36 @@ namespace ICSharpCode.TextEditor.Document
 
         public DefaultHighlightingStrategy(string name)
         {
-            this.name = name;
+            Name = name;
+            Folding = "";
+            environmentColors = new Dictionary<string, HighlightColor>();
+            Properties = new Dictionary<string, string>();
+            Rules = new List<HighlightRuleSet>();
 
-            digitColor       = new HighlightColor(SystemColors.WindowText, false, false);
+            DigitColor = new HighlightColor(SystemColors.WindowText, false, false);
             defaultTextColor = new HighlightColor(SystemColors.WindowText, false, false);
 
             // set small 'default color environment'
-            environmentColors["Default"]          = new HighlightBackground("WindowText", "Window", false, false);
-            environmentColors["Selection"]        = new HighlightColor("HighlightText", "Highlight", false, false);
-            environmentColors["VRuler"]           = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["InvalidLines"]     = new HighlightColor(Color.Red, false, false);
-            environmentColors["CaretMarker"]      = new HighlightColor(Color.Yellow, false, false);
+            environmentColors["Default"] = new HighlightBackground("WindowText", "Window", false, false);
+            environmentColors["Selection"] = new HighlightColor("HighlightText", "Highlight", false, false);
+            environmentColors["VRuler"] = new HighlightColor("ControlLight", "Window", false, false);
+            environmentColors["InvalidLines"] = new HighlightColor(Color.Red, false, false);
+            environmentColors["CaretMarker"] = new HighlightColor(Color.Yellow, false, false);
             environmentColors["CaretLine"] = new HighlightBackground("ControlLight", "Window", false, false);
             environmentColors["LineNumbers"] = new HighlightBackground("ControlDark", "Window", false, false);
 
-            environmentColors["FoldLine"]         = new HighlightColor("ControlDark", false, false);
-            environmentColors["FoldMarker"]       = new HighlightColor("WindowText", "Window", false, false);
+            environmentColors["FoldLine"] = new HighlightColor("ControlDark", false, false);
+            environmentColors["FoldMarker"] = new HighlightColor("WindowText", "Window", false, false);
             environmentColors["SelectedFoldLine"] = new HighlightColor("WindowText", false, false);
-            environmentColors["EOLMarkers"]       = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["SpaceMarkers"]     = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["TabMarkers"]       = new HighlightColor("ControlLight", "Window", false, false);
+            environmentColors["EOLMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
+            environmentColors["SpaceMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
+            environmentColors["TabMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
 
-        }
-
-        public Dictionary<string, string> Properties
-        {
-            get
-            {
-                return properties;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
-
-        public string[] Extensions
-        {
-            set
-            {
-                extensions = value;
-            }
-            get
-            {
-                return extensions;
-            }
-        }
-
-        public List<HighlightRuleSet> Rules
-        {
-            get
-            {
-                return rules;
-            }
         }
 
         public HighlightRuleSet FindHighlightRuleSet(string name)
         {
-            foreach(HighlightRuleSet ruleSet in rules)
+            foreach(HighlightRuleSet ruleSet in Rules)
             {
                 if (ruleSet.Name == name)
                 {
@@ -145,7 +105,7 @@ namespace ICSharpCode.TextEditor.Document
             }
             else
             {
-                rules.Add(aRuleSet);
+                Rules.Add(aRuleSet);
             }
         }
 

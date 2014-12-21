@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<SyntaxDefinition name = "ASP/XHTML" extensions = ".asp;.aspx;.asax;.asmx" extends = "HTML">
+<SyntaxDefinition name = "ASP/XHTML" folding="Xml" extensions = ".asp;.aspx;.asax;.asmx" extends = "HTML">
 	<RuleSets>
 		<RuleSet ignorecase = "true">
 			<Span name = "ASPCode" rule = "ASP"  bold = "false" italic = "false" color = "Black" bgcolor = "#F7F2E3" stopateol = "false">

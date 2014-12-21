@@ -2,7 +2,7 @@
 
 <!-- syntaxdefinition for Java 2001 by Jonathan Pierce & Mike Krueger -->
 
-<SyntaxDefinition name = "Java" extensions = ".java">
+<SyntaxDefinition name = "Java" folding="Code" extensions = ".java">
 	
 	<Properties>
 		<Property name="LineComment" value="//"/>
