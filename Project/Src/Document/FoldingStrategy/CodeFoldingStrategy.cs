@@ -13,8 +13,6 @@
 
 using System.Collections.Generic;
 
-// From https://code.google.com/p/codingeditor
-
 namespace ICSharpCode.TextEditor.Document
 {
     /// <summary>Description of CodeFoldingStrategy. Generic bracket folding.</summary>
@@ -22,25 +20,38 @@ namespace ICSharpCode.TextEditor.Document
     {
         #region Methods
 
+        /// Interface implementation.
         public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
         {
-            // This is a simple folding strategy.
-            // It searches for matching brackets ('{', '}') and creates folds for each region.
-
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
-            for (int offset = 0; offset < document.TextLength; ++offset)
+
+            Stack<int> startOffsets = new Stack<int>();
+            int lastNewLineOffset = 0;
+            char openingBrace = '{';
+            char closingBrace = '}';
+
+            for (int i = 0; i < document.TextLength; i++)
             {
-                char c = document.GetCharAt(offset);
-                if (c == '{')
+                char c = document.GetCharAt(i);
+                if (c == openingBrace)
                 {
-                    int offsetOfClosingBracket = document.FormattingStrategy.SearchBracketForward(document, offset + 1, '{', '}');
-                    if (offsetOfClosingBracket > 0)
+                    startOffsets.Push(i);
+                }
+                else if (c == closingBrace && startOffsets.Count > 0)
+                {
+                    int startOffset = startOffsets.Pop();
+                    // don't fold if opening and closing brace are on the same line
+                    if (startOffset < lastNewLineOffset)
                     {
-                        int length = offsetOfClosingBracket - offset + 1;
-                        foldMarkers.Add(new FoldMarker(document, offset, length, "{...}", false));
+                        foldMarkers.Add(new FoldMarker(document, startOffset, i + 1 - startOffset, "{...}", false));
                     }
                 }
+                else if (c == '\n' || c == '\r')
+                {
+                    lastNewLineOffset = i + 1;
+                }
             }
+
             return foldMarkers;
         }
 

@@ -85,7 +85,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <value>
         /// Returns true, if the selection is rectangular
         /// </value>
-        // TODO-texteditor-orig : make this unused property used.
+        // TODO2-texteditor-orig : make this unused property used.
         public bool IsRectangularSelection
         {
             get

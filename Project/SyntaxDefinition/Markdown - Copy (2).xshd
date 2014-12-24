@@ -2,13 +2,22 @@
 <SyntaxDefinition name="Markdown" folding="Markdown" extensions=".md;.markdown;.mkdown">
   <RuleSets>
     <RuleSet>
-      <Span name = "B1" bold = "true" italic = "false" color = "Blue" stopateol = "true">
+      <Span name = "B1b" bold = "true" italic = "false" color = "Blue" stopateol = "true">
         <Begin>==</Begin>
       </Span>
-      <Span name = "B2" bold = "true" italic = "false" color = "Green" stopateol = "true">
+      <Span name = "B2b" bold = "true" italic = "false" color = "Blue" stopateol = "true">
         <Begin>--</Begin>
       </Span>
-      <Span name = "B3" bold = "true" italic = "false" color = "Red" stopateol = "true">
+      <Span name = "B4" bold = "true" italic = "false" color = "Green" stopateol = "true">
+        <Begin>####</Begin>
+      </Span>
+      <Span name = "B3" bold = "true" italic = "false" color = "Green" stopateol = "true">
+        <Begin>###</Begin>
+      </Span>
+      <Span name = "B2" bold = "true" italic = "false" color = "Green" stopateol = "true">
+        <Begin>##</Begin>
+      </Span>
+      <Span name = "B1" bold = "true" italic = "false" color = "Green" stopateol = "true">
         <Begin>#</Begin>
       </Span>
 

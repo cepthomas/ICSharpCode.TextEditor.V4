@@ -235,6 +235,7 @@
     </Content>
     <Content Include="SyntaxDefinition\CSharp-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="SyntaxDefinition\HTML-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -269,6 +270,7 @@
     </Content>
     <Content Include="SyntaxDefinition\Markdown.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="SyntaxDefinition\CPP.NET-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

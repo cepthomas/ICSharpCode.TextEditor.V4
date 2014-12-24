@@ -86,7 +86,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public void Replace(int offset, int length, string text)
         {
-            Debug.WriteLine("Replace offset="+offset+" length="+length+" text.Length="+text.Length);
+            //Debug.WriteLine("Replace offset="+offset+" length="+length+" text.Length="+text.Length);
             int lineStart = GetLineNumberForOffset(offset);
             int oldNumberOfLines = this.TotalNumberOfLines;
             DeferredEventList deferredEventList = new DeferredEventList();
@@ -305,7 +305,7 @@ namespace ICSharpCode.TextEditor.Document
             return GetFirstLogicalLine(visibleLineNumber + 1) - 1;
         }
 
-        // TODO-texteditor-orig : speedup the next/prev visible line search
+        // TODO4-texteditor-orig : speedup the next/prev visible line search
         // HOW? : save the foldings in a sorted list and lookup the
         //        line numbers in this list
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)

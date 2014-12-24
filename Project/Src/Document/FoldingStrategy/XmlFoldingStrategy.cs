@@ -24,17 +24,14 @@ namespace ICSharpCode.TextEditor.Document
     public class XmlFoldStart
     {
         #region Fields
-
         int col = 0;
-        string foldText = String.Empty;
+        string foldText = "";
         int line = 0;
-        string name = String.Empty;
-        string prefix = String.Empty;
-
+        string name = "";
+        string prefix = "";
         #endregion Fields
 
         #region Constructors
-
         public XmlFoldStart(string prefix, string name, int line, int col)
         {
             this.line = line;
@@ -42,67 +39,31 @@ namespace ICSharpCode.TextEditor.Document
             this.prefix = prefix;
             this.name = name;
         }
-
         #endregion Constructors
 
         #region Properties
-
         /// <summary>
         /// The column where the fold should start.  Columns start from 0.
         /// </summary>
-        public int Column
-        {
-            get
-            {
-                return col;
-            }
-        }
+        public int Column { get; private set; }
 
         /// <summary>
         /// The text to be displayed when the item is folded.
         /// </summary>
-        public string FoldText
-        {
-            get
-            {
-                return foldText;
-            }
-
-            set
-            {
-                foldText = value;
-            }
-        }
+        public string FoldText { get; set; }
 
         /// <summary>
         /// The line where the fold should start.  Lines start from 0.
         /// </summary>
-        public int Line
-        {
-            get
-            {
-                return line;
-            }
-        }
+        public int Line { get; private set; }
 
         /// <summary>
         /// The name of the xml item with its prefix if it has one.
         /// </summary>
         public string Name
         {
-            get
-            {
-                if (prefix.Length > 0)
-                {
-                    return String.Concat(prefix, ":", name);
-                }
-                else
-                {
-                    return name;
-                }
-            }
+            get {  return (prefix.Length > 0) ? string.Concat(prefix, ":", name) : name; }
         }
-
         #endregion Properties
     }
 
@@ -210,8 +171,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a comment fold if the comment spans more than one line.
         /// </summary>
-        /// <remarks>The text displayed when the comment is folded is the first
-        /// line of the comment.</remarks>
+        /// <remarks>The text displayed when the comment is folded is the first line of the comment.</remarks>
         void CreateCommentFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader)
         {
             if (reader.Value != null)
@@ -238,8 +198,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <summary>
-        /// Create an element fold if the start and end tag are on
-        /// different lines.
+        /// Create an element fold if the start and end tag are on different lines.
         /// </summary>
         void CreateElementFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader, XmlFoldStart foldStart)
         {
@@ -276,8 +235,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <summary>
-        /// Gets the element's attributes as a string on one line that will
-        /// be displayed when the element is folded.
+        /// Gets the element's attributes as a string on one line that will be displayed when the element is folded.
         /// </summary>
         /// <remarks>
         /// Currently this puts all attributes from an element on the same
