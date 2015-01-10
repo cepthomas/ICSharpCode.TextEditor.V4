@@ -33,7 +33,7 @@ namespace ICSharpCode.TextEditor.Document
 
             Stack<int> startLines = new Stack<int>();
 
-            // Create foldmarkers for the whole document, enumerate through every line. TODO3 could use some cleanup.
+            // Create foldmarkers for the whole document, enumerate through every line. TODO4 could use some cleanup.
             for (int i = 0; i < document.TotalNumberOfLines; i++)
             {
                 LineSegment seg = document.GetLineSegment(i);

@@ -700,11 +700,6 @@ namespace ICSharpCode.TextEditor
             updateLevel = Math.Max(0, updateLevel - 1);
         }
 
-        public void LoadFile(string fileName)
-        {
-            LoadFile(fileName, true, true);
-        }
-
         /// <remarks>
         /// Loads a file given by fileName
         /// </remarks>

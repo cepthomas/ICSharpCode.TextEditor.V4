@@ -23,7 +23,7 @@ namespace ICSharpCode.TextEditor.Document
     public class BookmarkManager
     {
         IDocument      document;
-#if DEBUG
+#if DEBUG_EX
         IList<Bookmark> bookmark = new CheckedList<Bookmark>();
 #else
         List<Bookmark> bookmark = new List<Bookmark>();

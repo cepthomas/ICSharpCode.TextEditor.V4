@@ -85,7 +85,7 @@ namespace ICSharpCode.TextEditor.Util
         }
 
         #region Debugging code
-#if DEBUG
+#if DEBUG_EX
         /// <summary>
         /// Check tree for consistency and being balanced.
         /// </summary>
@@ -171,7 +171,7 @@ namespace ICSharpCode.TextEditor.Util
         public void Add(T item)
         {
             AddInternal(new RedBlackTreeNode<T>(item));
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
         }
@@ -377,7 +377,7 @@ namespace ICSharpCode.TextEditor.Util
             if (node != root)
                 throw new ArgumentException("Iterator does not belong to this tree");
             RemoveNode(iterator.node);
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
         }

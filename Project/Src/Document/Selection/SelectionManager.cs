@@ -366,8 +366,7 @@ namespace ICSharpCode.TextEditor.Document
             ClearSelection();
             if (offset >= 0)
             {
-                //             TODO4-texteditor-orig:
-//				document.Caret.Offset = offset;
+//				document.Caret.Offset = offset; // original
             }
             if (offset != -1)
             {

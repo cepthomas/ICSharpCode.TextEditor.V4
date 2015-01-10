@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Util
     {
         public static void Debug(string text)
         {
-#if DEBUG
+#if DEBUG_EX
             Console.WriteLine(text);
 #endif
         }

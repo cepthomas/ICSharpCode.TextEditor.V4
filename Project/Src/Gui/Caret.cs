@@ -350,7 +350,7 @@ namespace ICSharpCode.TextEditor
             currentPos = pos;
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG_EX")]
         static void Log(string text)
         {
             //Console.WriteLine(text);

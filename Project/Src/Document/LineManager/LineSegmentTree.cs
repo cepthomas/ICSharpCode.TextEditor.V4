@@ -217,7 +217,7 @@ namespace ICSharpCode.TextEditor.Document
             RedBlackTreeNode<RBNode> node = segment.treeEntry.it.node;
             segment.TotalLength = newTotalLength;
             default(MyHost).UpdateAfterChildrenChange(node);
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
         }
@@ -225,7 +225,7 @@ namespace ICSharpCode.TextEditor.Document
         public void RemoveSegment(LineSegment segment)
         {
             tree.RemoveAt(segment.treeEntry.it);
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
         }
@@ -251,7 +251,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 tree.InsertAsLeft(node.right.LeftMost, newNode);
             }
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
             return new Enumerator(new RedBlackTreeIterator<RBNode>(newNode));
@@ -309,7 +309,7 @@ namespace ICSharpCode.TextEditor.Document
             throw new NotSupportedException();
         }
 
-#if DEBUG
+#if DEBUG_EX
         [Conditional("DATACONSISTENCYTEST")]
         void CheckProperties()
         {
@@ -366,7 +366,7 @@ namespace ICSharpCode.TextEditor.Document
             emptySegment.DelimiterLength = 0;
             tree.Add(new RBNode(emptySegment));
             emptySegment.treeEntry = GetEnumeratorForIndex(0);
-#if DEBUG
+#if DEBUG_EX
             CheckProperties();
 #endif
         }

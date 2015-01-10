@@ -541,10 +541,10 @@ namespace ICSharpCode.TextEditor
                 }
 
                 // get colors from selection status:
-                if (ColumnRange.WholeColumn.Equals(selectionRange) || (selectionRange.StartColumn <= currentWordOffset
-                        && selectionRange.EndColumn > currentWordEndOffset))
+                if (ColumnRange.WholeColumn.Equals(selectionRange) ||
+                   (selectionRange.StartColumn <= currentWordOffset && selectionRange.EndColumn > currentWordEndOffset))
                 {
-                    // word is completely selected
+                    // word is completely selected  TODO-select-word this is where the word is selected.
                     wordBackBrush = selectionBackgroundBrush;
                     if (selectionColor.HasForeground)
                     {

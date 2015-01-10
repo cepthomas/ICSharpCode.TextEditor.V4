@@ -126,7 +126,7 @@ namespace ICSharpCode.TextEditor
             mousedownpos = nilPoint;
         }
 
-        void TextAreaClick(object sender, EventArgs e)
+        void TextAreaClick(object sender, EventArgs e)// TODO-rectsel
         {
             Point mousepos;
             mousepos = textArea.mousepos;
@@ -149,7 +149,7 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        void TextAreaMouseMove(object sender, MouseEventArgs e)
+        void TextAreaMouseMove(object sender, MouseEventArgs e)// TODO-rectsel
         {
             textArea.mousepos = e.Location;
 
@@ -245,7 +245,7 @@ namespace ICSharpCode.TextEditor
             // moves selection across whole words for double-click initiated selection
             if (!minSelection.IsEmpty && textArea.SelectionManager.SelectionCollection.Count > 0 && textArea.SelectionManager.selectFrom.where == WhereFrom.TArea)
             {
-                // Extend selection when selection was started with double-click
+                // Extend selection when selection was started with double-click TODO-select-word
                 ISelection selection = textArea.SelectionManager.SelectionCollection[0];
                 TextLocation min = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? maxSelection : minSelection;
                 TextLocation max = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? minSelection : maxSelection;
@@ -273,7 +273,7 @@ namespace ICSharpCode.TextEditor
             textArea.SetDesiredColumn();
         }
 
-        void DoubleClickSelectionExtend()
+        void DoubleClickSelectionExtend() //TODO-select-word
         {
             Point mousepos;
             mousepos = textArea.mousepos;
@@ -553,7 +553,6 @@ namespace ICSharpCode.TextEditor
 
             textArea.SelectionManager.selectFrom.where = WhereFrom.TArea;
             doubleclick = true;
-
         }
     }
 }

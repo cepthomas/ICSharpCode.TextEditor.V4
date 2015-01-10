@@ -349,7 +349,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public string GetText(int offset, int length)
         {
-#if DEBUG
+#if DEBUG_EX
             if (length < 0) throw new ArgumentOutOfRangeException("length", length, "length < 0");
 #endif
             return textBufferStrategy.GetText(offset, length);
@@ -537,7 +537,7 @@ namespace ICSharpCode.TextEditor.Document
         public event EventHandler UpdateCommited;
         public event EventHandler TextContentChanged;
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG_EX")]
         internal static void ValidatePosition(IDocument document, TextLocation position)
         {
             document.GetLineSegment(position.Line);

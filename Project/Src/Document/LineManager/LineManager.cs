@@ -96,7 +96,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 InsertInternal(offset, text);
             }
-//			#if DEBUG
+            //			#if DEBUG_EX
 //			Console.WriteLine("New line collection:");
 //			Console.WriteLine(lineCollection.GetTreeAsString());
 //			Console.WriteLine("New text:");

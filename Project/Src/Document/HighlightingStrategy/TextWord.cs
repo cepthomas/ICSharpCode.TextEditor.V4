@@ -141,7 +141,7 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public static TextWord Split(ref TextWord word, int pos)
         {
-#if DEBUG
+#if DEBUG_EX
             if (word.Type != TextWordType.Word)
                 throw new ArgumentException("word.Type must be Word");
             if (pos <= 0)

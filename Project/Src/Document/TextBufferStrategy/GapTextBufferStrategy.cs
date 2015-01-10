@@ -12,7 +12,7 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class GapTextBufferStrategy : ITextBufferStrategy
     {
-#if DEBUG
+#if DEBUG_EX
         int creatorThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
 
         void CheckThread()
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public char GetCharAt(int offset)
         {
-#if DEBUG
+#if DEBUG_EX
             CheckThread();
 #endif
 
@@ -67,7 +67,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public string GetText(int offset, int length)
         {
-#if DEBUG
+#if DEBUG_EX
             CheckThread();
 #endif
 
@@ -132,7 +132,7 @@ namespace ICSharpCode.TextEditor.Document
                 text = String.Empty;
             }
 
-#if DEBUG
+#if DEBUG_EX
             CheckThread();
 #endif
 
