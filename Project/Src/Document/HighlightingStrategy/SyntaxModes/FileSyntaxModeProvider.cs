@@ -22,22 +22,7 @@ namespace ICSharpCode.TextEditor.Document
         public FileSyntaxModeProvider(string directory)
         {
             _directory = directory;
-            UpdateSyntaxModeList();
-        }
-
-        public void UpdateSyntaxModeList()
-        {
-            //string syntaxModeFile = Path.Combine(directory, "SyntaxModes.xml"); // TODO4 this can go
-            //if (File.Exists(syntaxModeFile))
-            //{
-            //    Stream s = File.OpenRead(syntaxModeFile);
-            //    syntaxModes = SyntaxMode.GetSyntaxModes(s);
-            //    s.Close();
-            //}
-            //else
-            //{
-                SyntaxModes = ScanDirectory(_directory);
-            //}
+            SyntaxModes = ScanDirectory(_directory);
         }
 
         public XmlTextReader GetSyntaxModeFile(SyntaxMode syntaxMode)

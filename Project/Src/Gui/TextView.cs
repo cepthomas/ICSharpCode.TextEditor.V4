@@ -457,7 +457,7 @@ namespace ICSharpCode.TextEditor
                 currentWord = currentLine.Words[wordIdx];
                 if (currentWordOffset < startColumn)
                 {
-                    // TODO4-texteditor-orig: maybe we need to split at startColumn when we support fold markers inside words
+                    // TODO3-orig: maybe we need to split at startColumn when we support fold markers inside words
                     currentWordOffset += currentWord.Length;
                     continue;
                 }
@@ -544,7 +544,7 @@ namespace ICSharpCode.TextEditor
                 if (ColumnRange.WholeColumn.Equals(selectionRange) ||
                    (selectionRange.StartColumn <= currentWordOffset && selectionRange.EndColumn > currentWordEndOffset))
                 {
-                    // word is completely selected  TODO-select-word this is where the word is selected.
+                    // word is completely selected
                     wordBackBrush = selectionBackgroundBrush;
                     if (selectionColor.HasForeground)
                     {

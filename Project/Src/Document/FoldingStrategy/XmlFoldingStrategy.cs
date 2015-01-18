@@ -1,4 +1,4 @@
-#region Header
+// From https://code.google.com/p/codingeditor
 
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
@@ -7,16 +7,12 @@
 //     <version>$Revision: 1971 $</version>
 // </file>
 
-#endregion Header
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-
-// From https://code.google.com/p/codingeditor
 
 namespace ICSharpCode.TextEditor.Document
 {

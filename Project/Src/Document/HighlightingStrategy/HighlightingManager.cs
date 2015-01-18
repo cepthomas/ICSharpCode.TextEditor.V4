@@ -77,19 +77,6 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public void ReloadSyntaxModes()
-        {
-            highlightingDefs.Clear();
-            extensionsToName.Clear();
-            CreateDefaultHighlightingStrategy();
-            foreach (ISyntaxModeFileProvider provider in syntaxModeFileProviders)
-            {
-                provider.UpdateSyntaxModeList();
-                AddSyntaxModeFileProvider(provider);
-            }
-            OnReloadSyntaxHighlighting(EventArgs.Empty);
-        }
-
         void CreateDefaultHighlightingStrategy()
         {
             DefaultHighlightingStrategy defaultHighlightingStrategy = new DefaultHighlightingStrategy();

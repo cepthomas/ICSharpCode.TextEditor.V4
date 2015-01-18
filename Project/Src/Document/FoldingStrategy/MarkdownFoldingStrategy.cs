@@ -1,3 +1,4 @@
+// This file has been added to the base project by me. License is WTFPL.
 
 using System.Collections.Generic;
 

@@ -1,3 +1,4 @@
+// This file has been added to the base project by me. License is WTFPL.
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +34,7 @@ namespace ICSharpCode.TextEditor.Document
 
             Stack<int> startLines = new Stack<int>();
 
-            // Create foldmarkers for the whole document, enumerate through every line. TODO4 could use some cleanup.
+            // Create foldmarkers for the whole document. TODO3 could use some cleanup and improvements.
             for (int i = 0; i < document.TotalNumberOfLines; i++)
             {
                 LineSegment seg = document.GetLineSegment(i);
@@ -52,7 +53,7 @@ namespace ICSharpCode.TextEditor.Document
 
                 int spaceCount = offs - seg.Offset;
 
-                // now offs points to the first non-whitespace char on the line
+                // Now offs points to the first non-whitespace char on the line.
                 if (document.GetCharAt(offs) == '#')
                 {
                     string text = document.GetText(offs, seg.Length - spaceCount);

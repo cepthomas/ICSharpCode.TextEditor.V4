@@ -83,6 +83,7 @@
     <Compile Include="Src\Document\DefaultDocument.cs" />
     <Compile Include="Src\Document\DocumentEventArgs.cs" />
     <Compile Include="Src\Document\DocumentFactory.cs" />
+    <Compile Include="Src\Document\Finder.cs" />
     <Compile Include="Src\Document\FoldingStrategy\CodeFoldingStrategy.cs" />
     <Compile Include="Src\Document\FoldingStrategy\CSharpFoldingStrategy.cs" />
     <Compile Include="Src\Document\FoldingStrategy\MarkdownFoldingStrategy.cs" />
