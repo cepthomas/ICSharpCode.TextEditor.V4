@@ -11,7 +11,7 @@ using System.IO;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public class Finder // TODO1 debug all - need unit tests
+    public class Finder // TODO0 debug all - need unit tests
     {
         #region Enums
         /// <summary>Find modes.</summary>
