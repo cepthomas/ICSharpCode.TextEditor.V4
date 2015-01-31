@@ -281,13 +281,13 @@ namespace ICSharpCode.TextEditor
                 // Paint things after end of line
                 ColumnRange    selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
                 LineSegment    currentLine    = textArea.Document.GetLineSegment(lineNumber);
-                HighlightColor selectionColor = textArea.Document.HighlightingStrategy.GetColorFor("Selection");
+                HighlightColor selectionColor = textArea.Document.TextEditorProperties.SelectionColor;
 
                 bool  selectionBeyondEOL = selectionRange.EndColumn > currentLine.Length || ColumnRange.WholeColumn.Equals(selectionRange);
 
                 if (TextEditorProperties.ShowEOLMarker)
                 {
-                    HighlightColor eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
+                    HighlightColor eolMarkerColor = textArea.Document.TextEditorProperties.EOLMarkersColor;
                     physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y);
                 }
                 else
@@ -319,10 +319,10 @@ namespace ICSharpCode.TextEditor
         {
             if (DrawLineMarkerAtLine(lineNumber))
             {
-                HighlightColor caretLine = textArea.Document.HighlightingStrategy.GetColorFor("CaretMarker");
+                HighlightColor caretLine = textArea.Document.TextEditorProperties.CaretMarkerColor;
                 return BrushRegistry.GetBrush(caretLine.Color);
             }
-            HighlightColor background = textArea.Document.HighlightingStrategy.GetColorFor("Default");
+            HighlightColor background = textArea.Document.TextEditorProperties.DefaultColor;
             Color bgColor = background.BackgroundColor;
             return BrushRegistry.GetBrush(bgColor);
         }
@@ -331,7 +331,7 @@ namespace ICSharpCode.TextEditor
 
         int PaintFoldingText(Graphics g, int lineNumber, int physicalXPos, Rectangle lineRectangle, string text, bool drawSelected)
         {
-            HighlightColor      selectionColor  = textArea.Document.HighlightingStrategy.GetColorFor("Selection");
+            HighlightColor      selectionColor  = textArea.Document.TextEditorProperties.SelectionColor;
             Brush               bgColorBrush    = drawSelected ? BrushRegistry.GetBrush(selectionColor.BackgroundColor) : GetBgColorBrush(lineNumber);
             Brush               backgroundBrush = textArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
 
@@ -433,10 +433,10 @@ namespace ICSharpCode.TextEditor
             bool  drawLineMarker  = DrawLineMarkerAtLine(lineNumber);
             Brush backgroundBrush = textArea.Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
 
-            HighlightColor selectionColor = textArea.Document.HighlightingStrategy.GetColorFor("Selection");
+            HighlightColor selectionColor = textArea.Document.TextEditorProperties.SelectionColor;
             ColumnRange    selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
-            HighlightColor tabMarkerColor   = textArea.Document.HighlightingStrategy.GetColorFor("TabMarkers");
-            HighlightColor spaceMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("SpaceMarkers");
+            HighlightColor tabMarkerColor   = textArea.Document.TextEditorProperties.TabMarkersColor;
+            HighlightColor spaceMarkerColor = textArea.Document.TextEditorProperties.SpaceMarkersColor;
 
             LineSegment currentLine    = textArea.Document.GetLineSegment(lineNumber);
 
@@ -1190,25 +1190,25 @@ namespace ICSharpCode.TextEditor
 
         void DrawInvalidLineMarker(Graphics g, int x, int y)
         {
-            HighlightColor invalidLinesColor = textArea.Document.HighlightingStrategy.GetColorFor("InvalidLines");
+            HighlightColor invalidLinesColor = textArea.Document.TextEditorProperties.InvalidLinesColor;
             DrawString(g, "~", invalidLinesColor.GetFont(TextEditorProperties.FontContainer), invalidLinesColor.Color, x, y);
         }
 
         void DrawSpaceMarker(Graphics g, Color color, int x, int y)
         {
-            HighlightColor spaceMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("SpaceMarkers");
+            HighlightColor spaceMarkerColor = textArea.Document.TextEditorProperties.SpaceMarkersColor;
             DrawString(g, "\u00B7", spaceMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
         }
 
         void DrawTabMarker(Graphics g, Color color, int x, int y)
         {
-            HighlightColor tabMarkerColor   = textArea.Document.HighlightingStrategy.GetColorFor("TabMarkers");
+            HighlightColor tabMarkerColor   = textArea.Document.TextEditorProperties.TabMarkersColor;
             DrawString(g, "\u00BB", tabMarkerColor.GetFont(TextEditorProperties.FontContainer), color, x, y);
         }
 
         int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y)
         {
-            HighlightColor eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
+            HighlightColor eolMarkerColor = textArea.Document.TextEditorProperties.EOLMarkersColor;
 
             int width = GetWidth('\u00B6', eolMarkerColor.GetFont(TextEditorProperties.FontContainer));
             g.FillRectangle(backBrush,
@@ -1225,7 +1225,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
-            HighlightColor vRulerColor = textArea.Document.HighlightingStrategy.GetColorFor("VRuler");
+            HighlightColor vRulerColor = textArea.Document.TextEditorProperties.VRulerColor;
 
             g.DrawLine(BrushRegistry.GetPen(vRulerColor.Color),
                        drawingPosition.Left + xpos,

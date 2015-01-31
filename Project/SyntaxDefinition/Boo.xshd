@@ -2,10 +2,6 @@
 
 <SyntaxDefinition name="Boo" extensions=".boo">
 
-	<Environment>
-		<Custom name="LocalVariableCreation" bold="false" italic="false" color="#04ABAB" />
-	</Environment>
-
 	<Properties>
 		<Property name="LineComment" value="#"/>
 	</Properties>

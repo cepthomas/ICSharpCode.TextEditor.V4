@@ -77,26 +77,6 @@ namespace ICSharpCode.TextEditor.Document
                     highlighter.Folding = doc.DocumentElement.GetAttribute("folding");
                 }
 
-                XmlElement environment = doc.DocumentElement["Environment"];
-                if (environment != null)
-                {
-                    foreach (XmlNode node in environment.ChildNodes)
-                    {
-                        if (node is XmlElement)
-                        {
-                            XmlElement el = (XmlElement)node;
-                            if (el.Name == "Custom")
-                            {
-                                highlighter.SetColorFor(el.GetAttribute("name"), el.HasAttribute("bgcolor") ? new HighlightBackground(el) : new HighlightColor(el));
-                            }
-                            else
-                            {
-                                highlighter.SetColorFor(el.Name, el.HasAttribute("bgcolor") ? new HighlightBackground(el) : new HighlightColor(el));
-                            }
-                        }
-                    }
-                }
-
                 // parse properties
                 if (doc.DocumentElement["Properties"]!= null)
                 {

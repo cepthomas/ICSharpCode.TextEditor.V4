@@ -185,7 +185,7 @@ namespace ICSharpCode.TextEditor.Document
 
             try
             {
-                Color sel = Editor.Document.HighlightingStrategy.GetColorFor("CaretMarker").BackgroundColor;
+                Color sel = Editor.Document.TextEditorProperties.CaretMarkerColor.BackgroundColor;
                 _regex = CreateRegex(ftext, Mode, MatchCase, MatchWholeWord, true);
                 foreach (Match match in _regex.Matches(Editor.Document.TextContent))
                 {

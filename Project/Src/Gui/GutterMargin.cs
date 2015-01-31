@@ -76,7 +76,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
-            HighlightColor lineNumberPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumbers");
+            HighlightColor lineNumberPainterColor = textArea.Document.TextEditorProperties.LineNumbersColor;
             int fontHeight = textArea.TextView.FontHeight;
             Brush fillBrush = textArea.Enabled ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder;
             Brush drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);

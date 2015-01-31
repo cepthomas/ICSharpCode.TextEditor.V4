@@ -268,7 +268,7 @@ namespace ICSharpCode.TextEditor
             if (!textArea.Document.TextEditorProperties.CaretLine)
                 return;
 
-            HighlightColor caretLineColor = textArea.Document.HighlightingStrategy.GetColorFor("CaretLine");
+            HighlightColor caretLineColor = textArea.Document.TextEditorProperties.CaretLineColor;
 
             g.DrawLine(BrushRegistry.GetDotPen(caretLineColor.Color),
                        currentPos.X,

@@ -3,11 +3,6 @@
 
 <SyntaxDefinition name="C#" folding="CSharp" extensions=".cs">
 	
-	<Environment>
-		<Custom name="TypeReference" bold="false" italic="false" color="#04ABAB" />
-		<Custom name="UnknownEntity" bold="false" italic="false" color="#AB0404" />
-	</Environment>
-	
 	<Properties>
 		<Property name="LineComment" value="//"/>
 	</Properties>

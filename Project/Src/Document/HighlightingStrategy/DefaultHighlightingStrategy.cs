@@ -15,7 +15,6 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class DefaultHighlightingStrategy : IHighlightingStrategyUsingRuleSets
     {
-
         HighlightRuleSet defaultRuleSet = null;
 
         public string Folding { get; set; }
@@ -30,11 +29,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public List<HighlightRuleSet> Rules { get; private set; }
 
-        Dictionary<string, HighlightColor> environmentColors = new Dictionary<string, HighlightColor>();
-        public IEnumerable<KeyValuePair<string, HighlightColor>> EnvironmentColors
-        {
-            get { return environmentColors; }
-        }
+        public HighlightColor DefaultTextColor { get; set; }
 
         protected void ImportSettingsFrom(DefaultHighlightingStrategy source)
         {
@@ -47,8 +42,7 @@ namespace ICSharpCode.TextEditor.Document
             Name = source.Name;
             Folding = source.Folding;
             Rules = source.Rules;
-            environmentColors = source.environmentColors;
-            defaultTextColor = source.defaultTextColor;
+            DefaultTextColor = source.DefaultTextColor;
         }
 
         public DefaultHighlightingStrategy() : this("Default")
@@ -59,29 +53,11 @@ namespace ICSharpCode.TextEditor.Document
         {
             Name = name;
             Folding = "";
-            environmentColors = new Dictionary<string, HighlightColor>();
             Properties = new Dictionary<string, string>();
             Rules = new List<HighlightRuleSet>();
 
             DigitColor = new HighlightColor(SystemColors.WindowText, false, false);
-            defaultTextColor = new HighlightColor(SystemColors.WindowText, false, false);
-
-            // set small 'default color environment'
-            environmentColors["Default"] = new HighlightBackground("WindowText", "Window", false, false);
-            environmentColors["Selection"] = new HighlightColor("HighlightText", "Highlight", false, false);
-            environmentColors["VRuler"] = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["InvalidLines"] = new HighlightColor(Color.Red, false, false);
-            environmentColors["CaretMarker"] = new HighlightColor(Color.Yellow, false, false);
-            environmentColors["CaretLine"] = new HighlightBackground("ControlLight", "Window", false, false);
-            environmentColors["LineNumbers"] = new HighlightBackground("ControlDark", "Window", false, false);
-
-            environmentColors["FoldLine"] = new HighlightColor("ControlDark", false, false);
-            environmentColors["FoldMarker"] = new HighlightColor("WindowText", "Window", false, false);
-            environmentColors["SelectedFoldLine"] = new HighlightColor("WindowText", false, false);
-            environmentColors["EOLMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["SpaceMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
-            environmentColors["TabMarkers"] = new HighlightColor("ControlLight", "Window", false, false);
-
+            DefaultTextColor = new HighlightColor(SystemColors.WindowText, false, false);
         }
 
         public HighlightRuleSet FindHighlightRuleSet(string name)
@@ -176,38 +152,6 @@ namespace ICSharpCode.TextEditor.Document
                         throw new HighlightingDefinitionInvalidException("The mode defintion " + ruleSet.Reference + " which is refered from the " + this.Name + " mode definition does not implement IHighlightingStrategyUsingRuleSets");
                 }
             }
-        }
-
-//		internal void SetDefaultColor(HighlightBackground color)
-//		{
-//			return (HighlightColor)environmentColors[name];
-//			defaultColor = color;
-//		}
-
-        HighlightColor defaultTextColor;
-
-        public HighlightColor DefaultTextColor
-        {
-            get
-            {
-                return defaultTextColor;
-            }
-        }
-
-        public void SetColorFor(string name, HighlightColor color)
-        {
-            if (name == "Default")
-                defaultTextColor = new HighlightColor(color.Color, color.Bold, color.Italic);
-            environmentColors[name] = color;
-        }
-
-        public HighlightColor GetColorFor(string name)
-        {
-            HighlightColor color;
-            if (environmentColors.TryGetValue(name, out color))
-                return color;
-            else
-                return defaultTextColor;
         }
 
         public HighlightColor GetColor(IDocument document, LineSegment currentSegment, int currentOffset, int currentLength)

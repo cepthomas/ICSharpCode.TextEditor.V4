@@ -36,11 +36,6 @@ namespace ICSharpCode.TextEditor.Document
         Dictionary<string, string> Properties { get; }
 
         /// <remarks>
-        /// Gets the color of an Environment element.  (BackGround Color, Cursor Color and so on)
-        /// </remarks>
-        HighlightColor GetColorFor(string name);
-
-        /// <remarks>
         /// Used internally, do not call
         /// </remarks>
         void MarkTokens(IDocument document, List<LineSegment> lines);
