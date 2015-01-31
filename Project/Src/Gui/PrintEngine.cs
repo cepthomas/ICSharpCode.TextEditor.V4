@@ -101,7 +101,7 @@ namespace ICSharpCode.TextEditor
         }
 
         /////
-        void BeginPrint(object sender, PrintEventArgs ev)
+        void BeginPrint(object sender, PrintEventArgs ev) // TODO2 remove the printing support in TextEditorControl
         {
             _curLineNumber = 0;
             _printingStringFormat = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();

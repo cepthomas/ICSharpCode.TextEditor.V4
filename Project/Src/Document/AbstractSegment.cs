@@ -19,7 +19,6 @@ namespace ICSharpCode.TextEditor.Document
         [CLSCompliant(false)]
         protected int length = -1;
 
-        #region ICSharpCode.TextEditor.Document.ISegment interface implementation
         public virtual int Offset
         {
             get
@@ -44,15 +43,9 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        #endregion
-
         public override string ToString()
         {
-            return String.Format("[AbstractSegment: Offset = {0}, Length = {1}]",
-                                 Offset,
-                                 Length);
+            return String.Format("[AbstractSegment: Offset = {0}, Length = {1}]", Offset, Length);
         }
-
-
     }
 }

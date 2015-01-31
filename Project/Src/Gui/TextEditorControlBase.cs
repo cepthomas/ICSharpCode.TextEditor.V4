@@ -554,26 +554,27 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        /// <value>
-        /// The base font of the text area. No bold or italic fonts
-        /// can be used because bold/italic is reserved for highlighting
-        /// purposes.
-        /// </value>
-        [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        [Description("The base font of the text area. No bold or italic fonts can be used because bold/italic is reserved for highlighting purposes.")]
-        public override Font Font
-        {
-            get
-            {
-                return document.TextEditorProperties.Font;
-            }
-            set
-            {
-                document.TextEditorProperties.Font = value;
-                OptionsChanged();
-            }
-        }
+        // TODO1 this is broken, maybe not needed.
+        ///// <value>
+        ///// The base font of the text area. No bold or italic fonts
+        ///// can be used because bold/italic is reserved for highlighting
+        ///// purposes.
+        ///// </value>
+        //[Browsable(true)]
+        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        //[Description("The base font of the text area. No bold or italic fonts can be used because bold/italic is reserved for highlighting purposes.")]
+        //public override Font Font
+        //{
+        //    get
+        //    {
+        //        return document.TextEditorProperties.Font;
+        //    }
+        //    set
+        //    {
+        //        document.TextEditorProperties.Font = value;
+        //        OptionsChanged();
+        //    }
+        //}
 
         #endregion
         public abstract TextAreaControl ActiveTextAreaControl
@@ -583,6 +584,7 @@ namespace ICSharpCode.TextEditor
 
         protected TextEditorControlBase()
         {
+            //Font = new Font("Consolas", 10);
             GenerateDefaultActions();
             HighlightingManager.Manager.ReloadSyntaxHighlighting += new EventHandler(OnReloadHighlighting);
         }

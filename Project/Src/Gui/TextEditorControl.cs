@@ -20,31 +20,48 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     [ToolboxBitmap("ICSharpCode.TextEditor.Resources.TextEditorControl.bmp")]
     [ToolboxItem(true)]
-    public class TextEditorControl : TextEditorControlBase
+    public class TextEditorControl : TextEditorControlBase // TODO2 combine these?
     {
         protected Panel textAreaPanel     = new Panel();
-        TextAreaControl primaryTextArea;
+        TextAreaControl primaryTextArea  = null;
         Splitter        textAreaSplitter  = null;
         TextAreaControl secondaryTextArea = null;
+        //PrintDocument   printDocument = null; //TODO1
+        TextAreaControl activeTextAreaControl = null;
 
-        PrintDocument   printDocument = null;
-
-        [Browsable(false)]
-        public PrintDocument PrintDocument
+        bool _dirty = false;
+        /// <summary>Set the dirty flag.</summary>
+        /// <param name="value">New value.</param>
+        /// <returns>True if changed.</returns>
+        public bool SetDirty(bool value)
         {
-            get
-            {
-                if (printDocument == null)
-                {
-                    printDocument = new PrintDocument();
-                    printDocument.BeginPrint += new PrintEventHandler(this.BeginPrint);
-                    printDocument.PrintPage  += new PrintPageEventHandler(this.PrintPage);
-                }
-                return printDocument;
-            }
+            bool changed = value != _dirty;
+            _dirty = value;
+            return changed;
         }
 
-        TextAreaControl activeTextAreaControl;
+        /// <summary>Get the dirty flag.</summary>
+        /// <returns></returns>
+        public bool GetDirty()
+        {
+            return _dirty;
+        }
+
+        //[Browsable(false)]
+        //public PrintDocument PrintDocument
+        //{
+        //    get
+        //    {
+        //        if (printDocument == null)
+        //        {
+        //            printDocument = new PrintDocument();
+        //            printDocument.BeginPrint += new PrintEventHandler(this.BeginPrint);
+        //            printDocument.PrintPage  += new PrintPageEventHandler(this.PrintPage);
+        //        }
+        //        return printDocument;
+        //    }
+        //}
+
 
         public override TextAreaControl ActiveTextAreaControl
         {
@@ -80,10 +97,12 @@ namespace ICSharpCode.TextEditor
 
             primaryTextArea  = new TextAreaControl(this);
             activeTextAreaControl = primaryTextArea;
+
             primaryTextArea.TextArea.GotFocus += delegate
             {
                 SetActiveTextAreaControl(primaryTextArea);
             };
+
             primaryTextArea.Dock = DockStyle.Fill;
             textAreaPanel.Controls.Add(primaryTextArea);
             InitializeTextAreaControl(primaryTextArea);
@@ -211,12 +230,13 @@ namespace ICSharpCode.TextEditor
         {
             if (disposing)
             {
-                if (printDocument != null)
-                {
-                    printDocument.BeginPrint -= new PrintEventHandler(this.BeginPrint);
-                    printDocument.PrintPage  -= new PrintPageEventHandler(this.PrintPage);
-                    printDocument = null;
-                }
+                //if (printDocument != null)
+                //{
+                    //printDocument.BeginPrint -= new PrintEventHandler(this.BeginPrint);
+                    //printDocument.PrintPage  -= new PrintPageEventHandler(this.PrintPage);
+                    //printDocument = null;
+                //}
+
                 Document.UndoStack.ClearAll();
                 Document.UpdateCommited -= new EventHandler(CommitUpdateRequested);
                 if (textAreaPanel != null)
@@ -299,146 +319,146 @@ namespace ICSharpCode.TextEditor
                 }
             }
             Document.UpdateQueue.Clear();
-//			this.primaryTextArea.TextArea.Update();
+//orig			this.primaryTextArea.TextArea.Update();
 //			if (this.secondaryTextArea != null) {
 //				this.secondaryTextArea.TextArea.Update();
 //			}
         }
         #endregion
 
-        #region Printing routines
-        int          curLineNr = 0;
-        float        curTabIndent = 0;
-        StringFormat printingStringFormat;
+//        #region Printing routines
+//        int          curLineNr = 0;
+//        float        curTabIndent = 0;
+//        StringFormat printingStringFormat;
 
-        void BeginPrint(object sender, PrintEventArgs ev)
-        {
-            curLineNr = 0;
-            printingStringFormat = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
+//        void BeginPrint(object sender, PrintEventArgs ev)
+//        {
+//            curLineNr = 0;
+//            printingStringFormat = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
 
-            // 100 should be enough for everyone ...err ?
-            float[] tabStops = new float[100];
-            for (int i = 0; i < tabStops.Length; ++i)
-            {
-                tabStops[i] = TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth;
-            }
+//            // 100 should be enough for everyone ...err ?
+//            float[] tabStops = new float[100];
+//            for (int i = 0; i < tabStops.Length; ++i)
+//            {
+//                tabStops[i] = TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth;
+//            }
 
-            printingStringFormat.SetTabStops(0, tabStops);
-        }
+//            printingStringFormat.SetTabStops(0, tabStops);
+//        }
 
-        void Advance(ref float x, ref float y, float maxWidth, float size, float fontHeight)
-        {
-            if (x + size < maxWidth)
-            {
-                x += size;
-            }
-            else
-            {
-                x  = curTabIndent;
-                y += fontHeight;
-            }
-        }
+//        void Advance(ref float x, ref float y, float maxWidth, float size, float fontHeight)
+//        {
+//            if (x + size < maxWidth)
+//            {
+//                x += size;
+//            }
+//            else
+//            {
+//                x  = curTabIndent;
+//                y += fontHeight;
+//            }
+//        }
 
-        // btw. I hate source code duplication ... but this time I don't care !!!!
-        float MeasurePrintingHeight(Graphics g, LineSegment line, float maxWidth)
-        {
-            float xPos = 0;
-            float yPos = 0;
-            float fontHeight = Font.GetHeight(g);
-//			bool  gotNonWhitespace = false;
-            curTabIndent = 0;
-            FontContainer fontContainer = TextEditorProperties.FontContainer;
-            foreach (TextWord word in line.Words)
-            {
-                switch (word.Type)
-                {
-                case TextWordType.Space:
-                    Advance(ref xPos, ref yPos, maxWidth, primaryTextArea.TextArea.TextView.SpaceWidth, fontHeight);
-//						if (!gotNonWhitespace) {
-//							curTabIndent = xPos;
-//						}
-                    break;
-                case TextWordType.Tab:
-                    Advance(ref xPos, ref yPos, maxWidth, TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth, fontHeight);
-//						if (!gotNonWhitespace) {
-//							curTabIndent = xPos;
-//						}
-                    break;
-                case TextWordType.Word:
-//						if (!gotNonWhitespace) {
-//							gotNonWhitespace = true;
-//							curTabIndent    += TabIndent * primaryTextArea.TextArea.TextView.GetWidth(' ');
-//						}
-                    SizeF drawingSize = g.MeasureString(word.Word, word.GetFont(fontContainer), new SizeF(maxWidth, fontHeight * 100), printingStringFormat);
-                    Advance(ref xPos, ref yPos, maxWidth, drawingSize.Width, fontHeight);
-                    break;
-                }
-            }
-            return yPos + fontHeight;
-        }
+//        // btw. I hate source code duplication ... but this time I don't care !!!!
+//        float MeasurePrintingHeight(Graphics g, LineSegment line, float maxWidth)
+//        {
+//            float xPos = 0;
+//            float yPos = 0;
+//            float fontHeight = Font.GetHeight(g);
+////			bool  gotNonWhitespace = false;
+//            curTabIndent = 0;
+//            FontContainer fontContainer = TextEditorProperties.FontContainer;
+//            foreach (TextWord word in line.Words)
+//            {
+//                switch (word.Type)
+//                {
+//                case TextWordType.Space:
+//                    Advance(ref xPos, ref yPos, maxWidth, primaryTextArea.TextArea.TextView.SpaceWidth, fontHeight);
+////						if (!gotNonWhitespace) {
+////							curTabIndent = xPos;
+////						}
+//                    break;
+//                case TextWordType.Tab:
+//                    Advance(ref xPos, ref yPos, maxWidth, TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth, fontHeight);
+////						if (!gotNonWhitespace) {
+////							curTabIndent = xPos;
+////						}
+//                    break;
+//                case TextWordType.Word:
+////						if (!gotNonWhitespace) {
+////							gotNonWhitespace = true;
+////							curTabIndent    += TabIndent * primaryTextArea.TextArea.TextView.GetWidth(' ');
+////						}
+//                    SizeF drawingSize = g.MeasureString(word.Word, word.GetFont(fontContainer), new SizeF(maxWidth, fontHeight * 100), printingStringFormat);
+//                    Advance(ref xPos, ref yPos, maxWidth, drawingSize.Width, fontHeight);
+//                    break;
+//                }
+//            }
+//            return yPos + fontHeight;
+//        }
 
-        void DrawLine(Graphics g, LineSegment line, float yPos, RectangleF margin)
-        {
-            float xPos = 0;
-            float fontHeight = Font.GetHeight(g);
-//			bool  gotNonWhitespace = false;
-            curTabIndent = 0 ;
+//        void DrawLine(Graphics g, LineSegment line, float yPos, RectangleF margin)
+//        {
+//            float xPos = 0;
+//            float fontHeight = Font.GetHeight(g);
+////			bool  gotNonWhitespace = false;
+//            curTabIndent = 0 ;
 
-            FontContainer fontContainer = TextEditorProperties.FontContainer;
-            foreach (TextWord word in line.Words)
-            {
-                switch (word.Type)
-                {
-                case TextWordType.Space:
-                    Advance(ref xPos, ref yPos, margin.Width, primaryTextArea.TextArea.TextView.SpaceWidth, fontHeight);
-//						if (!gotNonWhitespace) {
-//							curTabIndent = xPos;
-//						}
-                    break;
-                case TextWordType.Tab:
-                    Advance(ref xPos, ref yPos, margin.Width, TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth, fontHeight);
-//						if (!gotNonWhitespace) {
-//							curTabIndent = xPos;
-//						}
-                    break;
-                case TextWordType.Word:
-//						if (!gotNonWhitespace) {
-//							gotNonWhitespace = true;
-//							curTabIndent    += TabIndent * primaryTextArea.TextArea.TextView.GetWidth(' ');
-//						}
-                    g.DrawString(word.Word, word.GetFont(fontContainer), BrushRegistry.GetBrush(word.Color), xPos + margin.X, yPos);
-                    SizeF drawingSize = g.MeasureString(word.Word, word.GetFont(fontContainer), new SizeF(margin.Width, fontHeight * 100), printingStringFormat);
-                    Advance(ref xPos, ref yPos, margin.Width, drawingSize.Width, fontHeight);
-                    break;
-                }
-            }
-        }
+//            FontContainer fontContainer = TextEditorProperties.FontContainer;
+//            foreach (TextWord word in line.Words)
+//            {
+//                switch (word.Type)
+//                {
+//                case TextWordType.Space:
+//                    Advance(ref xPos, ref yPos, margin.Width, primaryTextArea.TextArea.TextView.SpaceWidth, fontHeight);
+////						if (!gotNonWhitespace) {
+////							curTabIndent = xPos;
+////						}
+//                    break;
+//                case TextWordType.Tab:
+//                    Advance(ref xPos, ref yPos, margin.Width, TabIndent * primaryTextArea.TextArea.TextView.WideSpaceWidth, fontHeight);
+////						if (!gotNonWhitespace) {
+////							curTabIndent = xPos;
+////						}
+//                    break;
+//                case TextWordType.Word:
+////						if (!gotNonWhitespace) {
+////							gotNonWhitespace = true;
+////							curTabIndent    += TabIndent * primaryTextArea.TextArea.TextView.GetWidth(' ');
+////						}
+//                    g.DrawString(word.Word, word.GetFont(fontContainer), BrushRegistry.GetBrush(word.Color), xPos + margin.X, yPos);
+//                    SizeF drawingSize = g.MeasureString(word.Word, word.GetFont(fontContainer), new SizeF(margin.Width, fontHeight * 100), printingStringFormat);
+//                    Advance(ref xPos, ref yPos, margin.Width, drawingSize.Width, fontHeight);
+//                    break;
+//                }
+//            }
+//        }
 
-        void PrintPage(object sender, PrintPageEventArgs ev)
-        {
-            Graphics g = ev.Graphics;
-            float yPos = ev.MarginBounds.Top;
+//        void PrintPage(object sender, PrintPageEventArgs ev)
+//        {
+//            Graphics g = ev.Graphics;
+//            float yPos = ev.MarginBounds.Top;
 
-            while (curLineNr < Document.TotalNumberOfLines)
-            {
-                LineSegment curLine  = Document.GetLineSegment(curLineNr);
-                if (curLine.Words != null)
-                {
-                    float drawingHeight = MeasurePrintingHeight(g, curLine, ev.MarginBounds.Width);
-                    if (drawingHeight + yPos > ev.MarginBounds.Bottom)
-                    {
-                        break;
-                    }
+//            while (curLineNr < Document.TotalNumberOfLines)
+//            {
+//                LineSegment curLine  = Document.GetLineSegment(curLineNr);
+//                if (curLine.Words != null)
+//                {
+//                    float drawingHeight = MeasurePrintingHeight(g, curLine, ev.MarginBounds.Width);
+//                    if (drawingHeight + yPos > ev.MarginBounds.Bottom)
+//                    {
+//                        break;
+//                    }
 
-                    DrawLine(g, curLine, yPos, ev.MarginBounds);
-                    yPos += drawingHeight;
-                }
-                ++curLineNr;
-            }
+//                    DrawLine(g, curLine, yPos, ev.MarginBounds);
+//                    yPos += drawingHeight;
+//                }
+//                ++curLineNr;
+//            }
 
-            // If more lines exist, print another page.
-            ev.HasMorePages = curLineNr < Document.TotalNumberOfLines;
-        }
-        #endregion
+//            // If more lines exist, print another page.
+//            ev.HasMorePages = curLineNr < Document.TotalNumberOfLines;
+//        }
+//        #endregion
     }
 }

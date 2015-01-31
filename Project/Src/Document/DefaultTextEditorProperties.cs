@@ -67,11 +67,11 @@ namespace ICSharpCode.TextEditor.Document
         public HighlightColor VRulerColor { get; set; }
 
         //FontContainer fontContainer;
-        static Font DefaultFont;
+        static Font DefaultFont = new Font("Consolas", 10);
 
         public DefaultTextEditorProperties()
         {
-            DefaultFont = new Font("Consolas", 10);
+            //DefaultFont = new Font("Consolas", 10);
             FontContainer = new FontContainer(DefaultFont);
 
             TabIndent = 4;

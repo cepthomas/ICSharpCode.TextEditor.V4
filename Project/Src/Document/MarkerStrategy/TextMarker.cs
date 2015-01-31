@@ -18,80 +18,24 @@ namespace ICSharpCode.TextEditor.Document
         WaveLine
     }
 
-    /// <summary>
-    /// Marks a part of a document.
-    /// </summary>
+    /// <summary>Marks a part of a document.</summary>
     public class TextMarker : AbstractSegment
     {
-        TextMarkerType textMarkerType;
-        Color          color;
-        Color          foreColor;
-        string         toolTip = null;
-        bool           overrideForeColor = false;
+        public TextMarkerType TextMarkerType { get; private set; }
 
-        public TextMarkerType TextMarkerType
-        {
-            get
-            {
-                return textMarkerType;
-            }
-        }
+        public Color Color { get; private set; }
 
-        public Color Color
-        {
-            get
-            {
-                return color;
-            }
-        }
+        public Color ForeColor { get; private set; }
 
-        public Color ForeColor
-        {
-            get
-            {
-                return foreColor;
-            }
-        }
+        public bool OverrideForeColor { get; private set; }
 
-        public bool OverrideForeColor
-        {
-            get
-            {
-                return overrideForeColor;
-            }
-        }
+        /// <summary>Marks the text segment as read-only.</summary>
+        public bool IsReadOnly { get; set; }
 
-        /// <summary>
-        /// Marks the text segment as read-only.
-        /// </summary>
-        public bool IsReadOnly
-        {
-            get;
-            set;
-        }
+        public string ToolTip { get; set; }
 
-        public string ToolTip
-        {
-            get
-            {
-                return toolTip;
-            }
-            set
-            {
-                toolTip = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the last offset that is inside the marker region.
-        /// </summary>
-        public int EndOffset
-        {
-            get
-            {
-                return Offset + Length - 1;
-            }
-        }
+        /// <summary>Gets the last offset that is inside the marker region.</summary>
+        public int EndOffset { get { return Offset + Length - 1; } }
 
         public TextMarker(int offset, int length, TextMarkerType textMarkerType) : this(offset, length, textMarkerType, Color.Red)
         {
@@ -102,8 +46,8 @@ namespace ICSharpCode.TextEditor.Document
             if (length < 1) length = 1;
             this.offset          = offset;
             this.length          = length;
-            this.textMarkerType  = textMarkerType;
-            this.color           = color;
+            TextMarkerType  = textMarkerType;
+            Color           = color;
         }
 
         public TextMarker(int offset, int length, TextMarkerType textMarkerType, Color color, Color foreColor)
@@ -111,10 +55,10 @@ namespace ICSharpCode.TextEditor.Document
             if (length < 1) length = 1;
             this.offset          = offset;
             this.length          = length;
-            this.textMarkerType  = textMarkerType;
-            this.color           = color;
-            this.foreColor       = foreColor;
-            this.overrideForeColor = true;
+            TextMarkerType  = textMarkerType;
+            Color           = color;
+            ForeColor       = foreColor;
+            OverrideForeColor = true;
         }
     }
 }
