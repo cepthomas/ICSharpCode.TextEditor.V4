@@ -73,6 +73,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             //DefaultFont = new Font("Consolas", 10);
             FontContainer = new FontContainer(DefaultFont);
+            Font = DefaultFont;
 
             TabIndent = 4;
             IndentationSize = 4;
