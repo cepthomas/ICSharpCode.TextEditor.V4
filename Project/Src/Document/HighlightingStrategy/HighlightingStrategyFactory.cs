@@ -13,12 +13,12 @@ namespace ICSharpCode.TextEditor.Document
     {
         public static IHighlightingStrategy CreateHighlightingStrategy()
         {
-            return (IHighlightingStrategy)HighlightingManager.Manager.HighlightingDefinitions["Default"];
+            return (IHighlightingStrategy)HighlightingManager.Instance.HighlightingDefinitions["Default"];
         }
 
         public static IHighlightingStrategy CreateHighlightingStrategy(string name)
         {
-            IHighlightingStrategy highlightingStrategy  = HighlightingManager.Manager.FindHighlighter(name);
+            IHighlightingStrategy highlightingStrategy = HighlightingManager.Instance.FindHighlighter(name);
 
             if (highlightingStrategy == null)
             {
@@ -29,7 +29,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public static IHighlightingStrategy CreateHighlightingStrategyForFile(string fileName)
         {
-            IHighlightingStrategy highlightingStrategy  = HighlightingManager.Manager.FindHighlighterForFile(fileName);
+            IHighlightingStrategy highlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
             if (highlightingStrategy == null)
             {
                 return CreateHighlightingStrategy();

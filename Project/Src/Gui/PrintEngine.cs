@@ -11,7 +11,7 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-    // Mostly borrowed from ICSharpCode.TextEditor example but made more generally useful.
+    // Mostly borrowed from ICSharpCode.TextEditor example but made more generally useful. TODO2 print color doesn't work.
     public class PrintEngine
     {
         #region Printing support
@@ -101,7 +101,7 @@ namespace ICSharpCode.TextEditor
         }
 
         /////
-        void BeginPrint(object sender, PrintEventArgs ev) // TODO2 remove the printing support in TextEditorControl
+        void BeginPrint(object sender, PrintEventArgs ev)
         {
             _curLineNumber = 0;
             _printingStringFormat = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
@@ -167,7 +167,7 @@ namespace ICSharpCode.TextEditor
                 {
                     case TextWordType.Space:
                     case TextWordType.Tab:
-                        throw new NotImplementedException();
+                    //TODO3 this blows up throw new NotImplementedException();
 
                     case TextWordType.Word:
                         Font f = word.GetFont(fontContainer);
@@ -226,7 +226,8 @@ namespace ICSharpCode.TextEditor
                 {
                     case TextWordType.Space:
                     case TextWordType.Tab:
-                        throw new NotImplementedException();
+                        //TODO3 this blows up throw new NotImplementedException();
+                        break;
 
                     case TextWordType.Word:
                         SizeF drawingSize = g.MeasureString(word.Word, word.GetFont(fontContainer), new SizeF(maxWidth, fontHeight * 100), _printingStringFormat);

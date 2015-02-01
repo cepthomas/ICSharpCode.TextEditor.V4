@@ -142,7 +142,7 @@ namespace ICSharpCode.TextEditor.Document
                 ruleSet.Highlighter = this;
                 if (ruleSet.Reference != null)
                 {
-                    IHighlightingStrategy highlighter = HighlightingManager.Manager.FindHighlighter (ruleSet.Reference);
+                    IHighlightingStrategy highlighter = HighlightingManager.Instance.FindHighlighter(ruleSet.Reference);
 
                     if (highlighter == null)
                         throw new HighlightingDefinitionInvalidException("The mode defintion " + ruleSet.Reference + " which is refered from the " + this.Name + " mode definition could not be found");

@@ -55,7 +55,7 @@ namespace ICSharpCode.TextEditor.Document
 
                 if (doc.DocumentElement.HasAttribute("extends"))
                 {
-                    KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> entry = HighlightingManager.Manager.FindHighlighterEntry(doc.DocumentElement.GetAttribute("extends"));
+                    KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> entry = HighlightingManager.Instance.FindHighlighterEntry(doc.DocumentElement.GetAttribute("extends"));
                     if (entry.Key == null)
                     {
                         throw new HighlightingDefinitionInvalidException("Cannot find referenced highlighting source " + doc.DocumentElement.GetAttribute("extends"));

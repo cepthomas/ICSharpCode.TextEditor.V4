@@ -306,8 +306,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         // TODO-orig : speedup the next/prev visible line search
-        // HOW? : save the foldings in a sorted list and lookup the
-        //        line numbers in this list
+        // HOW? : save the foldings in a sorted list and lookup the line numbers in this list
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
         {
             int curLineNumber = lineNumber;

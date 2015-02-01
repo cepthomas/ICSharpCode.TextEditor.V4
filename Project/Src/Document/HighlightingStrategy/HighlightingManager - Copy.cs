@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
@@ -14,70 +15,66 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class HighlightingManager
     {
-        /// <summary>The one and only instance.</summary>
-        private static HighlightingManager _instance;
+        ArrayList syntaxModeFileProviders = new ArrayList();
+        static HighlightingManager highlightingManager;
 
-        /// <summary>Public instance accessor.</summary>
-        public static HighlightingManager Instance
+        // hash table from extension name to highlighting definition,
+        // OR from extension name to Pair SyntaxMode,ISyntaxModeFileProvider
+        Hashtable highlightingDefs = new Hashtable();
+
+        Hashtable extensionsToName = new Hashtable();
+
+        public Hashtable HighlightingDefinitions
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new HighlightingManager();
-                }
-                return _instance;
+                return highlightingDefs;
             }
         }
 
-        /// <summary>Public instance accessor.
-        /// hash table from extension name to highlighting definition,
-        ///   OR from extension name to Pair SyntaxMode,ISyntaxModeFileProvider
-        /// </summary>
-        public Dictionary<string, object> HighlightingDefinitions { get; private set; }
-        
-        /// <summary>Alll extension names.</summary>
-        public List<string> AllExtensions { get; private set; }
-        
-        Dictionary<string, string> _extensionsToName;
-
-        List<ISyntaxModeFileProvider> _syntaxModeFileProviders = new List<ISyntaxModeFileProvider>();
-
-        public event EventHandler ReloadSyntaxHighlighting;
-
-        /// <summary>Private default constructor.</summary>
-        private HighlightingManager()
+        public static HighlightingManager Manager
         {
-            HighlightingDefinitions = new Dictionary<string, object>();
-            _extensionsToName = new Dictionary<string, string>();
-            AllExtensions = new List<string>();
-            //Manager = new HighlightingManager();
-            // was: highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
-            CreateDefaultHighlightingStrategy();
-            AddSyntaxModeFileProvider(new FileSyntaxModeProvider("SyntaxDefinition"));
+            get
+            {
+                return highlightingManager;
+            }
         }
 
-        void AddSyntaxModeFileProvider(ISyntaxModeFileProvider syntaxModeFileProvider)
+        static HighlightingManager()
+        {
+            highlightingManager = new HighlightingManager();
+            // was: highlightingManager.AddSyntaxModeFileProvider(new ResourceSyntaxModeProvider());
+            highlightingManager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider("SyntaxDefinition"));
+        }
+
+        public HighlightingManager()
+        {
+            CreateDefaultHighlightingStrategy();
+        }
+
+        public void AddSyntaxModeFileProvider(ISyntaxModeFileProvider syntaxModeFileProvider)
         {
             foreach (SyntaxMode syntaxMode in syntaxModeFileProvider.SyntaxModes)
             {
-                HighlightingDefinitions[syntaxMode.Name] = new Tuple<SyntaxMode, ISyntaxModeFileProvider>(syntaxMode, syntaxModeFileProvider);
+                highlightingDefs[syntaxMode.Name] = new DictionaryEntry(syntaxMode, syntaxModeFileProvider);
                 foreach (string extension in syntaxMode.Extensions)
                 {
-                    _extensionsToName[extension.ToUpperInvariant()] = syntaxMode.Name;
+                    extensionsToName[extension.ToUpperInvariant()] = syntaxMode.Name;
                 }
             }
-
-            if (!_syntaxModeFileProviders.Contains(syntaxModeFileProvider))
+            if (!syntaxModeFileProviders.Contains(syntaxModeFileProvider))
             {
-                _syntaxModeFileProviders.Add(syntaxModeFileProvider);
+                syntaxModeFileProviders.Add(syntaxModeFileProvider);
             }
+        }
 
-            foreach (string s in HighlightingDefinitions.Keys)
+        public void AddHighlightingStrategy(IHighlightingStrategy highlightingStrategy)
+        {
+            highlightingDefs[highlightingStrategy.Name] = highlightingStrategy;
+            foreach (string extension in highlightingStrategy.Extensions)
             {
-                AllExtensions.Add(s);
+                extensionsToName[extension.ToUpperInvariant()] = highlightingStrategy.Name;
             }
-            AllExtensions.Sort();
         }
 
         void CreateDefaultHighlightingStrategy()
@@ -85,13 +82,13 @@ namespace ICSharpCode.TextEditor.Document
             DefaultHighlightingStrategy defaultHighlightingStrategy = new DefaultHighlightingStrategy();
             defaultHighlightingStrategy.Extensions = new string[] {};
             defaultHighlightingStrategy.Rules.Add(new HighlightRuleSet());
-            HighlightingDefinitions["Default"] = defaultHighlightingStrategy;
+            highlightingDefs["Default"] = defaultHighlightingStrategy;
         }
 
-        IHighlightingStrategy LoadDefinition(Tuple<SyntaxMode, ISyntaxModeFileProvider> entry)
+        IHighlightingStrategy LoadDefinition(DictionaryEntry entry)
         {
-            SyntaxMode              syntaxMode             = entry.Item1;
-            ISyntaxModeFileProvider syntaxModeFileProvider = entry.Item2;
+            SyntaxMode              syntaxMode             = (SyntaxMode)entry.Key;
+            ISyntaxModeFileProvider syntaxModeFileProvider = (ISyntaxModeFileProvider)entry.Value;
 
             DefaultHighlightingStrategy highlightingStrategy = null;
             try
@@ -111,7 +108,7 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     highlightingStrategy = DefaultHighlighting;
                 }
-                HighlightingDefinitions[syntaxMode.Name] = highlightingStrategy;
+                highlightingDefs[syntaxMode.Name] = highlightingStrategy;
                 highlightingStrategy.ResolveReferences();
             }
             return highlightingStrategy;
@@ -121,13 +118,13 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return (DefaultHighlightingStrategy)HighlightingDefinitions["Default"];
+                return (DefaultHighlightingStrategy)highlightingDefs["Default"];
             }
         }
 
         internal KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> FindHighlighterEntry(string name)
         {
-            foreach (ISyntaxModeFileProvider provider in _syntaxModeFileProviders)
+            foreach (ISyntaxModeFileProvider provider in syntaxModeFileProviders)
             {
                 foreach (SyntaxMode mode in provider.SyntaxModes)
                 {
@@ -142,23 +139,23 @@ namespace ICSharpCode.TextEditor.Document
 
         public IHighlightingStrategy FindHighlighter(string name)
         {
-            object def = HighlightingDefinitions[name];
-            if (def is Tuple<SyntaxMode, ISyntaxModeFileProvider>)
+            object def = highlightingDefs[name];
+            if (def is DictionaryEntry)
             {
-                return LoadDefinition(def as Tuple<SyntaxMode, ISyntaxModeFileProvider>);
+                return LoadDefinition((DictionaryEntry)def);
             }
             return def == null ? DefaultHighlighting : (IHighlightingStrategy)def;
         }
 
         public IHighlightingStrategy FindHighlighterForFile(string fileName)
         {
-            string highlighterName = (string)_extensionsToName[Path.GetExtension(fileName).ToUpperInvariant()];
+            string highlighterName = (string)extensionsToName[Path.GetExtension(fileName).ToUpperInvariant()];
             if (highlighterName != null)
             {
-                object def = HighlightingDefinitions[highlighterName];
-                if (def is Tuple<SyntaxMode, ISyntaxModeFileProvider>)
+                object def = highlightingDefs[highlighterName];
+                if (def is DictionaryEntry)
                 {
-                    return LoadDefinition(def as Tuple<SyntaxMode, ISyntaxModeFileProvider>);
+                    return LoadDefinition((DictionaryEntry)def);
                 }
                 return def == null ? DefaultHighlighting : (IHighlightingStrategy)def;
             }
@@ -175,5 +172,7 @@ namespace ICSharpCode.TextEditor.Document
                 ReloadSyntaxHighlighting(this, e);
             }
         }
+
+        public event EventHandler ReloadSyntaxHighlighting;
     }
 }
