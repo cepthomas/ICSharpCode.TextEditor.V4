@@ -167,7 +167,7 @@ namespace ICSharpCode.TextEditor
                 {
                     case TextWordType.Space:
                     case TextWordType.Tab:
-                    //TODO3 this blows up throw new NotImplementedException();
+                    //TODO2 this blows up throw new NotImplementedException();
 
                     case TextWordType.Word:
                         Font f = word.GetFont(fontContainer);
@@ -226,7 +226,7 @@ namespace ICSharpCode.TextEditor
                 {
                     case TextWordType.Space:
                     case TextWordType.Tab:
-                        //TODO3 this blows up throw new NotImplementedException();
+                        //TODO2 this blows up throw new NotImplementedException();
                         break;
 
                     case TextWordType.Word:

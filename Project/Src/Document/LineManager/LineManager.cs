@@ -305,7 +305,7 @@ namespace ICSharpCode.TextEditor.Document
             return GetFirstLogicalLine(visibleLineNumber + 1) - 1;
         }
 
-        // TODO-orig : speedup the next/prev visible line search
+        // TODO2-orig : speedup the next/prev visible line search
         // HOW? : save the foldings in a sorted list and lookup the line numbers in this list
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
         {

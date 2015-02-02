@@ -126,7 +126,7 @@ namespace ICSharpCode.TextEditor
             mousedownpos = nilPoint;
         }
 
-        void TextAreaClick(object sender, EventArgs e)// TODO-rectsel
+        void TextAreaClick(object sender, EventArgs e)// TODO1-rectsel
         {
             Point mousepos;
             mousepos = textArea.mousepos;
@@ -149,7 +149,7 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        void TextAreaMouseMove(object sender, MouseEventArgs e)// TODO-rectsel
+        void TextAreaMouseMove(object sender, MouseEventArgs e)// TODO1-rectsel
         {
             textArea.mousepos = e.Location;
 
