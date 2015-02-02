@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Diagnostics;
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -18,6 +19,10 @@ namespace ICSharpCode.TextEditor.Document
     public class SelectionManager : IDisposable
     {
         TextLocation selectionStart;
+        IDocument document;
+        TextArea textArea;
+        internal SelectFrom selectFrom = new SelectFrom();
+        internal List<ISelection> selectionCollection = new List<ISelection>();
 
         internal TextLocation SelectionStart
         {
@@ -31,11 +36,6 @@ namespace ICSharpCode.TextEditor.Document
                 selectionStart = value;
             }
         }
-        IDocument document;
-        TextArea textArea;
-        internal SelectFrom selectFrom = new SelectFrom();
-
-        internal List<ISelection> selectionCollection = new List<ISelection>();
 
         /// <value>
         /// A collection containing all selections.
@@ -158,17 +158,16 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Clears the selection and sets a new selection using the given <see cref="ISelection"/> object.
         /// </remarks>
-        public void SetSelection(ISelection selection)
+        public void SetSelection(ISelection selection) //XXX
         {
 //			autoClearSelection = false;
             if (selection != null)
             {
-                if (SelectionCollection.Count == 1 &&
-                        selection.StartPosition == SelectionCollection[0].StartPosition &&
-                        selection.EndPosition == SelectionCollection[0].EndPosition )
+                if (SelectionCollection.Count == 1 && selection.StartPosition == SelectionCollection[0].StartPosition && selection.EndPosition == SelectionCollection[0].EndPosition)
                 {
                     return;
                 }
+
                 ClearWithoutUpdate();
                 selectionCollection.Add(selection);
                 document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, selection.StartPosition.Y, selection.EndPosition.Y));
@@ -191,7 +190,7 @@ namespace ICSharpCode.TextEditor.Document
             return p1.Y > p2.Y || p1.Y == p2.Y && p1.X >= p2.X;
         }
 
-        public void ExtendSelection(TextLocation oldPosition, TextLocation newPosition, bool isRect)
+        public void ExtendSelection(TextLocation oldPosition, TextLocation newPosition, bool isRect) //XXX
         {
             // where oldposition is where the cursor was,
             // and newposition is where it has ended up from a click (both zero based)
@@ -205,6 +204,7 @@ namespace ICSharpCode.TextEditor.Document
             TextLocation max;
             int oldnewX = newPosition.X;
             bool  oldIsGreater = GreaterEqPos(oldPosition, newPosition);
+
             if (oldIsGreater)
             {
                 min = newPosition;
@@ -311,16 +311,19 @@ namespace ICSharpCode.TextEditor.Document
             // positions because it is always called before a new selection
             selectFrom.first = selectFrom.where;
             TextLocation newSelectionStart = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
+
             if (selectFrom.where == WhereFrom.Gutter)
             {
                 newSelectionStart.X = 0;
 //				selectionStart.Y = -1;
             }
+
             if (newSelectionStart.Line >= document.TotalNumberOfLines)
             {
                 newSelectionStart.Line = document.TotalNumberOfLines-1;
                 newSelectionStart.Column = document.GetLineSegment(document.TotalNumberOfLines-1).Length;
             }
+
             this.SelectionStart = newSelectionStart;
 
             ClearWithoutUpdate();
@@ -338,10 +341,12 @@ namespace ICSharpCode.TextEditor.Document
                 ClearSelection();
                 return;
             }
+
             List<int> lines = new List<int>();
             int offset = -1;
             bool oneLine = true;
 //			PriorityQueue queue = new PriorityQueue();
+
             foreach (ISelection s in selectionCollection)
             {
 //				ISelection s = ((ISelection)queue.Remove());
@@ -362,11 +367,14 @@ namespace ICSharpCode.TextEditor.Document
 
 //				queue.Insert(-s.Offset, s);
             }
+
             ClearSelection();
+
             if (offset >= 0)
             {
 //				document.Caret.Offset = offset; // original
             }
+
             if (offset != -1)
             {
                 if (oneLine)
@@ -383,7 +391,6 @@ namespace ICSharpCode.TextEditor.Document
                 document.CommitUpdate();
             }
         }
-
 
         bool SelectionsOverlap(ISelection s1, ISelection s2)
         {
@@ -462,12 +469,21 @@ namespace ICSharpCode.TextEditor.Document
 //			}
         }
 
-        public ColumnRange GetSelectionAtLine(int lineNumber)
+        public ColumnRange GetSelectionAtLine(int lineNumber) //XXX fix this for rect. also cut/copy/paste.
         {
-            foreach (ISelection selection in selectionCollection)
+            //Debug.WriteLine("------------------");
+            //foreach (ISelection sel in SelectionCollection)
+            //{
+            //    Debug.WriteLine(sel.ToString());
+            //}
+
+            //[DefaultSelection : StartPosition=(Line 20, Col 15), EndPosition=(Line 26, Col 39), IsRectangularSelection=False]            
+
+            foreach (ISelection sel in selectionCollection)
             {
-                int startLine = selection.StartPosition.Y;
-                int endLine   = selection.EndPosition.Y;
+                int startLine = sel.StartPosition.Y;
+                int endLine   = sel.EndPosition.Y;
+
                 if (startLine < lineNumber && lineNumber < endLine)
                 {
                     return ColumnRange.WholeColumn;
@@ -476,14 +492,14 @@ namespace ICSharpCode.TextEditor.Document
                 if (startLine == lineNumber)
                 {
                     LineSegment line = document.GetLineSegment(startLine);
-                    int startColumn = selection.StartPosition.X;
-                    int endColumn   = endLine == lineNumber ? selection.EndPosition.X : line.Length + 1;
+                    int startColumn = sel.StartPosition.X;
+                    int endColumn   = endLine == lineNumber ? sel.EndPosition.X : line.Length + 1;
                     return new ColumnRange(startColumn, endColumn);
                 }
 
                 if (endLine == lineNumber)
                 {
-                    int endColumn   = selection.EndPosition.X;
+                    int endColumn   = sel.EndPosition.X;
                     return new ColumnRange(0, endColumn);
                 }
             }

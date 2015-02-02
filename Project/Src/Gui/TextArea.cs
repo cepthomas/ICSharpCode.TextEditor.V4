@@ -30,6 +30,7 @@ namespace ICSharpCode.TextEditor
     public class TextArea : Control
     {
         bool hiddenMouseCursor = false;
+
         /// <summary>
         /// The position where the mouse cursor was when it was hidden. Sometimes the text editor gets MouseMove
         /// events when typing text even if the mouse is not moved.
@@ -496,12 +497,14 @@ namespace ICSharpCode.TextEditor
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
+
             if (!toolTipRectangle.Contains(e.Location))
             {
                 toolTipRectangle = Rectangle.Empty;
                 if (toolTipActive)
                     RequestToolTip(e.Location);
             }
+
             foreach (AbstractMargin margin in leftMargins)
             {
                 if (margin.DrawingPosition.Contains(e.X, e.Y))
@@ -519,11 +522,13 @@ namespace ICSharpCode.TextEditor
                     return;
                 }
             }
+
             if (lastMouseInMargin != null)
             {
                 lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
                 lastMouseInMargin = null;
             }
+
             if (textView.DrawingPosition.Contains(e.X, e.Y))
             {
                 TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
@@ -539,8 +544,10 @@ namespace ICSharpCode.TextEditor
                 }
                 return;
             }
+
             this.Cursor = Cursors.Default;
         }
+
         AbstractMargin updateMargin = null;
 
         public void Refresh(AbstractMargin margin)
@@ -1037,10 +1044,7 @@ namespace ICSharpCode.TextEditor
             lineBegin = Document.GetVisibleLine(lineBegin);
             int y         = Math.Max(    0, (int)(lineBegin * textView.FontHeight));
             y = Math.Max(0, y - this.virtualTop.Y);
-            Rectangle r = new Rectangle(0,
-                                        y,
-                                        Width,
-                                        Height - y);
+            Rectangle r = new Rectangle(0, y, Width, Height - y);
             Invalidate(r);
         }
 
@@ -1053,6 +1057,7 @@ namespace ICSharpCode.TextEditor
         {
             UpdateLines(line, line);
         }
+
         int FirstPhysicalLine
         {
             get
@@ -1060,6 +1065,7 @@ namespace ICSharpCode.TextEditor
                 return VirtualTop.Y / textView.FontHeight;
             }
         }
+
         internal void UpdateLines(int xPos, int lineBegin, int lineEnd)
         {
 //			if (lineEnd < FirstPhysicalLine || lineBegin > FirstPhysicalLine + textView.VisibleLineCount) {
@@ -1076,17 +1082,12 @@ namespace ICSharpCode.TextEditor
             int y         = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));
             int height    = Math.Min(textView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (textView.FontHeight + 1)));
 
-            Rectangle r = new Rectangle(0,
-                                        y - 1 - this.virtualTop.Y,
-                                        Width,
-                                        height + 3);
-
+            Rectangle r = new Rectangle(0, y - 1 - this.virtualTop.Y, Width, height + 3);
             Invalidate(r);
         }
         #endregion
+
         public event KeyEventHandler    KeyEventHandler;
         public event DialogKeyProcessor DoProcessDialogKey;
-
-        //internal void
     }
 }

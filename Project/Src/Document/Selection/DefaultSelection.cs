@@ -17,9 +17,9 @@ namespace ICSharpCode.TextEditor.Document
     public class DefaultSelection : ISelection
     {
         IDocument document;
-        bool      isRectangularSelection;
-        TextLocation     startPosition;
-        TextLocation     endPosition;
+        bool isRect;
+        TextLocation startPosition;
+        TextLocation endPosition;
 
         public TextLocation StartPosition
         {
@@ -85,15 +85,15 @@ namespace ICSharpCode.TextEditor.Document
         /// <value>
         /// Returns true, if the selection is rectangular
         /// </value>
-        public bool IsRectangularSelection
+        public bool IsRect
         {
             get
             {
-                return isRectangularSelection;
+                return isRect;
             }
             set
             {
-                isRectangularSelection = value;
+                isRect = value;
             }
         }
 
@@ -127,7 +127,7 @@ namespace ICSharpCode.TextEditor.Document
             this.document = document;
             this.startPosition = startPosition;
             this.endPosition = endPosition;
-            this.isRectangularSelection = isRect;
+            this.isRect = isRect;
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public override string ToString()
         {
-            return String.Format("[DefaultSelection : StartPosition={0}, EndPosition={1}, IsRectangularSelection={2}]", startPosition, endPosition, isRectangularSelection);
+            return String.Format("[DefaultSelection : StartPosition={0}, EndPosition={1}, IsRectangularSelection={2}]", startPosition, endPosition, isRect);
         }
 
         public bool ContainsPosition(TextLocation position)
