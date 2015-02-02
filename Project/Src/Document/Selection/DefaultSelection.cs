@@ -85,7 +85,6 @@ namespace ICSharpCode.TextEditor.Document
         /// <value>
         /// Returns true, if the selection is rectangular
         /// </value>
-        // TODO1-rectsel : make this unused property used. IsRectangularSelection
         public bool IsRectangularSelection
         {
             get
@@ -120,14 +119,15 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new instance of <see cref="DefaultSelection"/>
         /// </summary>
-        public DefaultSelection(IDocument document, TextLocation startPosition, TextLocation endPosition)
+        public DefaultSelection(IDocument document, TextLocation startPosition, TextLocation endPosition, bool isRect)
         {
             DefaultDocument.ValidatePosition(document, startPosition);
             DefaultDocument.ValidatePosition(document, endPosition);
             Debug.Assert(startPosition <= endPosition);
-            this.document      = document;
+            this.document = document;
             this.startPosition = startPosition;
-            this.endPosition   = endPosition;
+            this.endPosition = endPosition;
+            this.isRectangularSelection = isRect;
         }
 
         /// <summary>
@@ -135,12 +135,14 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public override string ToString()
         {
-            return String.Format("[DefaultSelection : StartPosition={0}, EndPosition={1}]", startPosition, endPosition);
+            return String.Format("[DefaultSelection : StartPosition={0}, EndPosition={1}, IsRectangularSelection={2}]", startPosition, endPosition, isRectangularSelection);
         }
+
         public bool ContainsPosition(TextLocation position)
         {
             if (this.IsEmpty)
                 return false;
+
             return startPosition.Y < position.Y && position.Y  < endPosition.Y ||
                    startPosition.Y == position.Y && startPosition.X <= position.X && (startPosition.Y != endPosition.Y || position.X <= endPosition.X) ||
                    endPosition.Y == position.Y && startPosition.Y != endPosition.Y && position.X <= endPosition.X;

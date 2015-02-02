@@ -191,7 +191,8 @@ namespace ICSharpCode.TextEditor
                 int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
                 LineSegment lineWhereCaretIs = textArea.Document.GetLineSegment(curLineNr);
                 string caretLineText = textArea.Document.GetText(lineWhereCaretIs.Offset, lineWhereCaretIs.TotalLength);
-                textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset), textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset + lineWhereCaretIs.TotalLength));
+                textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset),
+                    textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset + lineWhereCaretIs.TotalLength), false);
                 if (CopyTextToClipboard(caretLineText, true))
                 {
                     if (textArea.SelectionManager.SelectionIsReadonly)

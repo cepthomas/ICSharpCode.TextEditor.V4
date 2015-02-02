@@ -156,8 +156,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <remarks>
-        /// Clears the selection and sets a new selection
-        /// using the given <see cref="ISelection"/> object.
+        /// Clears the selection and sets a new selection using the given <see cref="ISelection"/> object.
         /// </remarks>
         public void SetSelection(ISelection selection)
         {
@@ -182,9 +181,9 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public void SetSelection(TextLocation startPosition, TextLocation endPosition)
+        public void SetSelection(TextLocation startPosition, TextLocation endPosition, bool isRect)
         {
-            SetSelection(new DefaultSelection(document, startPosition, endPosition));
+            SetSelection(new DefaultSelection(document, startPosition, endPosition, isRect));
         }
 
         public bool GreaterEqPos(TextLocation p1, TextLocation p2)
@@ -192,7 +191,7 @@ namespace ICSharpCode.TextEditor.Document
             return p1.Y > p2.Y || p1.Y == p2.Y && p1.X >= p2.X;
         }
 
-        public void ExtendSelection(TextLocation oldPosition, TextLocation newPosition)
+        public void ExtendSelection(TextLocation oldPosition, TextLocation newPosition, bool isRect)
         {
             // where oldposition is where the cursor was,
             // and newposition is where it has ended up from a click (both zero based)
@@ -224,7 +223,7 @@ namespace ICSharpCode.TextEditor.Document
 
             if (!HasSomethingSelected)
             {
-                SetSelection(new DefaultSelection(document, min, max));
+                SetSelection(new DefaultSelection(document, min, max, isRect));
                 // initialise selectFrom for a cursor selection
                 if (selectFrom.where == WhereFrom.None)
                     SelectionStart = oldPosition; //textArea.Caret.Position;

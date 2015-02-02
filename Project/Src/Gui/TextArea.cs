@@ -560,11 +560,10 @@ namespace ICSharpCode.TextEditor
             int currentXPos = 0;
             int currentYPos = 0;
             bool adjustScrollBars = false;
-            Graphics  g             = e.Graphics;
+            Graphics g = e.Graphics;
             Rectangle clipRectangle = e.ClipRectangle;
 
-            bool isFullRepaint = clipRectangle.X == 0 && clipRectangle.Y == 0
-                                 && clipRectangle.Width == this.Width && clipRectangle.Height == this.Height;
+            bool isFullRepaint = clipRectangle.X == 0 && clipRectangle.Y == 0  && clipRectangle.Width == this.Width && clipRectangle.Height == this.Height;
 
             g.TextRenderingHint = this.TextEditorProperties.TextRenderingHint;
 
@@ -594,6 +593,7 @@ namespace ICSharpCode.TextEditor
                         adjustScrollBars = true;
                         margin.DrawingPosition = marginRectangle;
                     }
+                    
                     currentXPos += margin.DrawingPosition.Width;
                     if (clipRectangle.IntersectsWith(marginRectangle))
                     {
@@ -614,6 +614,7 @@ namespace ICSharpCode.TextEditor
                 // update caret position (but outside of WM_PAINT!)
                 BeginInvoke((MethodInvoker)caret.UpdateCaretPosition);
             }
+
             if (clipRectangle.IntersectsWith(textViewArea))
             {
                 textViewArea.Intersect(clipRectangle);
@@ -633,6 +634,7 @@ namespace ICSharpCode.TextEditor
 
             base.OnPaint(e);
         }
+
         void DocumentFoldingsChanged(object sender, EventArgs e)
         {
             Caret.UpdateCaretPosition();
@@ -641,7 +643,6 @@ namespace ICSharpCode.TextEditor
         }
 
         #region keyboard handling methods
-
         /// <summary>
         /// This method is called on each Keypress
         /// </summary>

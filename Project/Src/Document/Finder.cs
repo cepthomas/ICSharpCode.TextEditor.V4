@@ -149,7 +149,6 @@ namespace ICSharpCode.TextEditor.Document
             if (_regex == null)
             {
                 _regex = CreateRegex(ftext, Mode, MatchCase, MatchWholeWord, next);
-
                 match = _regex.Match(Editor.Document.TextContent, next ? 0 : Editor.Document.TextLength - 1);
             }
             else
@@ -166,7 +165,7 @@ namespace ICSharpCode.TextEditor.Document
                 // Then select it.
                 TextLocation p1 = Editor.Document.OffsetToPosition(match.Index);
                 TextLocation p2 = Editor.Document.OffsetToPosition(match.Index + match.Length);
-                Editor.ActiveTextAreaControl.SelectionManager.SetSelection(p1, p2);
+                Editor.ActiveTextAreaControl.SelectionManager.SetSelection(p1, p2, false);
                 Editor.ActiveTextAreaControl.ScrollTo(p1.Line, p1.Column);
                 Editor.ActiveTextAreaControl.Caret.Position = Editor.Document.OffsetToPosition(match.Index + match.Length);
             }

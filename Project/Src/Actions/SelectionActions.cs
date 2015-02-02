@@ -18,7 +18,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -29,7 +29,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -40,7 +40,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -51,7 +51,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -62,7 +62,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -73,7 +73,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -84,7 +84,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -95,7 +95,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -106,7 +106,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -117,7 +117,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -128,7 +128,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -139,7 +139,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation oldCaretPos  = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
-            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position);
+            textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
         }
     }
 
@@ -159,7 +159,7 @@ namespace ICSharpCode.TextEditor.Actions
                 }
             }
             textArea.Caret.Position = textArea.SelectionManager.NextValidPosition(endPoint.Y);
-            textArea.SelectionManager.ExtendSelection(startPoint, endPoint);
+            textArea.SelectionManager.ExtendSelection(startPoint, endPoint, false);
             // after a SelectWholeDocument selection, the caret is placed correctly,
             // but it is not positioned internally.  The effect is when the cursor
             // is moved up or down a line, the caret will take on the column that

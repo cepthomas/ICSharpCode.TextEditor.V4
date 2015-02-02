@@ -81,7 +81,8 @@ namespace ICSharpCode.TextEditor
 
             textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document,
                                                    textArea.Document.OffsetToPosition(offset),
-                                                   textArea.Document.OffsetToPosition(offset + str.Length)));
+                                                   textArea.Document.OffsetToPosition(offset + str.Length), false));
+
             textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
             textArea.Refresh();
         }
