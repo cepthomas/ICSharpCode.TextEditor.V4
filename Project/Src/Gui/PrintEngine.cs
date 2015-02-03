@@ -85,8 +85,8 @@ namespace ICSharpCode.TextEditor
 
                 if (pdlg.PrinterSettings.PrintRange == PrintRange.Selection && _editor.ActiveTextAreaControl.TextArea.SelectionManager.HasSomethingSelected)
                 {
-                    _curLineNumber = _editor.ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].StartPosition.Line;
-                    _endLineNumber = _editor.ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].EndPosition.Line;
+                    _curLineNumber = _editor.ActiveTextAreaControl.TextArea.SelectionManager.CurrentSelection.StartPosition.Line;
+                    _endLineNumber = _editor.ActiveTextAreaControl.TextArea.SelectionManager.CurrentSelection.EndPosition.Line;
                 }
                 else // No selection, print all.
                 {

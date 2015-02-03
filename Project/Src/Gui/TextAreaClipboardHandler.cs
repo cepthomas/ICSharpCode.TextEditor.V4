@@ -104,7 +104,7 @@ namespace ICSharpCode.TextEditor
 
         const string LineSelectedType = "MSDEVLineSelect";  // This is the type VS 2003 and 2005 use for flagging a whole line copy
 
-        bool CopyTextToClipboard(string stringToCopy, bool asLine)
+        bool CopyTextToClipboard(string stringToCopy, bool asLine) //TODO1 fix this for rect. also cut/copy/paste.
         {
             if (stringToCopy.Length > 0)
             {
@@ -180,7 +180,7 @@ namespace ICSharpCode.TextEditor
                         return;
                     // Remove text
                     textArea.BeginUpdate();
-                    textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
+                    textArea.Caret.Position = textArea.SelectionManager.CurrentSelection.StartPosition;
                     textArea.SelectionManager.RemoveSelectedText();
                     textArea.EndUpdate();
                 }
@@ -245,7 +245,7 @@ namespace ICSharpCode.TextEditor
                             {
                                 if (textArea.SelectionManager.HasSomethingSelected)
                                 {
-                                    textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
+                                    textArea.Caret.Position = textArea.SelectionManager.CurrentSelection.StartPosition;
                                     textArea.SelectionManager.RemoveSelectedText();
                                 }
                                 if (fullLine)

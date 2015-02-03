@@ -50,8 +50,7 @@ namespace ICSharpCode.TextEditor
 
         static DragDropEffects GetDragDropEffect(DragEventArgs e)
         {
-            if ((e.AllowedEffect & DragDropEffects.Move) > 0 &&
-                    (e.AllowedEffect & DragDropEffects.Copy) > 0)
+            if ((e.AllowedEffect & DragDropEffects.Move) > 0 && (e.AllowedEffect & DragDropEffects.Copy) > 0)
             {
                 return (e.KeyState & 8) > 0 ? DragDropEffects.Copy : DragDropEffects.Move;
             }
@@ -74,15 +73,10 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-
         void InsertString(int offset, string str)
         {
             textArea.Document.Insert(offset, str);
-
-            textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document,
-                                                   textArea.Document.OffsetToPosition(offset),
-                                                   textArea.Document.OffsetToPosition(offset + str.Length), false));
-
+            textArea.SelectionManager.SetSelection(new Selection(textArea.Document, textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false));
             textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
             textArea.Refresh();
         }
@@ -103,13 +97,15 @@ namespace ICSharpCode.TextEditor
                         // prevent dragging text into readonly section
                         return;
                     }
-                    if (e.Data.GetDataPresent(typeof(DefaultSelection)))
+
+                    if (e.Data.GetDataPresent(typeof(Selection)))
                     {
-                        ISelection sel = (ISelection)e.Data.GetData(typeof(DefaultSelection));
+                        Selection sel = (Selection)e.Data.GetData(typeof(Selection));
                         if (sel.ContainsPosition(textArea.Caret.Position))
                         {
                             return;
                         }
+
                         if (GetDragDropEffect(e) == DragDropEffects.Move)
                         {
                             if (SelectionManager.SelectionIsReadOnly(textArea.Document, sel))
@@ -117,14 +113,17 @@ namespace ICSharpCode.TextEditor
                                 // prevent dragging text out of readonly section
                                 return;
                             }
+
                             int len = sel.Length;
                             textArea.Document.Remove(sel.Offset, len);
+
                             if (sel.Offset < offset)
                             {
                                 offset -= len;
                             }
                         }
                     }
+
                     textArea.SelectionManager.ClearSelection();
                     InsertString(offset, (string)e.Data.GetData(typeof(string)));
                     textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));

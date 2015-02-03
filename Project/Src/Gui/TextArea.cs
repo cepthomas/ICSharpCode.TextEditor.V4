@@ -37,23 +37,23 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         Point mouseCursorHidePosition;
 
-        Point virtualTop        = new Point(0, 0);
-        TextAreaControl         motherTextAreaControl;
-        TextEditorControl       motherTextEditorControl;
+        Point virtualTop = new Point(0, 0);
+        TextAreaControl motherTextAreaControl;
+        TextEditorControl motherTextEditorControl;
 
-        List<BracketHighlightingSheme> bracketshemes  = new List<BracketHighlightingSheme>();
-        TextAreaClipboardHandler  textAreaClipboardHandler;
+        List<BracketHighlightingSheme> bracketshemes = new List<BracketHighlightingSheme>();
+        TextAreaClipboardHandler textAreaClipboardHandler;
         bool autoClearSelection = false;
 
         List<AbstractMargin> leftMargins = new List<AbstractMargin>();
 
-        TextView      textView;
-        GutterMargin  gutterMargin;
-        FoldMargin    foldMargin;
+        TextView textView;
+        GutterMargin gutterMargin;
+        FoldMargin foldMargin;
         IconBarMargin iconBarMargin;
 
         SelectionManager selectionManager;
-        Caret            caret;
+        Caret caret;
 
         internal Point mousepos = new Point(0, 0);
         //public Point selectionStartPos = new Point(0,0);
@@ -259,7 +259,7 @@ namespace ICSharpCode.TextEditor
         void TextContentChanged(object sender, EventArgs e)
         {
             Caret.Position = new TextLocation(0, 0);
-            SelectionManager.SelectionCollection.Clear();
+            SelectionManager.SetSelection(null);
         }
 
         void SearchMatchingBracket(object sender, EventArgs e)
@@ -873,16 +873,17 @@ namespace ICSharpCode.TextEditor
             }
 
             Document.UndoStack.StartUndoGroup();
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal &&
-                    SelectionManager.SelectionCollection.Count > 0)
+            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
             {
-                Caret.Position = SelectionManager.SelectionCollection[0].StartPosition;
+                Caret.Position = SelectionManager.CurrentSelection.StartPosition;
                 SelectionManager.RemoveSelectedText();
             }
+
             LineSegment caretLine = Document.GetLineSegment(Caret.Line);
             int offset = Caret.Offset;
             // use desired column for generated whitespaces
             int dc = Caret.Column;
+
             if (caretLine.Length < dc && ch != '\n')
             {
                 Document.Insert(offset, GenerateWhitespaceString(dc - caretLine.Length) + ch);
@@ -891,6 +892,7 @@ namespace ICSharpCode.TextEditor
             {
                 Document.Insert(offset, ch.ToString());
             }
+
             Document.UndoStack.EndUndoGroup();
             ++Caret.Column;
 
@@ -914,13 +916,13 @@ namespace ICSharpCode.TextEditor
             {
                 BeginUpdate();
             }
+
             try
             {
                 Document.UndoStack.StartUndoGroup();
-                if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal &&
-                        SelectionManager.SelectionCollection.Count > 0)
+                if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
                 {
-                    Caret.Position = SelectionManager.SelectionCollection[0].StartPosition;
+                    Caret.Position = SelectionManager.CurrentSelection.StartPosition;
                     SelectionManager.RemoveSelectedText();
                 }
 
@@ -938,7 +940,9 @@ namespace ICSharpCode.TextEditor
                     Document.Insert(oldOffset, str);
                     Caret.Position = Document.OffsetToPosition(oldOffset + str.Length);
                 }
+
                 Document.UndoStack.EndUndoGroup();
+
                 if (oldLine != Caret.Line)
                 {
                     UpdateToEnd(oldLine);
@@ -967,9 +971,10 @@ namespace ICSharpCode.TextEditor
             {
                 BeginUpdate();
             }
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.SelectionCollection.Count > 0)
+
+            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
             {
-                Caret.Position = SelectionManager.SelectionCollection[0].StartPosition;
+                Caret.Position = SelectionManager.CurrentSelection.StartPosition;
                 SelectionManager.RemoveSelectedText();
             }
 
@@ -984,11 +989,13 @@ namespace ICSharpCode.TextEditor
             {
                 Document.Insert(offset, ch.ToString());
             }
+
             if (!updating)
             {
                 EndUpdate();
                 UpdateLineToEnd(lineNr, Caret.Column);
             }
+
             ++Caret.Column;
 //			++Caret.DesiredColumn;
         }
@@ -1006,19 +1013,23 @@ namespace ICSharpCode.TextEditor
                         caret.PositionChanged -= new EventHandler(SearchMatchingBracket);
                         caret.Dispose();
                     }
+
                     if (selectionManager != null)
                     {
                         selectionManager.Dispose();
                     }
+
                     Document.TextContentChanged -= new EventHandler(TextContentChanged);
                     Document.FoldingManager.FoldingsChanged -= new EventHandler(DocumentFoldingsChanged);
                     motherTextAreaControl = null;
                     motherTextEditorControl = null;
+
                     foreach (AbstractMargin margin in leftMargins)
                     {
                         if (margin is IDisposable)
                             (margin as IDisposable).Dispose();
                     }
+
                     textView.Dispose();
                 }
             }
@@ -1042,7 +1053,7 @@ namespace ICSharpCode.TextEditor
 //			}
 
             lineBegin = Document.GetVisibleLine(lineBegin);
-            int y         = Math.Max(    0, (int)(lineBegin * textView.FontHeight));
+            int y = Math.Max(0, (int)(lineBegin * textView.FontHeight));
             y = Math.Max(0, y - this.virtualTop.Y);
             Rectangle r = new Rectangle(0, y, Width, Height - y);
             Invalidate(r);
@@ -1077,17 +1088,17 @@ namespace ICSharpCode.TextEditor
 
         void InvalidateLines(int xPos, int lineBegin, int lineEnd)
         {
-            lineBegin     = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
-            lineEnd       = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + textView.VisibleLineCount);
-            int y         = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));
-            int height    = Math.Min(textView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (textView.FontHeight + 1)));
+            lineBegin = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
+            lineEnd = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + textView.VisibleLineCount);
+            int y = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));
+            int height = Math.Min(textView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (textView.FontHeight + 1)));
 
             Rectangle r = new Rectangle(0, y - 1 - this.virtualTop.Y, Width, height + 3);
             Invalidate(r);
         }
         #endregion
 
-        public event KeyEventHandler    KeyEventHandler;
+        public event KeyEventHandler KeyEventHandler;
         public event DialogKeyProcessor DoProcessDialogKey;
     }
 }

@@ -65,7 +65,7 @@ namespace ICSharpCode.TextEditor.Util
             bool  oldBold   = false;
             bool  escapeSequence = false;
 
-            foreach (ISelection selection in textArea.SelectionManager.SelectionCollection)
+            Selection selection = textArea.SelectionManager.CurrentSelection;
             {
                 int selectionOffset    = textArea.Document.PositionToOffset(selection.StartPosition);
                 int selectionEndOffset = textArea.Document.PositionToOffset(selection.EndPosition);

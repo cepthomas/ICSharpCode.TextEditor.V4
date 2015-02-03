@@ -136,7 +136,7 @@ namespace ICSharpCode.TextEditor.Actions
     {
         public override void Execute(TextArea textArea)
         {
-            TextLocation oldCaretPos  = textArea.Caret.Position;
+            TextLocation oldCaretPos = textArea.Caret.Position;
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
             textArea.SelectionManager.ExtendSelection(oldCaretPos, textArea.Caret.Position, false);
@@ -152,8 +152,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation endPoint   = textArea.Document.OffsetToPosition(textArea.Document.TextLength);
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                if (textArea.SelectionManager.SelectionCollection[0].StartPosition == startPoint &&
-                        textArea.SelectionManager.SelectionCollection[0].EndPosition   == endPoint)
+                if (textArea.SelectionManager.CurrentSelection.StartPosition == startPoint && textArea.SelectionManager.CurrentSelection.EndPosition == endPoint)
                 {
                     return;
                 }

@@ -21,8 +21,8 @@ namespace ICSharpCode.TextEditor
     public class TextAreaMouseHandler
     {
         TextArea  textArea;
-        TextLocation minSelection = TextLocation.Empty;
-        TextLocation maxSelection = TextLocation.Empty;
+        TextLocation minSelection;
+        TextLocation maxSelection;
         bool doubleclick = false;
         bool      clickedOnSelectedText = false;
         MouseButtons button;
@@ -169,7 +169,7 @@ namespace ICSharpCode.TextEditor
                 if (Math.Abs(mousedownpos.X - e.X) >= SystemInformation.DragSize.Width / 2 || Math.Abs(mousedownpos.Y - e.Y) >= SystemInformation.DragSize.Height / 2)
                 {
                     clickedOnSelectedText = false;
-                    ISelection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
+                    Selection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
 
                     if (selection != null)
                     {
@@ -234,10 +234,10 @@ namespace ICSharpCode.TextEditor
             }
 
             // moves selection across whole words for double-click initiated selection
-            if (!minSelection.IsEmpty && textArea.SelectionManager.SelectionCollection.Count > 0 && textArea.SelectionManager.selectFrom.where == WhereFrom.TArea)
+            if (!minSelection.IsValid && textArea.SelectionManager.CurrentSelection.IsValid && textArea.SelectionManager.selectFrom.where == WhereFrom.TArea)
             {
                 // Extend selection when selection was started with double-click
-                ISelection selection = textArea.SelectionManager.SelectionCollection[0];
+                Selection selection = textArea.SelectionManager.CurrentSelection;
                 TextLocation min = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? maxSelection : minSelection;
                 TextLocation max = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? minSelection : maxSelection;
 
@@ -305,9 +305,9 @@ namespace ICSharpCode.TextEditor
                     textArea.SelectionManager.ExtendSelection(minSelection, maxSelection, false);
                 }
 
-                if (textArea.SelectionManager.selectionCollection.Count > 0)
+                if (!textArea.SelectionManager.CurrentSelection.IsEmpty)
                 {
-                    ISelection selection = textArea.SelectionManager.selectionCollection[0];
+                    Selection selection = textArea.SelectionManager.CurrentSelection;
                     selection.StartPosition = minSelection;
                     selection.EndPosition = maxSelection;
                     textArea.SelectionManager.SelectionStart = minSelection;
@@ -360,21 +360,21 @@ namespace ICSharpCode.TextEditor
 
                         if (textArea.SelectionManager.selectFrom.where == WhereFrom.Gutter)
                         {
-                            if (!minSelection.IsEmpty && !maxSelection.IsEmpty && textArea.SelectionManager.SelectionCollection.Count > 0)
+                            if (minSelection.IsValid && maxSelection.IsValid && textArea.SelectionManager.CurrentSelection.IsValid)
                             {
-                                textArea.SelectionManager.SelectionCollection[0].StartPosition = minSelection;
-                                textArea.SelectionManager.SelectionCollection[0].EndPosition = maxSelection;
+                                textArea.SelectionManager.CurrentSelection.StartPosition = minSelection;
+                                textArea.SelectionManager.CurrentSelection.EndPosition = maxSelection;
                                 textArea.SelectionManager.SelectionStart = minSelection;
 
-                                minSelection = TextLocation.Empty;
-                                maxSelection = TextLocation.Empty;
+                                minSelection = new TextLocation();
+                                maxSelection = new TextLocation(); 
                             }
                         }
                         return;
                     }
                 }
-                minSelection = TextLocation.Empty;
-                maxSelection = TextLocation.Empty;
+                minSelection = new TextLocation();
+                maxSelection = new TextLocation();
 
                 lastmousedownpos = mousedownpos = new Point(e.X, e.Y);
 
@@ -392,7 +392,7 @@ namespace ICSharpCode.TextEditor
 
                         TextLocation startLocation = new TextLocation(marker.StartColumn, marker.StartLine);
                         TextLocation endLocation = new TextLocation(marker.EndColumn, marker.EndLine);
-                        textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.TextView.Document, startLocation, endLocation, isRect));
+                        textArea.SelectionManager.SetSelection(new Selection(textArea.TextView.Document, startLocation, endLocation, isRect));
                         textArea.Caret.Position = startLocation;
                         textArea.SetDesiredColumn();
                         textArea.Focus();

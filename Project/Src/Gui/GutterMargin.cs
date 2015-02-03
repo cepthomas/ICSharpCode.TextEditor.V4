@@ -124,13 +124,13 @@ namespace ICSharpCode.TextEditor
                             // whole line selection - start of line to start of next line
                             if (realline < textArea.Document.TotalNumberOfLines - 1)
                             {
-                                textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos,
+                                textArea.SelectionManager.SetSelection(new Selection(textArea.Document, selectionStartPos, 
                                     new TextLocation(0, realline + 1), isRect));
                                 textArea.Caret.Position = new TextLocation(0, realline + 1);
                             }
                             else
                             {
-                                textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, 
+                                textArea.SelectionManager.SetSelection(new Selection(textArea.Document, selectionStartPos, 
                                     new TextLocation(textArea.Document.GetLineSegment(realline).Length + 1, realline), isRect));
                                 textArea.Caret.Position = new TextLocation(textArea.Document.GetLineSegment(realline).Length + 1, realline);
                             }
@@ -141,7 +141,7 @@ namespace ICSharpCode.TextEditor
                             // nothing is selected so make a new selection from cursor
                             selectionStartPos = textArea.Caret.Position;
                             // whole line selection - start of line to start of next line
-                            textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, 
+                            textArea.SelectionManager.SetSelection(new Selection(textArea.Document, selectionStartPos, 
                                 new TextLocation(selectionStartPos.X, selectionStartPos.Y), isRect));
                             textArea.SelectionManager.ExtendSelection(new TextLocation(selectionStartPos.X, selectionStartPos.Y), new TextLocation(0, realline), false);
                             textArea.Caret.Position = new TextLocation(0, realline);
@@ -154,11 +154,10 @@ namespace ICSharpCode.TextEditor
                         textArea.RaiseMouseMove(e);
                     }
                 }
-                else     // this is a new selection with no shift-key
+                else // this is a new selection with no shift-key
                 {
                     // sync the textareamousehandler mouse location
-                    // (fixes problem with clicking out into a menu then back to the gutter whilst
-                    // there is a selection)
+                    // (fixes problem with clicking out into a menu then back to the gutter whilst there is a selection)
                     textArea.mousepos = mousepos;
 
                     selectionStartPos = new TextLocation(0, realline);
@@ -166,14 +165,14 @@ namespace ICSharpCode.TextEditor
                     // whole line selection - start of line to start of next line
                     if (realline < textArea.Document.TotalNumberOfLines - 1)
                     {
-                        textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, 
+                        textArea.SelectionManager.SetSelection(new Selection(textArea.Document, selectionStartPos, 
                             new TextLocation(selectionStartPos.X, selectionStartPos.Y + 1),
                             isRect));
                         textArea.Caret.Position = new TextLocation(selectionStartPos.X, selectionStartPos.Y + 1);
                     }
                     else
                     {
-                        textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, 
+                        textArea.SelectionManager.SetSelection(new Selection(textArea.Document, 
                             new TextLocation(0, realline),
                             new TextLocation(textArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y),
                             isRect));

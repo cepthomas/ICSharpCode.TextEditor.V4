@@ -13,90 +13,55 @@ namespace ICSharpCode.TextEditor
     /// A line/column position.
     /// Text editor lines/columns are counting from zero.
     /// </summary>
-    public struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
+    public class TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
-        /// <summary>
-        /// Represents no text location (-1, -1).
-        /// </summary>
-        public static readonly TextLocation Empty = new TextLocation(-1, -1);
+        /// <summary>Represents no text location (-1, -1).</summary>
+        public TextLocation()
+        {
+            X = -1;
+            Y = -1;
+        }
 
         public TextLocation(int column, int line)
         {
-            x = column;
-            y = line;
+            X = column;
+            Y = line;
         }
 
-        int x, y;
-
-        public int X
-        {
-            get
-            {
-                return x;
-            }
-            set
-            {
-                x = value;
-            }
-        }
-
-        public int Y
-        {
-            get
-            {
-                return y;
-            }
-            set
-            {
-                y = value;
-            }
-        }
-
+        public int X { get; set; }
+        public int Y { get; set; }
         public int Line
         {
-            get
-            {
-                return y;
-            }
-            set
-            {
-                y = value;
-            }
+            get { return Y; }
+            set { Y = value; }
         }
 
         public int Column
         {
-            get
-            {
-                return x;
-            }
-            set
-            {
-                x = value;
-            }
+            get { return X; }
+            set { X = value; }
         }
 
-        public bool IsEmpty
+        public bool IsValid
         {
-            get
-            {
-                return x <= 0 && y <= 0;
-            }
+           // get { return X <= 0 && Y <= 0; }
+            get { return X > 0 && Y > 0; }
         }
 
         public override string ToString()
         {
-            return string.Format("(Line {1}, Col {0})", this.x, this.y);
+            return string.Format("(Line {1}, Col {0})", X, Y);
         }
 
         public override int GetHashCode()
         {
-            return unchecked (87 * x.GetHashCode() ^ y.GetHashCode());
+            return unchecked (87 * X.GetHashCode() ^ Y.GetHashCode());
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is TextLocation)) return false;
+            if (!(obj is TextLocation)) 
+                return false;
             return (TextLocation)obj == this;
         }
 
@@ -107,30 +72,30 @@ namespace ICSharpCode.TextEditor
 
         public static bool operator ==(TextLocation a, TextLocation b)
         {
-            return a.x == b.x && a.y == b.y;
+            return a.X == b.X && a.Y == b.Y;
         }
 
         public static bool operator !=(TextLocation a, TextLocation b)
         {
-            return a.x != b.x || a.y != b.y;
+            return a.X != b.X || a.Y != b.Y;
         }
 
         public static bool operator <(TextLocation a, TextLocation b)
         {
-            if (a.y < b.y)
+            if (a.Y < b.Y)
                 return true;
-            else if (a.y == b.y)
-                return a.x < b.x;
+            else if (a.Y == b.Y)
+                return a.X < b.X;
             else
                 return false;
         }
 
         public static bool operator >(TextLocation a, TextLocation b)
         {
-            if (a.y > b.y)
+            if (a.Y > b.Y)
                 return true;
-            else if (a.y == b.y)
-                return a.x > b.x;
+            else if (a.Y == b.Y)
+                return a.X > b.X;
             else
                 return false;
         }

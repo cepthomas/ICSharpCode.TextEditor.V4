@@ -186,16 +186,13 @@ namespace ICSharpCode.TextEditor
 
             for (int y = 0; y < (DrawingPosition.Height + VisibleLineDrawingRemainder) / fontHeight + 1; ++y)
             {
-                Rectangle lineRectangle = new Rectangle(DrawingPosition.X - horizontalDelta,
-                                                        DrawingPosition.Top + y * fontHeight - VisibleLineDrawingRemainder,
-                                                        DrawingPosition.Width + horizontalDelta,
-                                                        fontHeight);
+                Rectangle lineRectangle = new Rectangle(DrawingPosition.X - horizontalDelta, DrawingPosition.Top + y * fontHeight - VisibleLineDrawingRemainder, DrawingPosition.Width + horizontalDelta, fontHeight);
 
                 if (rect.IntersectsWith(lineRectangle))
                 {
                     int fvl = textArea.Document.GetVisibleLine(FirstVisibleLine);
                     int currentLine = textArea.Document.GetFirstLogicalLine(textArea.Document.GetVisibleLine(FirstVisibleLine) + y);
-                    PaintDocumentLine(g, currentLine, lineRectangle);
+                    PaintDocumentLine(g, currentLine, lineRectangle); //XXX
                 }
             }
 
@@ -209,7 +206,7 @@ namespace ICSharpCode.TextEditor
             textArea.Caret.PaintCaret(g);
         }
 
-        void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle)
+        void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle) //XXX
         {
             Debug.Assert(lineNumber >= 0);
             Brush bgColorBrush    = GetBgColorBrush(lineNumber);
@@ -234,21 +231,22 @@ namespace ICSharpCode.TextEditor
             }
 
             int physicalXPos = lineRectangle.X;
-            // there can't be a folding wich starts in an above line and ends here, because the line is a new one,
-            // there must be a return before this line.
             int column = 0;
             physicalColumn = 0;
 
+            // Handle folding.
             if (TextEditorProperties.EnableFolding)
             {
+                // there can't be a folding wich starts in an above line and ends here, because the line is a new one, there must be a return before this line.
                 while (true)
                 {
                     List<FoldMarker> starts = textArea.Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column - 1);
                     if (starts == null || starts.Count <= 0)
                     {
+                        // No foldings.
                         if (lineNumber < textArea.Document.TotalNumberOfLines)
                         {
-                            physicalXPos = PaintLinePart(g, lineNumber, column, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+                            physicalXPos = PaintLinePart(g, lineNumber, column, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos); //XXX
                         }
                         break;
                     }
@@ -264,8 +262,8 @@ namespace ICSharpCode.TextEditor
                     }
                     starts.Clear();
 
-                    physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos);
-                    column     = firstFolding.EndColumn;
+                    physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos); //XXX
+                    column = firstFolding.EndColumn;
                     lineNumber = firstFolding.EndLine;
                     if (lineNumber >= textArea.Document.TotalNumberOfLines)
                     {
@@ -273,7 +271,7 @@ namespace ICSharpCode.TextEditor
                         break;
                     }
 
-                    ColumnRange    selectionRange2 = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
+                    ColumnRange selectionRange2 = textArea.SelectionManager.GetSelectionAtLine(lineNumber); //XXX
                     bool drawSelected = ColumnRange.WholeColumn.Equals(selectionRange2) || firstFolding.StartColumn >= selectionRange2.StartColumn && firstFolding.EndColumn <= selectionRange2.EndColumn;
 
                     physicalXPos = PaintFoldingText(g, lineNumber, physicalXPos, lineRectangle, firstFolding.FoldText, drawSelected);
@@ -281,7 +279,7 @@ namespace ICSharpCode.TextEditor
             }
             else
             {
-                physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+                physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos); //XXX
             }
 
             if (lineNumber < textArea.Document.TotalNumberOfLines)
