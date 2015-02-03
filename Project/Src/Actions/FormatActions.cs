@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor.Actions
             textArea.Document.UndoStack.StartUndoGroup();
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                Selection selection = textArea.SelectionManager.CurrentSelection;
+                SelectionManager selection = textArea.SelectionManager;
                 Convert(textArea.Document, selection.StartPosition.Y, selection.EndPosition.Y);
             }
             else
@@ -63,8 +63,8 @@ namespace ICSharpCode.TextEditor.Actions
             textArea.BeginUpdate();
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                Selection selection = textArea.SelectionManager.CurrentSelection;
-                Convert(textArea.Document, selection.Offset, selection.Length);
+                SelectionManager selection = textArea.SelectionManager;
+                Convert(textArea.Document, selection.StartOffset, selection.Length);
             }
             else
             {

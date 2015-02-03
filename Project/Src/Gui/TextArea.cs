@@ -259,7 +259,7 @@ namespace ICSharpCode.TextEditor
         void TextContentChanged(object sender, EventArgs e)
         {
             Caret.Position = new TextLocation(0, 0);
-            SelectionManager.SetSelection(null);
+            SelectionManager.ClearSelection();
         }
 
         void SearchMatchingBracket(object sender, EventArgs e)
@@ -873,9 +873,9 @@ namespace ICSharpCode.TextEditor
             }
 
             Document.UndoStack.StartUndoGroup();
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
+            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
             {
-                Caret.Position = SelectionManager.CurrentSelection.StartPosition;
+                Caret.Position = SelectionManager.StartPosition;
                 SelectionManager.RemoveSelectedText();
             }
 
@@ -920,9 +920,9 @@ namespace ICSharpCode.TextEditor
             try
             {
                 Document.UndoStack.StartUndoGroup();
-                if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
+                if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
                 {
-                    Caret.Position = SelectionManager.CurrentSelection.StartPosition;
+                    Caret.Position = SelectionManager.StartPosition;
                     SelectionManager.RemoveSelectedText();
                 }
 
@@ -972,9 +972,9 @@ namespace ICSharpCode.TextEditor
                 BeginUpdate();
             }
 
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.CurrentSelection.IsValid)
+            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
             {
-                Caret.Position = SelectionManager.CurrentSelection.StartPosition;
+                Caret.Position = SelectionManager.StartPosition;
                 SelectionManager.RemoveSelectedText();
             }
 

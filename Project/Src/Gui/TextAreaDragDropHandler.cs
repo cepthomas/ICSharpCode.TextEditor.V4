@@ -76,7 +76,7 @@ namespace ICSharpCode.TextEditor
         void InsertString(int offset, string str)
         {
             textArea.Document.Insert(offset, str);
-            textArea.SelectionManager.SetSelection(new Selection(textArea.Document, textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false));
+            textArea.SelectionManager.SetSelection(textArea.Document, textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false);
             textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
             textArea.Refresh();
         }
@@ -98,31 +98,32 @@ namespace ICSharpCode.TextEditor
                         return;
                     }
 
-                    if (e.Data.GetDataPresent(typeof(Selection)))
-                    {
-                        Selection sel = (Selection)e.Data.GetData(typeof(Selection));
-                        if (sel.ContainsPosition(textArea.Caret.Position))
-                        {
-                            return;
-                        }
+                    //TODO1 drag/drop
+                    //if (e.Data.GetDataPresent(typeof(Selection)))
+                    //{
+                    //    Selection sel = (Selection)e.Data.GetData(typeof(Selection));
+                    //    if (sel.ContainsPosition(textArea.Caret.Position))
+                    //    {
+                    //        return;
+                    //    }
 
-                        if (GetDragDropEffect(e) == DragDropEffects.Move)
-                        {
-                            if (SelectionManager.SelectionIsReadOnly(textArea.Document, sel))
-                            {
-                                // prevent dragging text out of readonly section
-                                return;
-                            }
+                    //    if (GetDragDropEffect(e) == DragDropEffects.Move)
+                    //    {
+                    //        if (SelectionManager.SelectionIsReadOnly(textArea.Document, sel))
+                    //        {
+                    //            // prevent dragging text out of readonly section
+                    //            return;
+                    //        }
 
-                            int len = sel.Length;
-                            textArea.Document.Remove(sel.Offset, len);
+                    //        int len = sel.Length;
+                    //        textArea.Document.Remove(sel.StartOffset, len);
 
-                            if (sel.Offset < offset)
-                            {
-                                offset -= len;
-                            }
-                        }
-                    }
+                    //        if (sel.StartOffset < offset)
+                    //        {
+                    //            offset -= len;
+                    //        }
+                    //    }
+                    //}
 
                     textArea.SelectionManager.ClearSelection();
                     InsertString(offset, (string)e.Data.GetData(typeof(string)));

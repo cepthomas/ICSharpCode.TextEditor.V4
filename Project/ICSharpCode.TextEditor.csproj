@@ -137,7 +137,6 @@
     <Compile Include="Src\Actions\IEditAction.cs" />
     <Compile Include="Src\Actions\MiscActions.cs" />
     <Compile Include="Src\Actions\SelectionActions.cs" />
-    <Compile Include="Src\Document\Selection\Selection.cs" />
     <Compile Include="Src\Document\FoldingStrategy\IFoldingStrategy.cs" />
     <Compile Include="Src\Document\FoldingStrategy\IndentFoldingStrategy.cs" />
     <Compile Include="Src\Gui\Ime.cs" />

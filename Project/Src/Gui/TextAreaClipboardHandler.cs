@@ -180,7 +180,7 @@ namespace ICSharpCode.TextEditor
                         return;
                     // Remove text
                     textArea.BeginUpdate();
-                    textArea.Caret.Position = textArea.SelectionManager.CurrentSelection.StartPosition;
+                    textArea.Caret.Position = textArea.SelectionManager.StartPosition;
                     textArea.SelectionManager.RemoveSelectedText();
                     textArea.EndUpdate();
                 }
@@ -245,7 +245,7 @@ namespace ICSharpCode.TextEditor
                             {
                                 if (textArea.SelectionManager.HasSomethingSelected)
                                 {
-                                    textArea.Caret.Position = textArea.SelectionManager.CurrentSelection.StartPosition;
+                                    textArea.Caret.Position = textArea.SelectionManager.StartPosition;
                                     textArea.SelectionManager.RemoveSelectedText();
                                 }
                                 if (fullLine)

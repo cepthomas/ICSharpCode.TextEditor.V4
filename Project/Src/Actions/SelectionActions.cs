@@ -152,7 +152,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation endPoint   = textArea.Document.OffsetToPosition(textArea.Document.TextLength);
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                if (textArea.SelectionManager.CurrentSelection.StartPosition == startPoint && textArea.SelectionManager.CurrentSelection.EndPosition == endPoint)
+                if (textArea.SelectionManager.StartPosition == startPoint && textArea.SelectionManager.EndPosition == endPoint)
                 {
                     return;
                 }
