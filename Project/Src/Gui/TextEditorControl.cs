@@ -15,16 +15,14 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-    /// <summary>
-    /// This class is used for a basic text area control
-    /// </summary>
+    /// <summary>This class is used for a basic text area control</summary>
     [ToolboxBitmap("ICSharpCode.TextEditor.Resources.TextEditorControl.bmp")]
     [ToolboxItem(true)]
-    public class TextEditorControl : TextEditorControlBase // TODO1 combine these?
+    public class TextEditorControl : TextEditorControlBase // TODO3 combine these?
     {
         protected Panel textAreaPanel     = new Panel();
         TextAreaControl primaryTextArea  = null;
-        Splitter        textAreaSplitter  = null;
+        Splitter textAreaSplitter  = null;
         TextAreaControl secondaryTextArea = null;
         TextAreaControl activeTextAreaControl = null;
 
@@ -48,10 +46,7 @@ namespace ICSharpCode.TextEditor
 
         public override TextAreaControl ActiveTextAreaControl
         {
-            get
-            {
-                return activeTextAreaControl;
-            }
+            get { return activeTextAreaControl; }
         }
 
         protected void SetActiveTextAreaControl(TextAreaControl value)
@@ -147,19 +142,13 @@ namespace ICSharpCode.TextEditor
         [Browsable(false)]
         public bool EnableUndo
         {
-            get
-            {
-                return Document.UndoStack.CanUndo;
-            }
+            get { return Document.UndoStack.CanUndo; }
         }
 
         [Browsable(false)]
         public bool EnableRedo
         {
-            get
-            {
-                return Document.UndoStack.CanRedo;
-            }
+            get { return Document.UndoStack.CanRedo; }
         }
 
         public void Undo()
@@ -168,6 +157,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
+
             if (Document.UndoStack.CanUndo)
             {
                 BeginUpdate();
@@ -175,6 +165,7 @@ namespace ICSharpCode.TextEditor
 
                 Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
                 this.primaryTextArea.TextArea.UpdateMatchingBracket();
+
                 if (secondaryTextArea != null)
                 {
                     this.secondaryTextArea.TextArea.UpdateMatchingBracket();
@@ -189,6 +180,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
+
             if (Document.UndoStack.CanRedo)
             {
                 BeginUpdate();
@@ -200,6 +192,7 @@ namespace ICSharpCode.TextEditor
                 {
                     this.secondaryTextArea.TextArea.UpdateMatchingBracket();
                 }
+
                 EndUpdate();
             }
         }
@@ -222,6 +215,7 @@ namespace ICSharpCode.TextEditor
 
                 Document.UndoStack.ClearAll();
                 Document.UpdateCommited -= new EventHandler(CommitUpdateRequested);
+
                 if (textAreaPanel != null)
                 {
                     if (secondaryTextArea != null)
@@ -231,10 +225,12 @@ namespace ICSharpCode.TextEditor
                         secondaryTextArea = null;
                         textAreaSplitter  = null;
                     }
+
                     if (primaryTextArea != null)
                     {
                         primaryTextArea.Dispose();
                     }
+
                     textAreaPanel.Dispose();
                     textAreaPanel = null;
                 }
@@ -259,6 +255,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
+
             foreach (TextAreaUpdate update in Document.UpdateQueue)
             {
                 switch (update.TextAreaUpdateType)

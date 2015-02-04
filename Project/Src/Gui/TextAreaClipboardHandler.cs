@@ -104,32 +104,28 @@ namespace ICSharpCode.TextEditor
 
         const string LineSelectedType = "MSDEVLineSelect";  // This is the type VS 2003 and 2005 use for flagging a whole line copy
 
-        bool CopyTextToClipboard(string stringToCopy, bool asLine) //TODO1 fix this for rect. also cut/copy/paste.
+        bool CopyTextToClipboard(string stringToCopy)
         {
+            bool ret = false;
+
             if (stringToCopy.Length > 0)
             {
                 DataObject dataObject = new DataObject();
                 dataObject.SetData(DataFormats.UnicodeText, true, stringToCopy);
-                if (asLine)
-                {
-                    MemoryStream lineSelected = new MemoryStream(1);
-                    lineSelected.WriteByte(1);
-                    dataObject.SetData(LineSelectedType, false, lineSelected);
-                }
+
                 // Default has no highlighting, therefore we don't need RTF output
                 if (textArea.Document.HighlightingStrategy.Name != "Default")
                 {
                     dataObject.SetData(DataFormats.Rtf, RtfWriter.GenerateRtf(textArea));
                 }
+
                 OnCopyText(new CopyTextEventArgs(stringToCopy));
 
                 SafeSetClipboard(dataObject);
-                return true;
+                ret = true;
             }
-            else
-            {
-                return false;
-            }
+
+            return ret;
         }
 
         // Code duplication: TextAreaClipboardHandler.cs also has SafeSetClipboard
@@ -165,11 +161,6 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        bool CopyTextToClipboard(string stringToCopy)
-        {
-            return CopyTextToClipboard(stringToCopy, false);
-        }
-
         public void Cut(object sender, EventArgs e)
         {
             if (textArea.SelectionManager.HasSomethingSelected)
@@ -178,6 +169,7 @@ namespace ICSharpCode.TextEditor
                 {
                     if (textArea.SelectionManager.SelectionIsReadonly)
                         return;
+
                     // Remove text
                     textArea.BeginUpdate();
                     textArea.Caret.Position = textArea.SelectionManager.StartPosition;
@@ -185,38 +177,11 @@ namespace ICSharpCode.TextEditor
                     textArea.EndUpdate();
                 }
             }
-            else if (textArea.Document.TextEditorProperties.CutCopyWholeLine)
-            {
-                // No text was selected, select and cut the entire line
-                int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
-                LineSegment lineWhereCaretIs = textArea.Document.GetLineSegment(curLineNr);
-                string caretLineText = textArea.Document.GetText(lineWhereCaretIs.Offset, lineWhereCaretIs.TotalLength);
-                textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset),
-                    textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset + lineWhereCaretIs.TotalLength), false);
-                if (CopyTextToClipboard(caretLineText, true))
-                {
-                    if (textArea.SelectionManager.SelectionIsReadonly)
-                        return;
-                    // remove line
-                    textArea.BeginUpdate();
-                    textArea.Caret.Position = textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset);
-                    textArea.SelectionManager.RemoveSelectedText();
-                    textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr)));
-                    textArea.EndUpdate();
-                }
-            }
         }
 
         public void Copy(object sender, EventArgs e)
         {
-            if (!CopyTextToClipboard(textArea.SelectionManager.SelectedText) && textArea.Document.TextEditorProperties.CutCopyWholeLine)
-            {
-                // No text was selected, select the entire line, copy it, and then deselect
-                int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
-                LineSegment lineWhereCaretIs = textArea.Document.GetLineSegment(curLineNr);
-                string caretLineText = textArea.Document.GetText(lineWhereCaretIs.Offset, lineWhereCaretIs.TotalLength);
-                CopyTextToClipboard(caretLineText, true);
-            }
+            CopyTextToClipboard(textArea.SelectionManager.SelectedText);
         }
 
         public void Paste(object sender, EventArgs e)
@@ -225,6 +190,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
+
             // Clipboard.GetDataObject may throw an exception...
             for (int i = 0;; i++)
             {
@@ -233,6 +199,7 @@ namespace ICSharpCode.TextEditor
                     IDataObject data = Clipboard.GetDataObject();
                     if (data == null)
                         return;
+
                     bool fullLine = data.GetDataPresent(LineSelectedType);
                     if (data.GetDataPresent(DataFormats.UnicodeText))
                     {
@@ -248,6 +215,7 @@ namespace ICSharpCode.TextEditor
                                     textArea.Caret.Position = textArea.SelectionManager.StartPosition;
                                     textArea.SelectionManager.RemoveSelectedText();
                                 }
+
                                 if (fullLine)
                                 {
                                     int col = textArea.Caret.Column;

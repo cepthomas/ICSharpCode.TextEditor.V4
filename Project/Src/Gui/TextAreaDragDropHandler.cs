@@ -76,7 +76,7 @@ namespace ICSharpCode.TextEditor
         void InsertString(int offset, string str)
         {
             textArea.Document.Insert(offset, str);
-            textArea.SelectionManager.SetSelection(textArea.Document, textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false);
+            textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false);
             textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
             textArea.Refresh();
         }
@@ -98,7 +98,7 @@ namespace ICSharpCode.TextEditor
                         return;
                     }
 
-                    //TODO1 drag/drop
+                    //TODO1 drag/drop - all this:
                     //if (e.Data.GetDataPresent(typeof(Selection)))
                     //{
                     //    Selection sel = (Selection)e.Data.GetData(typeof(Selection));

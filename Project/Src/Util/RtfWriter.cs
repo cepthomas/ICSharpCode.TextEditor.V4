@@ -61,29 +61,30 @@ namespace ICSharpCode.TextEditor.Util
             StringBuilder rtf = new StringBuilder();
             bool firstLine = true;
             Color curColor = Color.Black;
-            bool  oldItalic = false;
-            bool  oldBold   = false;
-            bool  escapeSequence = false;
+            bool oldItalic = false;
+            bool oldBold = false;
+            bool escapeSequence = false;
 
-            SelectionManager selection = textArea.SelectionManager;
+            SelectionManager selmgr = textArea.SelectionManager;
+
+            int selectionOffset = textArea.Document.PositionToOffset(selmgr.StartPosition);
+            int selectionEndOffset = textArea.Document.PositionToOffset(selmgr.EndPosition);
+
+            for (int i = selmgr.StartPosition.Y; i <= selmgr.EndPosition.Y; ++i)
             {
-                int selectionOffset    = textArea.Document.PositionToOffset(selection.StartPosition);
-                int selectionEndOffset = textArea.Document.PositionToOffset(selection.EndPosition);
-                for (int i = selection.StartPosition.Y; i <= selection.EndPosition.Y; ++i)
+                LineSegment line = textArea.Document.GetLineSegment(i);
+                int offset = line.Offset;
+                if (line.Words == null)
                 {
-                    LineSegment line = textArea.Document.GetLineSegment(i);
-                    int offset = line.Offset;
-                    if (line.Words == null)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    foreach (TextWord word in line.Words)
+                foreach (TextWord word in line.Words)
+                {
+                    switch (word.Type)
                     {
-                        switch (word.Type)
-                        {
                         case TextWordType.Space:
-                            if (selection.ContainsOffset(offset))
+                            if (selmgr.ContainsOffset(offset))
                             {
                                 rtf.Append(' ');
                             }
@@ -91,7 +92,7 @@ namespace ICSharpCode.TextEditor.Util
                             break;
 
                         case TextWordType.Tab:
-                            if (selection.ContainsOffset(offset))
+                            if (selmgr.ContainsOffset(offset))
                             {
                                 rtf.Append(@"\tab");
                             }
@@ -151,11 +152,13 @@ namespace ICSharpCode.TextEditor.Util
                                     rtf.Append(@"\f0\fs" + (textArea.TextEditorProperties.Font.Size * 2));
                                     firstLine = false;
                                 }
+
                                 if (escapeSequence)
                                 {
                                     rtf.Append(' ');
                                     escapeSequence = false;
                                 }
+
                                 string printWord;
                                 if (offset < selectionOffset)
                                 {
@@ -172,16 +175,18 @@ namespace ICSharpCode.TextEditor.Util
 
                                 AppendText(rtf, printWord);
                             }
+
                             offset += word.Length;
                             break;
-                        }
                     }
-                    if (offset < selectionEndOffset)
-                    {
-                        rtf.Append(@"\par");
-                    }
-                    rtf.Append('\n');
                 }
+
+                if (offset < selectionEndOffset)
+                {
+                    rtf.Append(@"\par");
+                }
+
+                rtf.Append('\n');
             }
 
             return rtf.ToString();

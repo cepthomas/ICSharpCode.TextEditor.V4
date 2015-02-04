@@ -25,7 +25,6 @@ namespace ICSharpCode.TextEditor.Document
         public bool IsIconBarVisible { get; set; }
         public bool AllowCaretBeyondEOL { get; set; }
         public bool ShowMatchingBracket { get; set; }
-        public bool CutCopyWholeLine { get; set; }
         public System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; }
         public bool MouseWheelScrollDown { get; set; }
         public bool MouseWheelTextZoom { get; set; }
@@ -89,7 +88,6 @@ namespace ICSharpCode.TextEditor.Document
             TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
             MouseWheelScrollDown = true;
             MouseWheelTextZoom = true;
-            CutCopyWholeLine = true;
 
             VerticalRulerRow = 80;
             LineViewerStyle = LineViewerStyle.None;

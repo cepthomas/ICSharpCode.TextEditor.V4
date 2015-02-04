@@ -15,40 +15,40 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
-    /// <summary>
-    /// This class handles all mouse stuff for a textArea.
-    /// </summary>
+    /// <summary>This class handles all mouse stuff for a textArea.</summary>
     public class TextAreaMouseHandler
     {
-        TextArea  textArea;
-        TextLocation minSelection;
-        TextLocation maxSelection;
-        bool doubleclick = false;
-        bool      clickedOnSelectedText = false;
-        MouseButtons button;
+        TextArea  _textArea;
+        TextLocation _minSelection;
+        TextLocation _maxSelection;
+        bool _doubleclick = false;
+        bool _clickedOnSelectedText = false; //TODO1 this is still a bit messed up.
+        MouseButtons _button;
 
-        static readonly Point nilPoint = new Point(-1, -1);
-        Point mousedownpos       = nilPoint;
-        Point lastmousedownpos   = nilPoint;
+        static readonly Point NIL_POINT = new Point(-1, -1);
+        Point _mousedownpos = NIL_POINT;
+        Point _lastmousedownpos = NIL_POINT;
 
-        bool gotmousedown = false;
-        bool dodragdrop = false;
+        bool _gotmousedown = false;
+        bool _dodragdrop = false;
 
         public TextAreaMouseHandler(TextArea ttextArea)
         {
-            textArea = ttextArea;
+            _textArea = ttextArea;
+            _minSelection = new TextLocation();
+            _maxSelection = new TextLocation();
         }
 
         public void Attach()
         {
-            textArea.Click       += new EventHandler(TextAreaClick);
-            textArea.MouseMove   += new MouseEventHandler(TextAreaMouseMove);
-            textArea.MouseDown   += new MouseEventHandler(OnMouseDown);
-            textArea.DoubleClick += new EventHandler(OnDoubleClick);
-            textArea.MouseLeave  += new EventHandler(OnMouseLeave);
-            textArea.MouseUp     += new MouseEventHandler(OnMouseUp);
-            textArea.LostFocus   += new EventHandler(TextAreaLostFocus);
-            textArea.ToolTipRequest += new ToolTipRequestEventHandler(OnToolTipRequest);
+            _textArea.Click += new EventHandler(TextAreaClick);
+            _textArea.MouseMove += new MouseEventHandler(TextAreaMouseMove);
+            _textArea.MouseDown += new MouseEventHandler(OnMouseDown);
+            _textArea.DoubleClick += new EventHandler(OnDoubleClick);
+            _textArea.MouseLeave += new EventHandler(OnMouseLeave);
+            _textArea.MouseUp += new MouseEventHandler(OnMouseUp);
+            _textArea.LostFocus += new EventHandler(TextAreaLostFocus);
+            _textArea.ToolTipRequest += new ToolTipRequestEventHandler(OnToolTipRequest);
         }
 
         void OnToolTipRequest(object sender, ToolTipRequestEventArgs e)
@@ -57,7 +57,7 @@ namespace ICSharpCode.TextEditor
                 return;
 
             Point mousepos = e.MousePosition;
-            FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
+            FoldMarker marker = _textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
             if (marker != null && marker.IsFolded)
             {
                 StringBuilder sb = new StringBuilder(marker.InnerText);
@@ -84,7 +84,7 @@ namespace ICSharpCode.TextEditor
                 return;
             }
 
-            foreach (TextMarker tm in textArea.Document.MarkerStrategy.GetMarkers(e.LogicalPosition))
+            foreach (TextMarker tm in _textArea.Document.MarkerStrategy.GetMarkers(e.LogicalPosition))
             {
                 if (tm.ToolTip != null)
                 {
@@ -96,7 +96,7 @@ namespace ICSharpCode.TextEditor
 
         void ShowHiddenCursorIfMovedOrLeft()
         {
-            textArea.ShowHiddenCursor(!textArea.Focused || !textArea.ClientRectangle.Contains(textArea.PointToClient(Cursor.Position)));
+            _textArea.ShowHiddenCursor(!_textArea.Focused || !_textArea.ClientRectangle.Contains(_textArea.PointToClient(Cursor.Position)));
         }
 
         void TextAreaLostFocus(object sender, EventArgs e)
@@ -104,86 +104,85 @@ namespace ICSharpCode.TextEditor
             // The call to ShowHiddenCursorIfMovedOrLeft is delayed until pending messages have been processed
             // so that it can properly detect whether the TextArea has really lost focus.
             // For example, the CodeCompletionWindow gets focus when it is shown, but immediately gives back focus to the TextArea.
-            textArea.BeginInvoke(new MethodInvoker(ShowHiddenCursorIfMovedOrLeft));
+            _textArea.BeginInvoke(new MethodInvoker(ShowHiddenCursorIfMovedOrLeft));
         }
 
         void OnMouseLeave(object sender, EventArgs e)
         {
             ShowHiddenCursorIfMovedOrLeft();
-            gotmousedown = false;
-            mousedownpos = nilPoint;
+            _gotmousedown = false;
+            _mousedownpos = NIL_POINT;
         }
 
         void OnMouseUp(object sender, MouseEventArgs e)
         {
-            textArea.SelectionManager.SelectFrom.where = WhereFrom.None;
-            gotmousedown = false;
-            mousedownpos = nilPoint;
+            _textArea.SelectionManager.WhereFrom = SelSource.None;
+            _gotmousedown = false;
+            _mousedownpos = NIL_POINT;
         }
 
         void TextAreaClick(object sender, EventArgs e)
         {
             Point mousepos;
-            mousepos = textArea.mousepos;
+            mousepos = _textArea.MousePos;
 
-            if (!dodragdrop)
+            if (!_dodragdrop)
             {
-                if (clickedOnSelectedText && textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
+                if (_clickedOnSelectedText && _textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
                 {
-                    textArea.SelectionManager.ClearSelection();
-                    TextLocation clickPosition = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
-                    textArea.Caret.Position = clickPosition;
-                    textArea.SetDesiredColumn();
+                    _textArea.SelectionManager.ClearSelection();
+                    TextLocation clickPosition = _textArea.TextView.GetLogicalPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
+                    _textArea.Caret.Position = clickPosition;
+                    _textArea.SetDesiredColumn();
                 }
             }
         }
 
         void TextAreaMouseMove(object sender, MouseEventArgs e)
         {
-            textArea.mousepos = e.Location;
+            _textArea.MousePos = e.Location;
 
             // honour the starting selection strategy
-            switch (textArea.SelectionManager.SelectFrom.where)
+            switch (_textArea.SelectionManager.WhereFrom)
             {
-                case WhereFrom.Gutter:
+                case SelSource.Gutter:
                     ExtendSelectionToMouse();
                     return;
 
-                case WhereFrom.TArea:
+                case SelSource.TArea:
                     break;
             }
 
-            textArea.ShowHiddenCursor(false);
+            _textArea.ShowHiddenCursor(false);
 
-            if (dodragdrop)
+            if (_dodragdrop)
             {
-                dodragdrop = false;
+                _dodragdrop = false;
                 return;
             }
 
-            doubleclick = false;
-            textArea.mousepos = new Point(e.X, e.Y);
+            _doubleclick = false;
+            _textArea.MousePos = new Point(e.X, e.Y);
 
-            if (clickedOnSelectedText)
+            if (_clickedOnSelectedText)
             {
-                if (Math.Abs(mousedownpos.X - e.X) >= SystemInformation.DragSize.Width / 2 || Math.Abs(mousedownpos.Y - e.Y) >= SystemInformation.DragSize.Height / 2)
+                if (Math.Abs(_mousedownpos.X - e.X) >= SystemInformation.DragSize.Width / 2 || Math.Abs(_mousedownpos.Y - e.Y) >= SystemInformation.DragSize.Height / 2)
                 {
-                    clickedOnSelectedText = false;
+                    _clickedOnSelectedText = false;
                     //Selection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
 
-                    if (textArea.SelectionManager.IsSelected(textArea.Caret.Offset))
+                    if (_textArea.SelectionManager.IsSelected(_textArea.Caret.Offset))
                     {
-                        string text = textArea.SelectionManager.SelectedText;
-                        //bool isReadOnly = SelectionManager.SelectionIsReadOnly(textArea.Document, selection);
-                        bool isReadOnly = textArea.SelectionManager.SelectionIsReadonly;
+                        string text = _textArea.SelectionManager.SelectedText;
+                        bool isReadOnly = _textArea.SelectionManager.SelectionIsReadonly;
 
                         if (text != null && text.Length > 0)
                         {
                             DataObject dataObject = new DataObject();
                             dataObject.SetData(DataFormats.UnicodeText, true, text);
-                            //TODO1 dataObject.SetData(selection);
-                            dodragdrop = true;
-                            textArea.DoDragDrop(dataObject, isReadOnly ? DragDropEffects.All & ~DragDropEffects.Move : DragDropEffects.All);
+                            dataObject.SetData(_textArea.SelectionManager.SelectedText);
+                            _dodragdrop = true;
+                            _textArea.DoDragDrop(dataObject, isReadOnly ? DragDropEffects.All & ~DragDropEffects.Move : DragDropEffects.All);
                         }
                     }
                 }
@@ -193,261 +192,265 @@ namespace ICSharpCode.TextEditor
 
             if (e.Button == MouseButtons.Left)
             {
-                if (gotmousedown && textArea.SelectionManager.SelectFrom.where == WhereFrom.TArea)
+                if (_gotmousedown && _textArea.SelectionManager.WhereFrom == SelSource.TArea)
                 {
                     ExtendSelectionToMouse();
                 }
             }
         }
 
-        void ExtendSelectionToMouse()
+        void ExtendSelectionToMouse()//XXX
         {
-            Point mousepos;
-            mousepos = textArea.mousepos;
-            TextLocation realmousepos = textArea.TextView.GetLogicalPosition(Math.Max(0, mousepos.X - textArea.TextView.DrawingPosition.X), mousepos.Y - textArea.TextView.DrawingPosition.Y);
+            Point mousepos = _textArea.MousePos;
+            TextLocation realmousepos = _textArea.TextView.GetLogicalPosition(Math.Max(0, mousepos.X - _textArea.TextView.DrawingPosition.X), mousepos.Y - _textArea.TextView.DrawingPosition.Y);
             int y = realmousepos.Y;
-            realmousepos = textArea.Caret.ValidatePosition(realmousepos);
-            TextLocation oldPos = textArea.Caret.Position;
+            realmousepos = _textArea.Caret.ValidatePosition(realmousepos);
+            TextLocation oldPos = _textArea.Caret.Position;
+
             bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
 
-            if (oldPos == realmousepos && textArea.SelectionManager.SelectFrom.where != WhereFrom.Gutter)
-            {
-                return;
-            }
+            //if (oldPos == realmousepos && _textArea.SelectionManager.WhereFrom != SelSource.Gutter)
+            //{
+            //    return;
+            //}
 
-            // the selection is from the gutter
-            if (textArea.SelectionManager.SelectFrom.where == WhereFrom.Gutter)
+            // Update caret.
+            if (_textArea.SelectionManager.WhereFrom == SelSource.Gutter)
             {
-                if(realmousepos.Y < textArea.SelectionManager.SelectionStart.Y)
+                // the selection is from the gutter
+                if (realmousepos.Y < _textArea.SelectionManager.StartPosition.Y)
                 {
                     // the selection has moved above the startpoint
-                    textArea.Caret.Position = new TextLocation(0, realmousepos.Y);
+                    _textArea.Caret.Position = new TextLocation(0, realmousepos.Y);
                 }
                 else
                 {
                     // the selection has moved below the startpoint
-                    textArea.Caret.Position = textArea.SelectionManager.NextValidPosition(realmousepos.Y);
+                    _textArea.Caret.Position = _textArea.SelectionManager.NextValidPosition(realmousepos.Y);
                 }
             }
-            else
+            else // from text
             {
-                textArea.Caret.Position = realmousepos;
+                _textArea.Caret.Position = realmousepos;
             }
 
-            // moves selection across whole words for double-click initiated selection
-            if (!minSelection.IsValid && textArea.SelectionManager.IsValid && textArea.SelectionManager.SelectFrom.where == WhereFrom.TArea)
-            {
-                // Extend selection when selection was started with double-click
-                //Selection selection = textArea.SelectionManager.CurrentSelection;
-                TextLocation min = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? maxSelection : minSelection;
-                TextLocation max = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? minSelection : maxSelection;
+            ////// moves selection across whole words for double-click initiated selection
+            ////if (!_minSelection.IsValid && _textArea.SelectionManager.IsValid && _textArea.SelectionManager.WhereFrom == SelSource.TArea)
+            ////{
+            ////    // Extend selection when selection was started with double-click
+            ////    TextLocation min = _minSelection >= _maxSelection ? _maxSelection : _minSelection;
+            ////    TextLocation max = _minSelection >= _maxSelection ? _minSelection : _maxSelection;
 
-                if (textArea.SelectionManager.GreaterEqPos(max, realmousepos) && textArea.SelectionManager.GreaterEqPos(realmousepos, min))
-                {
-                    textArea.SelectionManager.SetSelection(min, max, isRect);
-                }
-                else if (textArea.SelectionManager.GreaterEqPos(max, realmousepos))
-                {
-                    int moff = textArea.Document.PositionToOffset(realmousepos);
-                    min = textArea.Document.OffsetToPosition(FindWordStart(textArea.Document, moff));
-                    textArea.SelectionManager.SetSelection(min, max, isRect);
-                }
-                else
-                {
-                    int moff = textArea.Document.PositionToOffset(realmousepos);
-                    max = textArea.Document.OffsetToPosition(FindWordEnd(textArea.Document, moff));
-                    textArea.SelectionManager.SetSelection(min, max, isRect);
-                }
-            }
-            else
-            {
-                textArea.SelectionManager.ExtendSelection(oldPos, textArea.Caret.Position, isRect);
-            }
-            textArea.SetDesiredColumn();
+            ////    if (max >= realmousepos && realmousepos >= min)
+            ////    {
+            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
+            ////    }
+            ////    else if (max >= realmousepos)
+            ////    {
+            ////        int moff = _textArea.Document.PositionToOffset(realmousepos);
+            ////        min = _textArea.Document.OffsetToPosition(FindWordStart(_textArea.Document, moff));
+            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
+            ////    }
+            ////    else
+            ////    {
+            ////        int moff = _textArea.Document.PositionToOffset(realmousepos);
+            ////        max = _textArea.Document.OffsetToPosition(FindWordEnd(_textArea.Document, moff));
+            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
+            ////    }
+            ////}
+            ////else
+            ////{
+            ////    _textArea.SelectionManager.ExtendSelection(oldPos, _textArea.Caret.Position, isRect);//XXX
+            ////}
+
+            _textArea.SelectionManager.ExtendSelection(_textArea.Caret.Position, isRect);
+
+            _textArea.SetDesiredColumn();
         }
 
         void DoubleClickSelectionExtend()
         {
             Point mousepos;
-            mousepos = textArea.mousepos;
+            mousepos = _textArea.MousePos;
 
-            textArea.SelectionManager.ClearSelection();
-            if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
+            _textArea.SelectionManager.ClearSelection();
+
+            if (_textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
-                FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
-                                    mousepos.Y - textArea.TextView.DrawingPosition.Y);
+                FoldMarker marker = _textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - _textArea.TextView.DrawingPosition.X,mousepos.Y - _textArea.TextView.DrawingPosition.Y);
                 if (marker != null && marker.IsFolded)
                 {
                     marker.IsFolded = false;
-                    textArea.MotherTextAreaControl.AdjustScrollBars();
+                    _textArea.MotherTextAreaControl.AdjustScrollBars();
                 }
-                if (textArea.Caret.Offset < textArea.Document.TextLength)
+
+                if (_textArea.Caret.Offset < _textArea.Document.TextLength)
                 {
-                    switch (textArea.Document.GetCharAt(textArea.Caret.Offset))
+                    switch (_textArea.Document.GetCharAt(_textArea.Caret.Offset))
                     {
                         case '"':
-                            if (textArea.Caret.Offset < textArea.Document.TextLength)
+                            if (_textArea.Caret.Offset < _textArea.Document.TextLength)
                             {
-                                int next = FindNext(textArea.Document, textArea.Caret.Offset + 1, '"');
-                                minSelection = textArea.Caret.Position;
-                                if (next > textArea.Caret.Offset && next < textArea.Document.TextLength)
+                                int next = FindNext(_textArea.Document, _textArea.Caret.Offset + 1, '"');
+                                _minSelection = _textArea.Caret.Position;
+                                if (next > _textArea.Caret.Offset && next < _textArea.Document.TextLength)
                                     next += 1;
-                                maxSelection = textArea.Document.OffsetToPosition(next);
+                                _maxSelection = _textArea.Document.OffsetToPosition(next);
                             }
                             break;
 
                         default:
-                            minSelection = textArea.Document.OffsetToPosition(FindWordStart(textArea.Document, textArea.Caret.Offset));
-                            maxSelection = textArea.Document.OffsetToPosition(FindWordEnd(textArea.Document, textArea.Caret.Offset));
+                            _minSelection = _textArea.Document.OffsetToPosition(FindWordStart(_textArea.Document, _textArea.Caret.Offset));
+                            _maxSelection = _textArea.Document.OffsetToPosition(FindWordEnd(_textArea.Document, _textArea.Caret.Offset));
                             break;
                     }
 
-                    textArea.Caret.Position = maxSelection;
-                    textArea.SelectionManager.ExtendSelection(minSelection, maxSelection, false);
+                    _textArea.Caret.Position = _maxSelection;
+                    _textArea.SelectionManager.SetSelection(_minSelection, _maxSelection, false);//XXX
                 }
 
-                if (!textArea.SelectionManager.IsEmpty)
-                {
-                    SelectionManager selection = textArea.SelectionManager;
-                    selection.StartPosition = minSelection;
-                    selection.EndPosition = maxSelection;
-                    textArea.SelectionManager.SelectionStart = minSelection;
-                }
+                //////if (!_textArea.SelectionManager.IsEmpty)
+                //////{
+                //////    _textArea.SelectionManager.StartPosition = _minSelection;
+                //////    _textArea.SelectionManager.EndPosition = _maxSelection;
+                //////}
 
                 // after a double-click selection, the caret is placed correctly, but it is not positioned internally.  The effect is when the cursor
                 // is moved up or down a line, the caret will take on the column first clicked on for the double-click
-                textArea.SetDesiredColumn();
+                _textArea.SetDesiredColumn();
 
                 // HACK WARNING !!!
                 // must refresh here, because when a error tooltip is showed and the underlined code is double clicked the textArea 
                 // don't update corrctly, updateline doesn't work ... but the refresh does. Mike
-                textArea.Refresh();
+                _textArea.Refresh();
             }
         }
 
         void OnMouseDown(object sender, MouseEventArgs e)
         {
             Point mousepos;
-            textArea.mousepos = e.Location;
+            _textArea.MousePos = e.Location;
             mousepos = e.Location;
 
-            if (dodragdrop)
+            if (_dodragdrop)
             {
                 return;
             }
 
-            if (doubleclick)
+            if (_doubleclick)
             {
-                doubleclick = false;
+                _doubleclick = false;
                 return;
             }
 
-            if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
+            if (_textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
-                gotmousedown = true;
-                textArea.SelectionManager.SelectFrom.where = WhereFrom.TArea;
-                button = e.Button;
+                _gotmousedown = true;
+                _textArea.SelectionManager.WhereFrom = SelSource.TArea;
+                _button = e.Button;
 
                 // double-click
-                if (button == MouseButtons.Left && e.Clicks == 2)
+                if (_button == MouseButtons.Left && e.Clicks == 2)
                 {
-                    int deltaX   = Math.Abs(lastmousedownpos.X - e.X);
-                    int deltaY   = Math.Abs(lastmousedownpos.Y - e.Y);
+                    int deltaX = Math.Abs(_lastmousedownpos.X - e.X);
+                    int deltaY = Math.Abs(_lastmousedownpos.Y - e.Y);
+                    
                     if (deltaX <= SystemInformation.DoubleClickSize.Width && deltaY <= SystemInformation.DoubleClickSize.Height)
                     {
                         DoubleClickSelectionExtend();
-                        lastmousedownpos = new Point(e.X, e.Y);
+                        _lastmousedownpos = new Point(e.X, e.Y);
 
-                        if (textArea.SelectionManager.SelectFrom.where == WhereFrom.Gutter)
+                        if (_textArea.SelectionManager.WhereFrom == SelSource.Gutter)
                         {
-                            if (minSelection.IsValid && maxSelection.IsValid && textArea.SelectionManager.IsValid)
+                            if (_minSelection.IsValid && _maxSelection.IsValid && _textArea.SelectionManager.IsValid)
                             {
-                                textArea.SelectionManager.StartPosition = minSelection;
-                                textArea.SelectionManager.EndPosition = maxSelection;
-                                textArea.SelectionManager.SelectionStart = minSelection;
+                                _textArea.SelectionManager.StartPosition = _minSelection;
+                                _textArea.SelectionManager.EndPosition = _maxSelection;
 
-                                minSelection = new TextLocation();
-                                maxSelection = new TextLocation(); 
+                                _minSelection = new TextLocation();
+                                _maxSelection = new TextLocation(); 
                             }
                         }
                         return;
                     }
                 }
-                minSelection = new TextLocation();
-                maxSelection = new TextLocation();
 
-                lastmousedownpos = mousedownpos = new Point(e.X, e.Y);
+                _minSelection = new TextLocation();
+                _maxSelection = new TextLocation();
 
-                if (button == MouseButtons.Left)
+                _lastmousedownpos = _mousedownpos = new Point(e.X, e.Y);
+                bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
+
+
+                if (_button == MouseButtons.Left)
                 {
-                    FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
+                    FoldMarker marker = _textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
                     if (marker != null && marker.IsFolded)
                     {
-                        if (textArea.SelectionManager.HasSomethingSelected)
+                        if (_textArea.SelectionManager.HasSomethingSelected)
                         {
-                            clickedOnSelectedText = true;
+                            _clickedOnSelectedText = true;
                         }
-
-                        bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
 
                         TextLocation startLocation = new TextLocation(marker.StartColumn, marker.StartLine);
                         TextLocation endLocation = new TextLocation(marker.EndColumn, marker.EndLine);
-                        textArea.SelectionManager.SetSelection(textArea.TextView.Document, startLocation, endLocation, isRect);
-                        textArea.Caret.Position = startLocation;
-                        textArea.SetDesiredColumn();
-                        textArea.Focus();
+                        _textArea.SelectionManager.SetSelection(startLocation, endLocation, isRect);
+                        _textArea.Caret.Position = startLocation;
+                        _textArea.SetDesiredColumn();
+                        _textArea.Focus();
                         return;
                     }
 
-                    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+                    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) // Shift while selecting end point.
                     {
                         ExtendSelectionToMouse();
                     }
                     else
                     {
-                        TextLocation realmousepos = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
-                        clickedOnSelectedText = false;
+                        TextLocation realmousepos = _textArea.TextView.GetLogicalPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
+                        _clickedOnSelectedText = false;
 
-                        int offset = textArea.Document.PositionToOffset(realmousepos);
+                        int offset = _textArea.Document.PositionToOffset(realmousepos);
 
-                        if (textArea.SelectionManager.HasSomethingSelected && textArea.SelectionManager.IsSelected(offset))
+                        if (_textArea.SelectionManager.HasSomethingSelected && _textArea.SelectionManager.IsSelected(offset))
                         {
-                            clickedOnSelectedText = true;
+                            _clickedOnSelectedText = true;
                         }
                         else
                         {
-                            textArea.SelectionManager.ClearSelection();
-                            if (mousepos.Y > 0 && mousepos.Y < textArea.TextView.DrawingPosition.Height)
+                            _textArea.SelectionManager.ClearSelection();
+                            if (mousepos.Y > 0 && mousepos.Y < _textArea.TextView.DrawingPosition.Height)
                             {
                                 TextLocation pos = new TextLocation();
-                                pos.Y = Math.Min(textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
+                                pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
                                 pos.X = realmousepos.X;
-                                textArea.Caret.Position = pos;
-                                textArea.SetDesiredColumn();
+                                _textArea.Caret.Position = pos;
+                                _textArea.SelectionManager.SetSelection(pos, pos, isRect);
+                                _textArea.SetDesiredColumn();
                             }
                         }
                     }
                 }
-                else if (button == MouseButtons.Right)
+                else if (_button == MouseButtons.Right)
                 {
                     // Rightclick sets the cursor to the click position unless the previous selection was clicked
-                    TextLocation realmousepos = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
-                    int offset = textArea.Document.PositionToOffset(realmousepos);
-                    if (!textArea.SelectionManager.HasSomethingSelected || !textArea.SelectionManager.IsSelected(offset))
+                    TextLocation realmousepos = _textArea.TextView.GetLogicalPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
+                    int offset = _textArea.Document.PositionToOffset(realmousepos);
+                    if (!_textArea.SelectionManager.HasSomethingSelected || !_textArea.SelectionManager.IsSelected(offset))
                     {
-                        textArea.SelectionManager.ClearSelection();
-                        if (mousepos.Y > 0 && mousepos.Y < textArea.TextView.DrawingPosition.Height)
+                        _textArea.SelectionManager.ClearSelection();
+                        if (mousepos.Y > 0 && mousepos.Y < _textArea.TextView.DrawingPosition.Height)
                         {
                             TextLocation pos = new TextLocation();
-                            pos.Y = Math.Min(textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
+                            pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
                             pos.X = realmousepos.X;
-                            textArea.Caret.Position = pos;
-                            textArea.SetDesiredColumn();
+                            _textArea.Caret.Position = pos;
+                            _textArea.SetDesiredColumn();
                         }
                     }
                 }
             }
-            textArea.Focus();
+            _textArea.Focus();
         }
 
         int FindNext(IDocument document, int offset, char ch)
@@ -530,13 +533,13 @@ namespace ICSharpCode.TextEditor
         
         void OnDoubleClick(object sender, System.EventArgs e)
         {
-            if (dodragdrop)
+            if (_dodragdrop)
             {
                 return;
             }
 
-            textArea.SelectionManager.SelectFrom.where = WhereFrom.TArea;
-            doubleclick = true;
+            _textArea.SelectionManager.WhereFrom = SelSource.TArea;
+            _doubleclick = true;
         }
     }
 }

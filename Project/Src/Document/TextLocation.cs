@@ -15,6 +15,9 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
+        public int X { get; set; }
+        public int Y { get; set; }
+
         /// <summary>Represents no text location (-1, -1).</summary>
         public TextLocation()
         {
@@ -28,8 +31,6 @@ namespace ICSharpCode.TextEditor
             Y = line;
         }
 
-        public int X { get; set; }
-        public int Y { get; set; }
         public int Line
         {
             get { return Y; }
@@ -44,8 +45,7 @@ namespace ICSharpCode.TextEditor
 
         public bool IsValid
         {
-           // get { return X <= 0 && Y <= 0; }
-            get { return X > 0 && Y > 0; }
+            get { return X >= 0 && Y >= 0; }
         }
 
         public override string ToString()
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor
             return string.Format("(Line {1}, Col {0})", X, Y);
         }
 
-        public override int GetHashCode()
+        public override int GetHashCode() //TODO1 used for?
         {
             return unchecked (87 * X.GetHashCode() ^ Y.GetHashCode());
         }
@@ -62,6 +62,7 @@ namespace ICSharpCode.TextEditor
         {
             if (!(obj is TextLocation)) 
                 return false;
+
             return (TextLocation)obj == this;
         }
 

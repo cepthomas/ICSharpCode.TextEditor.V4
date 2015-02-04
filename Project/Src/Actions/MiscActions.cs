@@ -45,13 +45,13 @@ namespace ICSharpCode.TextEditor.Actions
             return indent.ToString();
         }
 
-        void InsertTabs(IDocument document, SelectionManager selection, int y1, int y2)
+        void InsertTabs(IDocument document, SelectionManager selmgr, int y1, int y2)
         {
             string indentationString = GetIndentationString(document);
             for (int i = y2; i >= y1; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (i == y2 && i == selection.EndPosition.Y && selection.EndPosition.X  == 0)
+                if (i == y2 && i == selmgr.EndPosition.Y && selmgr.EndPosition.X  == 0)
                 {
                     continue;
                 }
@@ -93,16 +93,17 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 return;
             }
+
             textArea.Document.UndoStack.StartUndoGroup();
+
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                SelectionManager selection = textArea.SelectionManager;
-                int startLine = selection.StartPosition.Y;
-                int endLine   = selection.EndPosition.Y;
+                int startLine = textArea.SelectionManager.StartPosition.Y;
+                int endLine = textArea.SelectionManager.EndPosition.Y;
                 if (startLine != endLine)
                 {
                     textArea.BeginUpdate();
-                    InsertTabs(textArea.Document, selection, startLine, endLine);
+                    InsertTabs(textArea.Document, textArea.SelectionManager, startLine, endLine);
                     textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine, endLine));
                     textArea.EndUpdate();
                 }
@@ -118,19 +119,20 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 InsertTabAtCaretPosition(textArea);
             }
+
             textArea.Document.UndoStack.EndUndoGroup();
         }
     }
 
     public class ShiftTab : AbstractEditAction
     {
-        void RemoveTabs(IDocument document, SelectionManager selection, int y1, int y2)
+        void RemoveTabs(IDocument document, SelectionManager selmgr, int y1, int y2)
         {
             document.UndoStack.StartUndoGroup();
             for (int i = y2; i >= y1; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (i == y2 && line.Offset == selection.EndOffset)
+                if (i == y2 && line.Offset == selmgr.EndOffset)
                 {
                     continue;
                 }
@@ -207,11 +209,10 @@ namespace ICSharpCode.TextEditor.Actions
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                SelectionManager selection = textArea.SelectionManager;
-                int startLine = selection.StartPosition.Y;
-                int endLine   = selection.EndPosition.Y;
+                int startLine = textArea.SelectionManager.StartPosition.Y;
+                int endLine = textArea.SelectionManager.EndPosition.Y;
                 textArea.BeginUpdate();
-                RemoveTabs(textArea.Document, selection, startLine, endLine);
+                RemoveTabs(textArea.Document, textArea.SelectionManager, startLine, endLine);
                 textArea.Document.UpdateQueue.Clear();
                 textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine, endLine));
                 textArea.EndUpdate();
@@ -270,7 +271,7 @@ namespace ICSharpCode.TextEditor.Actions
         int firstLine;
         int lastLine;
 
-        void RemoveCommentAt(IDocument document, string comment, SelectionManager selection, int y1, int y2)
+        void RemoveCommentAt(IDocument document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
             lastLine  = y2;
@@ -278,7 +279,7 @@ namespace ICSharpCode.TextEditor.Actions
             for (int i = y2; i >= y1; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (selection != null && i == y2 && line.Offset == selection.StartOffset + selection.Length)
+                if (selmgr != null && i == y2 && line.Offset == selmgr.StartOffset + selmgr.Length)
                 {
                     --lastLine;
                     continue;
@@ -292,7 +293,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
 
-        void SetCommentAt(IDocument document, string comment, SelectionManager selection, int y1, int y2)
+        void SetCommentAt(IDocument document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
             lastLine  = y2;
@@ -300,7 +301,7 @@ namespace ICSharpCode.TextEditor.Actions
             for (int i = y2; i >= y1; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (selection != null && i == y2 && line.Offset == selection.StartOffset + selection.Length)
+                if (selmgr != null && i == y2 && line.Offset == selmgr.StartOffset + selmgr.Length)
                 {
                     --lastLine;
                     continue;
@@ -311,12 +312,12 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
 
-        bool ShouldComment(IDocument document, string comment, SelectionManager selection, int startLine, int endLine)
+        bool ShouldComment(IDocument document, string comment, SelectionManager selmgr, int startLine, int endLine)
         {
             for (int i = endLine; i >= startLine; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (selection != null && i == endLine && line.Offset == selection.StartOffset + selection.Length)
+                if (selmgr != null && i == endLine && line.Offset == selmgr.StartOffset + selmgr.Length)
                 {
                     --lastLine;
                     continue;
@@ -356,8 +357,7 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.SelectionManager.HasSomethingSelected)
             {
                 bool shouldComment = true;
-                SelectionManager selection = textArea.SelectionManager;
-                if (!ShouldComment(textArea.Document, comment, selection, selection.StartPosition.Y, selection.EndPosition.Y))
+                if (!ShouldComment(textArea.Document, comment, textArea.SelectionManager, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y))
                 {
                     shouldComment = false;
                 }
@@ -365,11 +365,11 @@ namespace ICSharpCode.TextEditor.Actions
                 textArea.BeginUpdate();
                 if (shouldComment)
                 {
-                    SetCommentAt(textArea.Document, comment, selection, selection.StartPosition.Y, selection.EndPosition.Y);
+                    SetCommentAt(textArea.Document, comment, textArea.SelectionManager, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
                 }
                 else
                 {
-                    RemoveCommentAt(textArea.Document, comment, selection, selection.StartPosition.Y, selection.EndPosition.Y);
+                    RemoveCommentAt(textArea.Document, comment, textArea.SelectionManager, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
                 }
                 textArea.Document.UpdateQueue.Clear();
                 textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, lastLine));
@@ -433,7 +433,7 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.SelectionManager.HasSomethingSelected)
             {
                 selectionStartOffset = textArea.SelectionManager.StartOffset;
-                selectionEndOffset = selectionStartOffset; // TODO1 broken? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
+                selectionEndOffset = selectionStartOffset; // TODO2 broken? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
             }
             else
             {
@@ -444,6 +444,7 @@ namespace ICSharpCode.TextEditor.Actions
             BlockCommentRegion commentRegion = FindSelectedCommentRegion(textArea.Document, commentStart, commentEnd, selectionStartOffset, selectionEndOffset);
 
             textArea.Document.UndoStack.StartUndoGroup();
+
             if (commentRegion != null)
             {
                 RemoveComment(textArea.Document, commentRegion);
@@ -452,8 +453,8 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 SetCommentAt(textArea.Document, selectionStartOffset, selectionEndOffset, commentStart, commentEnd);
             }
-            textArea.Document.UndoStack.EndUndoGroup();
 
+            textArea.Document.UndoStack.EndUndoGroup();
             textArea.Document.CommitUpdate();
             textArea.AutoClearSelection = false;
         }
@@ -869,25 +870,24 @@ namespace ICSharpCode.TextEditor.Actions
                 Delete.DeleteSelection(textArea);
                 return;
             }
+
             textArea.BeginUpdate();
             // now delete from the caret to the beginning of the word
-            LineSegment line =
-                textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
+            LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
             // if we are not at the beginning of a line
             if (textArea.Caret.Offset > line.Offset)
             {
-                int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document,
-                                    textArea.Caret.Offset);
+                int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document, textArea.Caret.Offset);
                 if (prevWordStart < textArea.Caret.Offset)
                 {
                     if (!textArea.IsReadOnly(prevWordStart, textArea.Caret.Offset - prevWordStart))
                     {
-                        textArea.Document.Remove(prevWordStart,
-                                                 textArea.Caret.Offset - prevWordStart);
+                        textArea.Document.Remove(prevWordStart, textArea.Caret.Offset - prevWordStart);
                         textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
                     }
                 }
             }
+
             // if we are now at the beginning of a line
             if (textArea.Caret.Offset == line.Offset)
             {
@@ -933,6 +933,7 @@ namespace ICSharpCode.TextEditor.Actions
                 DeleteSelection(textArea);
                 return;
             }
+
             // if anything is selected we will just delete it first
             textArea.BeginUpdate();
             // now delete from the caret to the beginning of the word
@@ -944,8 +945,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else
             {
-                int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document,
-                                    textArea.Caret.Offset);
+                int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document, textArea.Caret.Offset);
                 if(nextWordStart > textArea.Caret.Offset)
                 {
                     if (!textArea.IsReadOnly(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset))
@@ -955,6 +955,7 @@ namespace ICSharpCode.TextEditor.Actions
                     }
                 }
             }
+
             textArea.UpdateMatchingBracket();
             textArea.EndUpdate();
             // if there are now less lines, we need this or there are redraw problems

@@ -19,78 +19,41 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public interface IDocument
     {
-        ITextEditorProperties TextEditorProperties
-        {
-            get;
-            set;
-        }
+        ITextEditorProperties TextEditorProperties { get; set; }
 
-        UndoStack UndoStack
-        {
-            get;
-        }
+        UndoStack UndoStack { get; }
+
         /// <value>
         /// If true the document can't be altered
         /// </value>
-        bool ReadOnly
-        {
-            get;
-            set;
-        }
+        bool ReadOnly { get; set; }
 
         /// <summary>
         /// The <see cref="IFormattingStrategy"/> attached to the <see cref="IDocument"/> instance
         /// </summary>
-        IFormattingStrategy FormattingStrategy
-        {
-            get;
-            set;
-        }
+        IFormattingStrategy FormattingStrategy { get; set; }
 
         /// <summary>
         /// The <see cref="ITextBufferStrategy"/> attached to the <see cref="IDocument"/> instance
         /// </summary>
-        ITextBufferStrategy TextBufferStrategy
-        {
-            get;
-        }
+        ITextBufferStrategy TextBufferStrategy { get; }
 
         /// <summary>
         /// The <see cref="FoldingManager"/> attached to the <see cref="IDocument"/> instance
         /// </summary>
-        FoldingManager FoldingManager
-        {
-            get;
-        }
+        FoldingManager FoldingManager { get; }
 
         /// <summary>
         /// The <see cref="IHighlightingStrategy"/> attached to the <see cref="IDocument"/> instance
         /// </summary>
-        IHighlightingStrategy HighlightingStrategy
-        {
-            get;
-            set;
-        }
+        IHighlightingStrategy HighlightingStrategy { get; set; }
 
         /// <summary>
         /// The <see cref="IBookMarkManager"/> attached to the <see cref="IDocument"/> instance
         /// </summary>
-        BookmarkManager BookmarkManager
-        {
-            get;
-        }
+        BookmarkManager BookmarkManager { get; }
 
-        MarkerStrategy MarkerStrategy
-        {
-            get;
-        }
-
-//		/// <summary>
-//		/// The <see cref="SelectionManager"/> attached to the <see cref="IDocument"/> instance
-//		/// </summary>
-//		SelectionManager SelectionManager {
-//			get;
-//		}
+        MarkerStrategy MarkerStrategy { get; }
 
         #region ILineManager interface
         /// <value>
@@ -101,18 +64,12 @@ namespace ICSharpCode.TextEditor.Document
         /// of the 'last line ends with a delimiter problem'. Otherwise
         /// the <see cref="GetLineSegment"/> method should be used.
         /// </remarks>
-        IList<LineSegment> LineSegmentCollection
-        {
-            get;
-        }
+        IList<LineSegment> LineSegmentCollection { get; }
 
         /// <value>
         /// The total number of lines in the document.
         /// </value>
-        int TotalNumberOfLines
-        {
-            get;
-        }
+        int TotalNumberOfLines { get; }
 
         /// <remarks>
         /// Returns a valid line number for the given offset.
@@ -178,11 +135,6 @@ namespace ICSharpCode.TextEditor.Document
         /// </remarks>
         int GetVisibleLine(int lineNumber);
 
-//		/// <remarks>
-//		/// Get the visible column for a given logical line and logical column.
-//		/// </remarks>
-//		int GetVisibleColumn(int logicalLine, int logicalColumn);
-
         /// <remarks>
         /// Get the next visible line after lineNumber
         /// </remarks>
@@ -205,19 +157,12 @@ namespace ICSharpCode.TextEditor.Document
         /// Set TextContent only for actions such as loading a file; if you want to change the current document
         /// use the Replace method instead.
         /// </value>
-        string TextContent
-        {
-            get;
-            set;
-        }
+        string TextContent { get; set; }
 
         /// <value>
         /// The current length of the sequence of characters that can be edited.
         /// </value>
-        int TextLength
-        {
-            get;
-        }
+        int TextLength { get; }
 
         /// <summary>
         /// Inserts a string of characters into the sequence.
@@ -273,8 +218,9 @@ namespace ICSharpCode.TextEditor.Document
         /// number of characters to copy.
         /// </param>
         string GetText(int offset, int length);
-        #endregion
+
         string GetText(ISegment segment);
+        #endregion
 
         #region ITextModel interface
         /// <summary>
@@ -287,13 +233,11 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         int PositionToOffset(TextLocation p);
         #endregion
+
         /// <value>
         /// A container where all TextAreaUpdate objects get stored
         /// </value>
-        List<TextAreaUpdate> UpdateQueue
-        {
-            get;
-        }
+        List<TextAreaUpdate> UpdateQueue { get; }
 
         /// <remarks>
         /// Requests an update of the textarea
@@ -316,12 +260,8 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         event EventHandler UpdateCommited;
 
-        /// <summary>
-        /// </summary>
         event DocumentEventHandler DocumentAboutToBeChanged;
 
-        /// <summary>
-        /// </summary>
         event DocumentEventHandler DocumentChanged;
 
         event EventHandler TextContentChanged;

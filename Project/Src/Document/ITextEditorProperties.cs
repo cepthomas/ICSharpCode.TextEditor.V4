@@ -19,7 +19,6 @@ namespace ICSharpCode.TextEditor.Document
         bool IsIconBarVisible { get; set; }   // is wrapped in text editor control
         bool AllowCaretBeyondEOL { get; set; }
         bool ShowMatchingBracket { get; set; }   // is wrapped in text editor control
-        bool CutCopyWholeLine { get; set; }
         System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; }   // is wrapped in text editor control
         bool MouseWheelScrollDown { get; set; }
         bool MouseWheelTextZoom { get; set; }

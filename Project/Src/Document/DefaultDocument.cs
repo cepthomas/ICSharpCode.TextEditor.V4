@@ -510,11 +510,13 @@ namespace ICSharpCode.TextEditor.Document
                 // if we're going to update the whole text area, we don't need to store detail updates
                 return;
             }
+
             if (update.TextAreaUpdateType == TextAreaUpdateType.WholeTextArea)
             {
                 // if we're going to update the whole text area, we don't need to store detail updates
                 updateQueue.Clear();
             }
+
             updateQueue.Add(update);
         }
 

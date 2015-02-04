@@ -21,14 +21,13 @@ namespace ICSharpCode.TextEditor
     public class TextAreaControl : Panel
     {
         TextEditorControl motherTextEditorControl;
-
-        HRuler     hRuler     = null;
+        HRuler hRuler = null;
 
         VScrollBar vScrollBar = new VScrollBar();
         HScrollBar hScrollBar = new HScrollBar();
-        TextArea   textArea;
-        bool       doHandleMousewheel = true;
-        bool       disposed;
+        TextArea textArea;
+        bool doHandleMousewheel = true;
+        bool disposed;
 
         public TextArea TextArea
         {

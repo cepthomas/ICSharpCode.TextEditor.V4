@@ -643,7 +643,7 @@ namespace ICSharpCode.TextEditor
             editactions[Keys.V | Keys.Control] = new Paste();
 
             editactions[Keys.A | Keys.Control] = new SelectWholeDocument();
-            editactions[Keys.Escape] = new ClearAllSelections();
+            editactions[Keys.Escape] = new ClearSelection();
 
             editactions[Keys.Divide | Keys.Control] = new ToggleComment();
             editactions[Keys.OemQuestion | Keys.Control] = new ToggleComment();

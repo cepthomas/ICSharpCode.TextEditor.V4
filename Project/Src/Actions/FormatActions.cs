@@ -29,18 +29,20 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 return;
             }
+
             this.textArea = textArea;
             textArea.BeginUpdate();
             textArea.Document.UndoStack.StartUndoGroup();
+
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                SelectionManager selection = textArea.SelectionManager;
-                Convert(textArea.Document, selection.StartPosition.Y, selection.EndPosition.Y);
+                Convert(textArea.Document, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
             }
             else
             {
                 Convert(textArea.Document, 0, textArea.Document.TotalNumberOfLines - 1);
             }
+
             textArea.Document.UndoStack.EndUndoGroup();
             textArea.Caret.ValidateCaretPos();
             textArea.EndUpdate();
@@ -59,17 +61,19 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 return;
             }
+
             this.textArea = textArea;
             textArea.BeginUpdate();
+
             if (textArea.SelectionManager.HasSomethingSelected)
             {
-                SelectionManager selection = textArea.SelectionManager;
-                Convert(textArea.Document, selection.StartOffset, selection.Length);
+                Convert(textArea.Document, textArea.SelectionManager.StartOffset, textArea.SelectionManager.Length);
             }
             else
             {
                 Convert(textArea.Document, 0, textArea.Document.TextLength);
             }
+
             textArea.Caret.ValidateCaretPos();
             textArea.EndUpdate();
             textArea.Refresh();
