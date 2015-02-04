@@ -15,18 +15,16 @@ namespace ICSharpCode.TextEditor
 {
     public class TextAreaDragDropHandler
     {
-        public static Action<Exception> OnDragDropException = ex => MessageBox.Show(ex.ToString());
-
-        TextArea textArea;
+        TextArea _textArea;
 
         public void Attach(TextArea textArea)
         {
-            this.textArea = textArea;
-            textArea.AllowDrop = true;
+            _textArea = textArea;
+            _textArea.AllowDrop = true;
 
-            textArea.DragEnter += MakeDragEventHandler(OnDragEnter);
-            textArea.DragDrop  += MakeDragEventHandler(OnDragDrop);
-            textArea.DragOver  += MakeDragEventHandler(OnDragOver);
+            _textArea.DragEnter += MakeDragEventHandler(OnDragEnter);
+            _textArea.DragDrop += MakeDragEventHandler(OnDragDrop);
+            _textArea.DragOver += MakeDragEventHandler(OnDragOver);
         }
 
         /// <summary>
@@ -43,7 +41,7 @@ namespace ICSharpCode.TextEditor
                 }
                 catch (Exception ex)
                 {
-                    OnDragDropException(ex);
+                    MessageBox.Show(ex.ToString());
                 }
             };
         }
@@ -75,24 +73,24 @@ namespace ICSharpCode.TextEditor
 
         void InsertString(int offset, string str)
         {
-            textArea.Document.Insert(offset, str);
-            textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(offset), textArea.Document.OffsetToPosition(offset + str.Length), false);
-            textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
-            textArea.Refresh();
+            _textArea.Document.Insert(offset, str);
+            _textArea.SelectionManager.SetSelection(_textArea.Document.OffsetToPosition(offset), _textArea.Document.OffsetToPosition(offset + str.Length), false);
+            _textArea.Caret.Position = _textArea.Document.OffsetToPosition(offset + str.Length);
+            _textArea.Refresh();
         }
 
         protected void OnDragDrop(object sender, DragEventArgs e)
         {
-            Point p = textArea.PointToClient(new Point(e.X, e.Y));
+            Point p = _textArea.PointToClient(new Point(e.X, e.Y));
 
             if (e.Data.GetDataPresent(typeof(string)))
             {
-                textArea.BeginUpdate();
-                textArea.Document.UndoStack.StartUndoGroup();
+                _textArea.BeginUpdate();
+                _textArea.Document.UndoStack.StartUndoGroup();
                 try
                 {
-                    int offset = textArea.Caret.Offset;
-                    if (textArea.IsReadOnly(offset))
+                    int offset = _textArea.Caret.Offset;
+                    if (_textArea.IsReadOnly(offset))
                     {
                         // prevent dragging text into readonly section
                         return;
@@ -125,36 +123,37 @@ namespace ICSharpCode.TextEditor
                     //    }
                     //}
 
-                    textArea.SelectionManager.ClearSelection();
+                    _textArea.SelectionManager.ClearSelection();
                     InsertString(offset, (string)e.Data.GetData(typeof(string)));
-                    textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+                    _textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
                 }
                 finally
                 {
-                    textArea.Document.UndoStack.EndUndoGroup();
-                    textArea.EndUpdate();
+                    _textArea.Document.UndoStack.EndUndoGroup();
+                    _textArea.EndUpdate();
                 }
             }
         }
 
         protected void OnDragOver(object sender, DragEventArgs e)
         {
-            if (!textArea.Focused)
+            if (!_textArea.Focused)
             {
-                textArea.Focus();
+                _textArea.Focus();
             }
 
-            Point p = textArea.PointToClient(new Point(e.X, e.Y));
+            Point p = _textArea.PointToClient(new Point(e.X, e.Y));
 
-            if (textArea.TextView.DrawingPosition.Contains(p.X, p.Y))
+            if (_textArea.TextView.DrawingPosition.Contains(p.X, p.Y))
             {
-                TextLocation realmousepos= textArea.TextView.GetLogicalPosition(p.X - textArea.TextView.DrawingPosition.X,
-                                           p.Y - textArea.TextView.DrawingPosition.Y);
-                int lineNr = Math.Min(textArea.Document.TotalNumberOfLines - 1, Math.Max(0, realmousepos.Y));
+                TextLocation realmousepos= _textArea.TextView.GetLogicalPosition(p.X - _textArea.TextView.DrawingPosition.X,
+                                           p.Y - _textArea.TextView.DrawingPosition.Y);
+                int lineNr = Math.Min(_textArea.Document.TotalNumberOfLines - 1, Math.Max(0, realmousepos.Y));
 
-                textArea.Caret.Position = new TextLocation(realmousepos.X, lineNr);
-                textArea.SetDesiredColumn();
-                if (e.Data.GetDataPresent(typeof(string)) && !textArea.IsReadOnly(textArea.Caret.Offset))
+                _textArea.Caret.Position = new TextLocation(realmousepos.X, lineNr);
+                _textArea.SetDesiredColumn();
+
+                if (e.Data.GetDataPresent(typeof(string)) && !_textArea.IsReadOnly(_textArea.Caret.Offset))
                 {
                     e.Effect = GetDragDropEffect(e);
                 }

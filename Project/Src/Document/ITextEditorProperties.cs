@@ -7,6 +7,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
@@ -19,7 +20,7 @@ namespace ICSharpCode.TextEditor.Document
         bool IsIconBarVisible { get; set; }   // is wrapped in text editor control
         bool AllowCaretBeyondEOL { get; set; }
         bool ShowMatchingBracket { get; set; }   // is wrapped in text editor control
-        System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; }   // is wrapped in text editor control
+        TextRenderingHint TextRenderingHint { get; set; }   // is wrapped in text editor control
         bool MouseWheelScrollDown { get; set; }
         bool MouseWheelTextZoom { get; set; }
         string LineTerminator { get; set; }

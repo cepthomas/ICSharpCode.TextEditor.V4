@@ -21,12 +21,6 @@ namespace ICSharpCode.TextEditor
         const int ADDITIONAL_FOLD_TEXT_SIZE = 1;
         Font _lastFont;
 
-        public void Dispose()
-        {
-            measureCache.Clear();
-            //measureStringFormat.Dispose();
-        }
-
         public Highlight Highlight { get; set; }
 
         public int FirstPhysicalLine { get { return textArea.VirtualTop.Y / FontHeight; } }
@@ -65,6 +59,12 @@ namespace ICSharpCode.TextEditor
         {
             base.Cursor = Cursors.IBeam;
             OptionsChanged();
+        }
+
+        public void Dispose()
+        {
+            measureCache.Clear();
+            //measureStringFormat.Dispose();
         }
 
         static int GetFontHeight(Font font)
@@ -128,7 +128,7 @@ namespace ICSharpCode.TextEditor
             textArea.Caret.PaintCaret(g);
         }
 
-        void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle) //XXX
+        void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle)
         {
             Debug.Assert(lineNumber >= 0);
             Brush bgColorBrush    = GetBgColorBrush(lineNumber);
@@ -168,7 +168,7 @@ namespace ICSharpCode.TextEditor
                         // No foldings.
                         if (lineNumber < textArea.Document.TotalNumberOfLines)
                         {
-                            physicalXPos = PaintLinePart(g, lineNumber, column, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos); //XXX
+                            physicalXPos = PaintLinePart(g, lineNumber, column, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
                         }
                         break;
                     }
@@ -184,7 +184,7 @@ namespace ICSharpCode.TextEditor
                     }
                     starts.Clear();
 
-                    physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos); //XXX
+                    physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos);
                     column = firstFolding.EndColumn;
                     lineNumber = firstFolding.EndLine;
                     if (lineNumber >= textArea.Document.TotalNumberOfLines)
@@ -193,7 +193,7 @@ namespace ICSharpCode.TextEditor
                         break;
                     }
 
-                    ColumnRange selectionRange2 = textArea.SelectionManager.GetSelectionAtLine(lineNumber); //XXX
+                    ColumnRange selectionRange2 = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
                     bool drawSelected = ColumnRange.WHOLE_COLUMN.Equals(selectionRange2) || firstFolding.StartColumn >= selectionRange2.StartColumn && firstFolding.EndColumn <= selectionRange2.EndColumn;
 
                     physicalXPos = PaintFoldingText(g, lineNumber, physicalXPos, lineRectangle, firstFolding.FoldText, drawSelected);
@@ -201,7 +201,7 @@ namespace ICSharpCode.TextEditor
             }
             else // simple paint
             {
-                physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos); //XXX
+                physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
             }
 
             if (lineNumber < textArea.Document.TotalNumberOfLines)
@@ -209,7 +209,7 @@ namespace ICSharpCode.TextEditor
                 // Paint things after end of line
                 LineSegment currentLine = textArea.Document.GetLineSegment(lineNumber);
                 HighlightColor selectionColor = textArea.Document.TextEditorProperties.SelectionColor;
-                ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber); //XXX
+                ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
 
                 bool  selectionBeyondEOL = selectionRange.EndColumn > currentLine.Length || ColumnRange.WHOLE_COLUMN.Equals(selectionRange);
 
@@ -355,7 +355,7 @@ namespace ICSharpCode.TextEditor
             Brush backgroundBrush = textArea.Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
 
             HighlightColor selectionColor = textArea.Document.TextEditorProperties.SelectionColor;
-            ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber); //XXX
+            ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
             HighlightColor tabMarkerColor = textArea.Document.TextEditorProperties.TabMarkersColor;
             HighlightColor spaceMarkerColor = textArea.Document.TextEditorProperties.SpaceMarkersColor;
 
@@ -471,7 +471,7 @@ namespace ICSharpCode.TextEditor
                 // get colors from selection status:
                 if (ColumnRange.WHOLE_COLUMN.Equals(selectionRange) || (selectionRange.StartColumn <= currentWordOffset && selectionRange.EndColumn > currentWordEndOffset))
                 {
-                    // word is completely selected XXX
+                    // word is completely selected 
                     //Debug.WriteLine("YYY :{0}:{1}:{2}:{3}", selectionRange.StartColumn, currentWordOffset, selectionRange.EndColumn, currentWordEndOffset);
 
                     wordBackBrush = selectionBackgroundBrush;
@@ -629,10 +629,10 @@ namespace ICSharpCode.TextEditor
                 return font.Equals(myWordFontPair.font);
             }
 
-            public override int GetHashCode() //TODO1 used for?
-            {
-                return word.GetHashCode() ^ font.GetHashCode();
-            }
+            //public override int GetHashCode()
+            //{
+            //    return word.GetHashCode() ^ font.GetHashCode();
+            //}
         }
 
         Dictionary<WordFontPair, int> measureCache = new Dictionary<WordFontPair, int>();

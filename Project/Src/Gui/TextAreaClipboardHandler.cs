@@ -22,18 +22,12 @@ namespace ICSharpCode.TextEditor
 
         public bool EnableCut
         {
-            get
-            {
-                return textArea.EnableCutOrPaste; //textArea.SelectionManager.HasSomethingSelected;
-            }
+            get { return textArea.EnableCutOrPaste; } //textArea.SelectionManager.HasSomethingSelected; }
         }
 
         public bool EnableCopy
         {
-            get
-            {
-                return true; //textArea.SelectionManager.HasSomethingSelected;
-            }
+            get { return true; } //textArea.SelectionManager.HasSomethingSelected;       }
         }
 
         public delegate bool ClipboardContainsTextDelegate();
@@ -56,6 +50,7 @@ namespace ICSharpCode.TextEditor
             {
                 if (!textArea.EnableCutOrPaste)
                     return false;
+
                 ClipboardContainsTextDelegate d = GetClipboardContainsText;
                 if (d != null)
                 {
@@ -77,18 +72,12 @@ namespace ICSharpCode.TextEditor
 
         public bool EnableDelete
         {
-            get
-            {
-                return textArea.SelectionManager.HasSomethingSelected && !textArea.SelectionManager.SelectionIsReadonly;
-            }
+            get { return textArea.SelectionManager.HasSomethingSelected && !textArea.SelectionManager.SelectionIsReadonly; }
         }
 
         public bool EnableSelectAll
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public TextAreaClipboardHandler(TextArea textArea)
@@ -101,8 +90,6 @@ namespace ICSharpCode.TextEditor
         {
 //			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
         }
-
-        const string LineSelectedType = "MSDEVLineSelect";  // This is the type VS 2003 and 2005 use for flagging a whole line copy
 
         bool CopyTextToClipboard(string stringToCopy)
         {
@@ -200,7 +187,8 @@ namespace ICSharpCode.TextEditor
                     if (data == null)
                         return;
 
-                    bool fullLine = data.GetDataPresent(LineSelectedType);
+                    bool fullLine = data.GetDataPresent("MSDEVLineSelect"); // This is the type VS 2003 and 2005 use for flagging a whole line copy
+
                     if (data.GetDataPresent(DataFormats.UnicodeText))
                     {
                         string text = (string)data.GetData(DataFormats.UnicodeText);

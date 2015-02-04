@@ -7,6 +7,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
@@ -25,7 +26,7 @@ namespace ICSharpCode.TextEditor.Document
         public bool IsIconBarVisible { get; set; }
         public bool AllowCaretBeyondEOL { get; set; }
         public bool ShowMatchingBracket { get; set; }
-        public System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; }
+        public TextRenderingHint TextRenderingHint { get; set; }
         public bool MouseWheelScrollDown { get; set; }
         public bool MouseWheelTextZoom { get; set; }
         public string LineTerminator { get; set; }
@@ -85,7 +86,7 @@ namespace ICSharpCode.TextEditor.Document
             ShowLineNumbers = true;
             EnableFolding = true;
             ShowVerticalRuler = true;
-            TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+            TextRenderingHint = TextRenderingHint.SystemDefault;
             MouseWheelScrollDown = true;
             MouseWheelTextZoom = true;
 

@@ -9,10 +9,7 @@ using System;
 
 namespace ICSharpCode.TextEditor
 {
-    /// <summary>
-    /// A line/column position.
-    /// Text editor lines/columns are counting from zero.
-    /// </summary>
+    /// <summary>A line/column position. Text editor lines/columns are counting from zero.</summary>
     public class TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
         public int X { get; set; }
@@ -53,10 +50,10 @@ namespace ICSharpCode.TextEditor
             return string.Format("(Line {1}, Col {0})", X, Y);
         }
 
-        public override int GetHashCode() //TODO1 used for?
-        {
-            return unchecked (87 * X.GetHashCode() ^ Y.GetHashCode());
-        }
+        //public override int GetHashCode()
+        //{
+        //    return unchecked (87 * X.GetHashCode() ^ Y.GetHashCode());
+        //}
 
         public override bool Equals(object obj)
         {

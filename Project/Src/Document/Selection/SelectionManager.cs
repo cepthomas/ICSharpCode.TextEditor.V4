@@ -13,7 +13,6 @@ using System.Diagnostics;
 
 namespace ICSharpCode.TextEditor.Document
 {
-
     /// <summary>Where selection initiated from.</summary>
     public enum SelSource { None = 0, Gutter = 1, TArea = 2 }
 
@@ -42,8 +41,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public bool IsValid { get { return StartPosition.IsValid && EndPosition.IsValid; } }
 
-
-        public string SelectedText //TODO1 test for IsRect
+        public string SelectedText //TODO1 test for IsRect - make a list
         {
             get
             {
@@ -69,8 +67,10 @@ namespace ICSharpCode.TextEditor.Document
             {
                 if (_document.ReadOnly)
                     return true;
+
                 if (_document.TextEditorProperties.SupportReadOnlySegments)
                     return _document.MarkerStrategy.GetMarkers(StartOffset, Length).Exists(m => m.IsReadOnly);
+
                 return false;
             }
         }
@@ -89,7 +89,6 @@ namespace ICSharpCode.TextEditor.Document
             StartPosition = new TextLocation();
             EndPosition = new TextLocation();
             _isRect = false;
-
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
         }
 
@@ -119,34 +118,22 @@ namespace ICSharpCode.TextEditor.Document
 
         void DocumentChanged(object sender, DocumentEventArgs e)
         {
-            if (e.Text == null)
-            {
-                Remove(e.Offset, e.Length);
-            }
-            else
-            {
-                if (e.Length < 0)
-                {
-                    Insert(e.Offset, e.Text);
-                }
-                else
-                {
-                    Replace(e.Offset, e.Length, e.Text);
-                }
-            }
+            //if (e.Text == null)
+            //{
+            //    Remove(e.Offset, e.Length);
+            //}
+            //else
+            //{
+            //    if (e.Length < 0)
+            //    {
+            //        Insert(e.Offset, e.Text);
+            //    }
+            //    else
+            //    {
+            //        Replace(e.Offset, e.Length, e.Text);
+            //    }
+            //}
         }
-
-        //public void SetSelection(IDocument document, TextLocation startPosition, TextLocation endPosition, bool isRect)
-        //{
-        //    DefaultDocument.ValidatePosition(document, startPosition);
-        //    DefaultDocument.ValidatePosition(document, endPosition);
-        //    Debug.Assert(startPosition <= endPosition);
-
-        //    _document = document;
-        //    StartPosition = startPosition;
-        //    EndPosition = endPosition;
-        //    IsRect = isRect;
-        //}
 
         public void SetSelection(TextLocation startPosition, TextLocation endPosition, bool isRect)
         {
@@ -307,49 +294,11 @@ namespace ICSharpCode.TextEditor.Document
             return ret;
         }
 
-        /// <remarks>Used internally, do not call.</remarks>
-        internal void Insert(int offset, string text)
-        {
-//			foreach (Selection selection in SelectionCollection) {
-//				if (selection.Offset > offset) {
-//					selection.Offset += text.Length;
-//				} else if (selection.Offset + selection.Length > offset) {
-//					selection.Length += text.Length;
-//				}
-//			}
-        }
-
-        /// <remarks>Used internally, do not call.</remarks>
-        internal void Remove(int offset, int length)
-        {
-//			foreach (Selection selection in SelectionCollection) {
-//				if (selection.Offset > offset) {
-//					selection.Offset -= length;
-//				} else if (selection.Offset + selection.Length > offset) {
-//					selection.Length -= length;
-//				}
-//			}
-        }
-
-        /// <remarks>Used internally, do not call.</remarks>
-        internal void Replace(int offset, int length, string text)
-        {
-//			foreach (Selection selection in SelectionCollection) {
-//				if (selection.Offset > offset) {
-//					selection.Offset = selection.Offset - length + text.Length;
-//				} else if (selection.Offset + selection.Length > offset) {
-//					selection.Length = selection.Length - length + text.Length;
-//				}
-//			}
-        }
-
         public ColumnRange GetSelectionAtLine(int lineNumber)
         {
             ColumnRange ret = null;
 
-
-            Debug.Write(string.Format("L:{0}  ", lineNumber));
-
+            //Debug.Write(string.Format("L:{0}  ", lineNumber));
 
             if (IsValid && !IsEmpty)
             {
@@ -359,7 +308,9 @@ namespace ICSharpCode.TextEditor.Document
                 if (_isRect)
                 {
                     if (startLine <= lineNumber && lineNumber <= endLine)
+                    {
                         ret = new ColumnRange(StartPosition.X, EndPosition.X);
+                    }
                 }
                 else
                 {
@@ -385,8 +336,6 @@ namespace ICSharpCode.TextEditor.Document
 
                 //Debug.Write(string.Format("L:{0}:{1}  ", lineNumber, ret));
             }
-
-
 
             return ret ?? ColumnRange.NO_COLUMN;
         }

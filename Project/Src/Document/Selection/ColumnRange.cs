@@ -24,10 +24,10 @@ namespace ICSharpCode.TextEditor.Document
             EndColumn = endColumn;
         }
 
-        public override int GetHashCode() //TODO1 used for?
-        {
-            return StartColumn + (EndColumn << 16);
-        }
+        //public override int GetHashCode()
+        //{
+        //    return StartColumn + (EndColumn << 16);
+        //}
 
         public override bool Equals(object obj)
         {

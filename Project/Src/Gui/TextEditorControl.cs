@@ -206,13 +206,6 @@ namespace ICSharpCode.TextEditor
         {
             if (disposing)
             {
-                //if (printDocument != null)
-                //{
-                    //printDocument.BeginPrint -= new PrintEventHandler(this.BeginPrint);
-                    //printDocument.PrintPage  -= new PrintPageEventHandler(this.PrintPage);
-                    //printDocument = null;
-                //}
-
                 Document.UndoStack.ClearAll();
                 Document.UpdateCommited -= new EventHandler(CommitUpdateRequested);
 
@@ -302,11 +295,8 @@ namespace ICSharpCode.TextEditor
                         break;
                 }
             }
+
             Document.UpdateQueue.Clear();
-//orig			this.primaryTextArea.TextArea.Update();
-//			if (this.secondaryTextArea != null) {
-//				this.secondaryTextArea.TextArea.Update();
-//			}
         }
         #endregion
     }

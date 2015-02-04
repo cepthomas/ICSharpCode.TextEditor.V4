@@ -69,17 +69,18 @@ namespace ICSharpCode.TextEditor.Actions
         {
             switch (textArea.Caret.CaretMode)
             {
-            case CaretMode.InsertMode:
-                textArea.InsertString(GetIndentationString(textArea.Document, textArea));
-                break;
-            case CaretMode.OverwriteMode:
-                string indentStr = GetIndentationString(textArea.Document, textArea);
-                textArea.ReplaceChar(indentStr[0]);
-                if (indentStr.Length > 1)
-                {
-                    textArea.InsertString(indentStr.Substring(1));
-                }
-                break;
+                case CaretMode.InsertMode:
+                    textArea.InsertString(GetIndentationString(textArea.Document, textArea));
+                    break;
+
+                case CaretMode.OverwriteMode:
+                    string indentStr = GetIndentationString(textArea.Document, textArea);
+                    textArea.ReplaceChar(indentStr[0]);
+                    if (indentStr.Length > 1)
+                    {
+                        textArea.InsertString(indentStr.Substring(1));
+                    }
+                    break;
             }
             textArea.SetDesiredColumn();
         }
@@ -159,6 +160,7 @@ namespace ICSharpCode.TextEditor.Actions
                     /// MS Visual Studio 6 strategy:
                      ****/
 //					string temp = document.GetText(line.Offset,line.Length);
+
                     if (line.Length > 0)
                     {
                         int charactersToRemove = 0;
@@ -191,6 +193,7 @@ namespace ICSharpCode.TextEditor.Actions
                                 charactersToRemove = leadingSpaces;
                             }
                         }
+
                         if (charactersToRemove > 0)
                         {
                             document.Remove(line.Offset,charactersToRemove);
@@ -371,6 +374,7 @@ namespace ICSharpCode.TextEditor.Actions
                 {
                     RemoveCommentAt(textArea.Document, comment, textArea.SelectionManager, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
                 }
+
                 textArea.Document.UpdateQueue.Clear();
                 textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, lastLine));
                 textArea.EndUpdate();
@@ -389,6 +393,7 @@ namespace ICSharpCode.TextEditor.Actions
                 {
                     RemoveCommentAt(textArea.Document, comment, null, caretLine, caretLine);
                 }
+
                 textArea.Document.UpdateQueue.Clear();
                 textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, caretLine));
                 textArea.EndUpdate();
@@ -433,7 +438,7 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.SelectionManager.HasSomethingSelected)
             {
                 selectionStartOffset = textArea.SelectionManager.StartOffset;
-                selectionEndOffset = selectionStartOffset; // TODO2 broken? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
+                selectionEndOffset = selectionStartOffset; // TODO2 broken-orig? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
             }
             else
             {
@@ -517,9 +522,7 @@ namespace ICSharpCode.TextEditor.Actions
                 }
             }
 
-            // Find end of comment after or partially after the
-            // selected text.
-
+            // Find end of comment after or partially after the selected text.
             if (commentEndOffset == -1)
             {
                 int offset = selectionStartOffset + 1 - commentEnd.Length;
@@ -607,18 +610,18 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
 
-        public override int GetHashCode()
-        {
-            int hashCode = 0;
-            unchecked
-            {
-                if (commentStart != null) hashCode += 1000000007 * commentStart.GetHashCode();
-                if (commentEnd != null) hashCode += 1000000009 * commentEnd.GetHashCode();
-                hashCode += 1000000021 * startOffset.GetHashCode();
-                hashCode += 1000000033 * endOffset.GetHashCode();
-            }
-            return hashCode;
-        }
+        //public override int GetHashCode()
+        //{
+        //    int hashCode = 0;
+        //    unchecked
+        //    {
+        //        if (commentStart != null) hashCode += 1000000007 * commentStart.GetHashCode();
+        //        if (commentEnd != null) hashCode += 1000000009 * commentEnd.GetHashCode();
+        //        hashCode += 1000000021 * startOffset.GetHashCode();
+        //        hashCode += 1000000033 * endOffset.GetHashCode();
+        //    }
+        //    return hashCode;
+        //}
 
         public override bool Equals(object obj)
         {
@@ -814,14 +817,16 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 return;
             }
+
             switch (textArea.Caret.CaretMode)
             {
-            case CaretMode.InsertMode:
-                textArea.Caret.CaretMode = CaretMode.OverwriteMode;
-                break;
-            case CaretMode.OverwriteMode:
-                textArea.Caret.CaretMode = CaretMode.InsertMode;
-                break;
+                case CaretMode.InsertMode:
+                    textArea.Caret.CaretMode = CaretMode.OverwriteMode;
+                    break;
+
+                case CaretMode.OverwriteMode:
+                    textArea.Caret.CaretMode = CaretMode.InsertMode;
+                    break;
             }
         }
     }

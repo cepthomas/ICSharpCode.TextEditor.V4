@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
@@ -24,11 +23,9 @@ namespace ICSharpCode.TextEditor
         bool _doubleclick = false;
         bool _clickedOnSelectedText = false; //TODO1 this is still a bit messed up.
         MouseButtons _button;
-
         static readonly Point NIL_POINT = new Point(-1, -1);
         Point _mousedownpos = NIL_POINT;
         Point _lastmousedownpos = NIL_POINT;
-
         bool _gotmousedown = false;
         bool _dodragdrop = false;
 
@@ -199,7 +196,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void ExtendSelectionToMouse()//XXX
+        void ExtendSelectionToMouse()
         {
             Point mousepos = _textArea.MousePos;
             TextLocation realmousepos = _textArea.TextView.GetLogicalPosition(Math.Max(0, mousepos.X - _textArea.TextView.DrawingPosition.X), mousepos.Y - _textArea.TextView.DrawingPosition.Y);
@@ -208,11 +205,6 @@ namespace ICSharpCode.TextEditor
             TextLocation oldPos = _textArea.Caret.Position;
 
             bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
-
-            //if (oldPos == realmousepos && _textArea.SelectionManager.WhereFrom != SelSource.Gutter)
-            //{
-            //    return;
-            //}
 
             // Update caret.
             if (_textArea.SelectionManager.WhereFrom == SelSource.Gutter)
@@ -233,35 +225,6 @@ namespace ICSharpCode.TextEditor
             {
                 _textArea.Caret.Position = realmousepos;
             }
-
-            ////// moves selection across whole words for double-click initiated selection
-            ////if (!_minSelection.IsValid && _textArea.SelectionManager.IsValid && _textArea.SelectionManager.WhereFrom == SelSource.TArea)
-            ////{
-            ////    // Extend selection when selection was started with double-click
-            ////    TextLocation min = _minSelection >= _maxSelection ? _maxSelection : _minSelection;
-            ////    TextLocation max = _minSelection >= _maxSelection ? _minSelection : _maxSelection;
-
-            ////    if (max >= realmousepos && realmousepos >= min)
-            ////    {
-            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
-            ////    }
-            ////    else if (max >= realmousepos)
-            ////    {
-            ////        int moff = _textArea.Document.PositionToOffset(realmousepos);
-            ////        min = _textArea.Document.OffsetToPosition(FindWordStart(_textArea.Document, moff));
-            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
-            ////    }
-            ////    else
-            ////    {
-            ////        int moff = _textArea.Document.PositionToOffset(realmousepos);
-            ////        max = _textArea.Document.OffsetToPosition(FindWordEnd(_textArea.Document, moff));
-            ////        _textArea.SelectionManager.SetSelection(min, max, isRect);
-            ////    }
-            ////}
-            ////else
-            ////{
-            ////    _textArea.SelectionManager.ExtendSelection(oldPos, _textArea.Caret.Position, isRect);//XXX
-            ////}
 
             _textArea.SelectionManager.ExtendSelection(_textArea.Caret.Position, isRect);
 
@@ -306,20 +269,14 @@ namespace ICSharpCode.TextEditor
                     }
 
                     _textArea.Caret.Position = _maxSelection;
-                    _textArea.SelectionManager.SetSelection(_minSelection, _maxSelection, false);//XXX
+                    _textArea.SelectionManager.SetSelection(_minSelection, _maxSelection, false);
                 }
-
-                //////if (!_textArea.SelectionManager.IsEmpty)
-                //////{
-                //////    _textArea.SelectionManager.StartPosition = _minSelection;
-                //////    _textArea.SelectionManager.EndPosition = _maxSelection;
-                //////}
 
                 // after a double-click selection, the caret is placed correctly, but it is not positioned internally.  The effect is when the cursor
                 // is moved up or down a line, the caret will take on the column first clicked on for the double-click
                 _textArea.SetDesiredColumn();
 
-                // HACK WARNING !!!
+                // orig-HACK WARNING !!!
                 // must refresh here, because when a error tooltip is showed and the underlined code is double clicked the textArea 
                 // don't update corrctly, updateline doesn't work ... but the refresh does. Mike
                 _textArea.Refresh();
@@ -380,7 +337,6 @@ namespace ICSharpCode.TextEditor
 
                 _lastmousedownpos = _mousedownpos = new Point(e.X, e.Y);
                 bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
-
 
                 if (_button == MouseButtons.Left)
                 {
@@ -456,7 +412,7 @@ namespace ICSharpCode.TextEditor
         int FindNext(IDocument document, int offset, char ch)
         {
             LineSegment line = document.GetLineSegmentForOffset(offset);
-            int         endPos = line.Offset + line.Length;
+            int endPos = line.Offset + line.Length;
 
             while (offset < endPos && document.GetCharAt(offset) != ch)
             {
