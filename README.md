@@ -10,3 +10,9 @@ An evolution of the old WinForm text editor. After evaluating a lot of editors f
 - Maybe some performance tweaks.
 
 The baseline is from ICSharpCode V3.2.1.7.
+
+Hiatus
+===============
+After wading around in a lot of the ICSharpCode.TextEditor.V4 I've decided that the better course is to
+build an editor around AvalonEdit. So I've forked that and started a new version.
+This can stay here for a while.

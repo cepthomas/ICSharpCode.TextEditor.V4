@@ -1,4 +1,4 @@
-﻿// This file has been added to the base project by me. License is WTFPL.
+﻿// This file has been added to the base project by me.
 
 using System;
 using System.Collections.Generic;
