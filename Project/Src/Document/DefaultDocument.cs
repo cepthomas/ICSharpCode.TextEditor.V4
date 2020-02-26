@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-
+using ICSharpCode.TextEditor.Src.Util;
 using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// The default <see cref="IDocument"/> implementation.
     /// </summary>
-    internal sealed class DefaultDocument : IDocument
+    internal sealed class DefaultDocument : IDocument // TODO don't really need the interface.
     {
         bool readOnly = false;
 
@@ -284,15 +284,22 @@ namespace ICSharpCode.TextEditor.Document
             }
             set
             {
+                Logger.Info("DefaultDocument.TextContent entry");
                 Debug.Assert(textBufferStrategy != null);
                 Debug.Assert(lineTrackingStrategy != null);
                 OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
+                Logger.Info("DefaultDocument.TextContent 10");
                 textBufferStrategy.SetContent(value);
-                lineTrackingStrategy.SetContent(value);
+                Logger.Info("DefaultDocument.TextContent 20");
+                lineTrackingStrategy.SetContent(value); // TODO 6 seconds
+                Logger.Info("DefaultDocument.TextContent 30");
                 undoStack.ClearAll();
+                Logger.Info("DefaultDocument.TextContent 40");
 
                 OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
+                Logger.Info("DefaultDocument.TextContent 50");
                 OnTextContentChanged(EventArgs.Empty);
+                Logger.Info("DefaultDocument.TextContent exit");
             }
         }
 

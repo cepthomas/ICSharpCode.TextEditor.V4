@@ -15,7 +15,6 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.TextEditor.snk</AssemblyOriginatorKeyFile>
     <RootNamespace>ICSharpCode.TextEditor</RootNamespace>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
@@ -127,6 +126,7 @@
     <Compile Include="Src\Util\AugmentableRedBlackTree.cs" />
     <Compile Include="Src\Util\CheckedList.cs" />
     <Compile Include="Src\Util\LookupTable.cs" />
+    <Compile Include="Src\Util\MiscUtil.cs" />
     <Compile Include="Src\Util\MouseWheelHandler.cs" />
     <Compile Include="Src\Util\RedBlackTreeIterator.cs" />
     <Compile Include="Src\Util\TextUtility.cs" />
@@ -214,8 +214,6 @@
     </Compile>
     <Compile Include="Src\Document\BookmarkManager\Bookmark.cs" />
     <Compile Include="Src\Document\BookmarkManager\BookmarkEventHandler.cs" />
-    <None Include="Resources\ICSharpCode.TextEditor.snk" />
-    <EmbeddedResource Include="Resources\TextEditorControl.bmp" />
     <EmbeddedResource Include="Resources\RightArrow.cur" />
     <Compile Include="Src\Util\FileReader.cs" />
     <Compile Include="Src\Gui\DrawableLine.cs" />
