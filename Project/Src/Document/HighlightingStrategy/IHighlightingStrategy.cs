@@ -21,7 +21,7 @@ namespace ICSharpCode.TextEditor.Document
         string Name { get; }
 
         /// <value>
-        /// The name of the folding type. Not technically part of highlighting but best place to keep it.
+        /// The name of the folding type. Not technically part of highlighting but best place to keep it. TODO?
         /// </value>
         string Folding { get; }
 

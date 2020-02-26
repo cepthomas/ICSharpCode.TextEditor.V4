@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Tests
         public void Init()
         {
             document = new DocumentFactory().CreateDocument();
-            document.HighlightingStrategy = HighlightingManager.Manager.FindHighlighter("XML");
+            document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighter("XML");
         }
 
         [Test]

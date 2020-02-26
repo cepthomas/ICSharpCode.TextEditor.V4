@@ -152,8 +152,8 @@ namespace ICSharpCode.TextEditor.Document
 
         public IHighlightingStrategy FindHighlighterForFile(string fileName)
         {
-            string highlighterName = (string)_extensionsToName[Path.GetExtension(fileName).ToUpperInvariant()];
-            if (highlighterName != null)
+            string ext = Path.GetExtension(fileName).ToUpperInvariant();
+            if(_extensionsToName.TryGetValue(ext, out string highlighterName))
             {
                 object def = HighlightingDefinitions[highlighterName];
                 if (def is Tuple<SyntaxMode, ISyntaxModeFileProvider>)
