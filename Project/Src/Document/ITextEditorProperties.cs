@@ -12,7 +12,7 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public interface ITextEditorProperties
+    public interface ITextEditorProperties // TODO1 needed?
     {
         bool CaretLine { get; set; }
         bool AutoInsertCurlyBracket { get; set; }   // is wrapped in text editor control
@@ -45,7 +45,7 @@ namespace ICSharpCode.TextEditor.Document
         BracketMatchingStyle  BracketMatchingStyle { get; set; }   // is wrapped in text editor control
         bool SupportReadOnlySegments { get; set; }
 
-        // Colors relocated from highlighting environment.
+        // Colors relocated from highlighting environment. TODO1 I did this.
         HighlightColor DefaultColor { get; set; }
         HighlightColor CaretMarkerColor { get; set; }
         HighlightColor SelectionColor { get; set; }

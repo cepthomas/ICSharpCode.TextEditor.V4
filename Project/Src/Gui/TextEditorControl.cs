@@ -18,7 +18,7 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class is used for a basic text area control</summary>
     [ToolboxBitmap("ICSharpCode.TextEditor.Resources.TextEditorControl.bmp")]
     [ToolboxItem(true)]
-    public class TextEditorControl : TextEditorControlBase // TODO3 combine these?
+    public class TextEditorControl : TextEditorControlBase // TODO1 combine these?
     {
         protected Panel textAreaPanel     = new Panel();
         TextAreaControl primaryTextArea  = null;

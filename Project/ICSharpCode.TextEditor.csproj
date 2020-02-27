@@ -122,7 +122,6 @@
     <Compile Include="Src\Document\TextBufferStrategy\GapTextBufferStrategy.cs" />
     <Compile Include="Src\Document\TextBufferStrategy\ITextBufferStrategy.cs" />
     <Compile Include="Src\Document\TextBufferStrategy\StringTextBufferStrategy.cs" />
-    <Compile Include="Src\Gui\PrintEngine.cs" />
     <Compile Include="Src\Util\AugmentableRedBlackTree.cs" />
     <Compile Include="Src\Util\CheckedList.cs" />
     <Compile Include="Src\Util\LookupTable.cs" />
@@ -271,6 +270,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <None Include="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="SyntaxDefinition\CPP.NET-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

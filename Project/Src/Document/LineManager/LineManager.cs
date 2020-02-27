@@ -5,6 +5,7 @@
 //     <version>$Revision$</version>
 // </file>
 
+using ICSharpCode.TextEditor.Src.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -86,36 +87,50 @@ namespace ICSharpCode.TextEditor.Document
 
         public void Replace(int offset, int length, string text)
         {
+            Logger.Info("LineManager.Replace entry");
+
             //Debug.WriteLine("Replace offset="+offset+" length="+length+" text.Length="+text.Length);
             int lineStart = GetLineNumberForOffset(offset);
             int oldNumberOfLines = this.TotalNumberOfLines;
             DeferredEventList deferredEventList = new DeferredEventList();
+            Logger.Info("LineManager.Replace 10");
+
             RemoveInternal(ref deferredEventList, offset, length);
             int numberOfLinesAfterRemoving = this.TotalNumberOfLines;
-            if (!string.IsNullOrEmpty(text))
-            {
-                InsertInternal(offset, text);
-            }
-            //			#if DEBUG_EX
-//			Console.WriteLine("New line collection:");
-//			Console.WriteLine(lineCollection.GetTreeAsString());
-//			Console.WriteLine("New text:");
-//			Console.WriteLine("'" + document.TextContent + "'");
-//			#endif
+
+            Logger.Info("LineManager.Replace 20");
+
+            InsertInternal(offset, text ?? "");
+            //TODO1*** 1.5 sec
+            Logger.Info("LineManager.Replace 30");
+
+#if DEBUG_EX
+			Console.WriteLine("New line collection:");
+			Console.WriteLine(lineCollection.GetTreeAsString());
+			Console.WriteLine("New text:");
+			Console.WriteLine("'" + document.TextContent + "'");
+#endif
             // Only fire events after RemoveInternal+InsertInternal finished completely:
             // Otherwise we would expose inconsistent state to the event handlers.
             RunHighlighter(lineStart, 1 + Math.Max(0, this.TotalNumberOfLines - numberOfLinesAfterRemoving));
+
+            //TODO1*** 5 sec
+            Logger.Info("LineManager.Replace 40");
 
             if (deferredEventList.removedLines != null)
             {
                 foreach (LineSegment ls in deferredEventList.removedLines)
                     OnLineDeleted(new LineEventArgs(document, ls));
             }
+
+            Logger.Info("LineManager.Replace 50");
+
             deferredEventList.RaiseEvents();
             if (this.TotalNumberOfLines != oldNumberOfLines)
             {
                 OnLineCountChanged(new LineCountChangeEventArgs(document, lineStart, this.TotalNumberOfLines - oldNumberOfLines));
             }
+            Logger.Info("LineManager.Replace exit");
         }
 
         void RemoveInternal(ref DeferredEventList deferredEventList, int offset, int length)
@@ -305,7 +320,7 @@ namespace ICSharpCode.TextEditor.Document
             return GetFirstLogicalLine(visibleLineNumber + 1) - 1;
         }
 
-        // TODO2-orig : speedup the next/prev visible line search
+        // TODO1-orig : speedup the next/prev visible line search
         // HOW? : save the foldings in a sorted list and lookup the line numbers in this list
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
         {

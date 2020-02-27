@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// The default <see cref="IDocument"/> implementation.
     /// </summary>
-    internal sealed class DefaultDocument : IDocument // TODO don't really need the interface.
+    internal sealed class DefaultDocument : IDocument // TODO1 don't really need the interface.
     {
         bool readOnly = false;
 
@@ -284,22 +284,14 @@ namespace ICSharpCode.TextEditor.Document
             }
             set
             {
-                Logger.Info("DefaultDocument.TextContent entry");
                 Debug.Assert(textBufferStrategy != null);
                 Debug.Assert(lineTrackingStrategy != null);
                 OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
-                Logger.Info("DefaultDocument.TextContent 10");
                 textBufferStrategy.SetContent(value);
-                Logger.Info("DefaultDocument.TextContent 20");
-                lineTrackingStrategy.SetContent(value); // TODO 6 seconds
-                Logger.Info("DefaultDocument.TextContent 30");
+                lineTrackingStrategy.SetContent(value); // TODO1*** 6 seconds
                 undoStack.ClearAll();
-                Logger.Info("DefaultDocument.TextContent 40");
-
                 OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
-                Logger.Info("DefaultDocument.TextContent 50");
                 OnTextContentChanged(EventArgs.Empty);
-                Logger.Info("DefaultDocument.TextContent exit");
             }
         }
 

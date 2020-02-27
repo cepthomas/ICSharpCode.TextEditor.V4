@@ -705,8 +705,6 @@ namespace ICSharpCode.TextEditor
         /// <param name="autodetectEncoding">Automatically detect file encoding and set Encoding property to the detected encoding.</param>
         public void LoadFile(string fileName, Stream stream, bool autoLoadHighlighting, bool autodetectEncoding)
         {
-            Logger.Info("TextEditorControlBase.LoadFile() entry");
-
             if (stream == null)
                 throw new ArgumentNullException("stream");
 
@@ -714,7 +712,6 @@ namespace ICSharpCode.TextEditor
             document.TextContent = String.Empty;
             document.UndoStack.ClearAll();
             document.BookmarkManager.Clear();
-            Logger.Info("TextEditorControlBase.LoadFile() 10");
 
             if (autoLoadHighlighting)
             {
@@ -727,36 +724,28 @@ namespace ICSharpCode.TextEditor
                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            Logger.Info("TextEditorControlBase.LoadFile() 20");
 
             if (autodetectEncoding)
             {
                 Encoding encoding = this.Encoding;
                 Document.TextContent = Util.FileReader.ReadFileContent(stream, ref encoding);
-                Logger.Info("TextEditorControlBase.LoadFile() 30");
                 this.Encoding = encoding;
             }
             else
             {
                 using (StreamReader reader = new StreamReader(fileName, this.Encoding))
                 {
-                    Logger.Info("TextEditorControlBase.LoadFile() 40");
                     string s = reader.ReadToEnd();
-                    Logger.Info("TextEditorControlBase.LoadFile() 50");
-                    Document.TextContent = s; // TODO takes 6 seconds...
-                    Logger.Info("TextEditorControlBase.LoadFile() 60");
+                    Document.TextContent = s; // takes 6 seconds...
                 }
             }
-            Logger.Info("TextEditorControlBase.LoadFile() 80");
 
             this.FileName = fileName;
             Document.UpdateQueue.Clear();
             EndUpdate();
-            Logger.Info("TextEditorControlBase.LoadFile() 90");
 
             OptionsChanged();
             Refresh();
-            Logger.Info("TextEditorControlBase.LoadFile() exit");
         }
 
         /// <summary>

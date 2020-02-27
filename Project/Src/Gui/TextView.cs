@@ -378,7 +378,7 @@ namespace ICSharpCode.TextEditor
                 currentWord = currentLine.Words[wordIdx];
                 if (currentWordOffset < startColumn)
                 {
-                    // TODO3-orig: maybe we need to split at startColumn when we support fold markers inside words
+                    // TODO1-orig: maybe we need to split at startColumn when we support fold markers inside words
                     currentWordOffset += currentWord.Length;
                     continue;
                 }

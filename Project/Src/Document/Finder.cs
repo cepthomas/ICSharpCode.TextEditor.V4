@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 
-// TODO3 Replace in files? Part of refactoring?
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -79,8 +78,10 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Public worker functions
-        /// <summary>Escape magic chars so we can use regex for plain old filters.
-        /// Static so the whole world can use it.</summary>
+        /// <summary>
+        /// Escape magic chars so we can use regex for plain old filters.
+        /// Static so the whole world can use it.
+        /// </summary>
         /// <returns></returns>
         public static Regex CreateRegex(string regExString, FindMode mode, bool matchCase, bool matchWholeWord, bool next)
         {
