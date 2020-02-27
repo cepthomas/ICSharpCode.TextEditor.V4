@@ -198,7 +198,7 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        public ITextEditorProperties TextEditorProperties
+        public TextEditorProperties TextEditorProperties
         {
             get
             {

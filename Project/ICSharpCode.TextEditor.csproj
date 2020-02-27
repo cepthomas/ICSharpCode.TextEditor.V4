@@ -95,6 +95,7 @@
     <Compile Include="Src\Document\LineManager\DeferredEventList.cs" />
     <Compile Include="Src\Document\LineManager\LineSegmentTree.cs" />
     <Compile Include="Src\Document\TextAnchor.cs" />
+    <Compile Include="Src\Document\TextEditorProperties.cs" />
     <Compile Include="Src\Document\TextLocation.cs" />
     <Compile Include="Src\Document\TextUtilities.cs" />
     <Compile Include="Src\Document\BookmarkManager\BookmarkManager.cs" />
@@ -165,7 +166,6 @@
     <Compile Include="Src\Util\TipSplitter.cs" />
     <Compile Include="Src\Util\TipSpacer.cs" />
     <Compile Include="Src\Util\TipPainterTools.cs" />
-    <Compile Include="Src\Document\ITextEditorProperties.cs" />
     <Compile Include="Src\Gui\Caret.cs" />
     <Compile Include="Src\Gui\TextArea.cs">
       <SubType>Component</SubType>
@@ -198,7 +198,6 @@
     <Compile Include="Src\Actions\BookmarkActions.cs" />
     <Compile Include="Src\Actions\FoldActions.cs" />
     <Compile Include="Src\Actions\FormatActions.cs" />
-    <Compile Include="Src\Document\DefaultTextEditorProperties.cs" />
     <Compile Include="Src\Document\MarkerStrategy\MarkerStrategy.cs" />
     <Compile Include="Src\Document\MarkerStrategy\TextMarker.cs" />
     <Compile Include="Src\Gui\CompletionWindow\AbstractCompletionWindow.cs">
@@ -270,9 +269,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <None Include="README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="README.md" />
     <None Include="SyntaxDefinition\CPP.NET-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

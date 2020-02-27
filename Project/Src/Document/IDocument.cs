@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public interface IDocument
     {
-        ITextEditorProperties TextEditorProperties { get; set; }
+        TextEditorProperties TextEditorProperties { get; set; }
 
         UndoStack UndoStack { get; }
 

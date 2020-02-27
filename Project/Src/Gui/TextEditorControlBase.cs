@@ -40,7 +40,7 @@ namespace ICSharpCode.TextEditor
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ITextEditorProperties TextEditorProperties
+        public TextEditorProperties TextEditorProperties
         {
             get
             {

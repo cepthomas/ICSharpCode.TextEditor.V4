@@ -104,7 +104,7 @@ namespace ICSharpCode.TextEditor.Document
         IFormattingStrategy   formattingStrategy;
         FoldingManager        foldingManager;
         UndoStack             undoStack = new UndoStack();
-        ITextEditorProperties textEditorProperties = new DefaultTextEditorProperties();
+        TextEditorProperties textEditorProperties = new TextEditorProperties();
         MarkerStrategy        markerStrategy;
 
         public LineManager LineManager
@@ -167,7 +167,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public ITextEditorProperties TextEditorProperties
+        public TextEditorProperties TextEditorProperties
         {
             get
             {
