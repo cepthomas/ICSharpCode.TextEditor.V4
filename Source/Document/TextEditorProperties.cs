@@ -49,12 +49,11 @@ namespace ICSharpCode.TextEditor.Document
         public int IndentationSize { get; set; } = 4;
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
-        public Font Font { get; set; } = DefaultFont;
-        public FontContainer FontContainer { get; private set; } = new FontContainer(DefaultFont);
+        public FontContainer FontContainer { get; private set; } = new FontContainer(new Font("Consolas", 10));
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
         public bool SupportReadOnlySegments { get; set; }
 
-        // Colors relocated from highlighting environment. TODO1 I did this - good?
+        /////// Colors relocated from highlighting environment. TODO1 I did this - good?
         public HighlightColor DefaultColor { get; set; } = new HighlightBackground("WindowText", "Window", false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.Yellow, false, false);
         public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
@@ -69,6 +68,6 @@ namespace ICSharpCode.TextEditor.Document
         public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor("WindowText", false, false);
         public HighlightColor VRulerColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
 
-        static Font DefaultFont = new Font("Consolas", 10);
+        //static Font DefaultFont = new Font("Consolas", 10);
     }
 }

@@ -338,12 +338,12 @@ namespace ICSharpCode.TextEditor
             // set the input method editor location
             if (ime == null)
             {
-                ime = new Ime(textArea.Handle, textArea.Document.TextEditorProperties.Font);
+                ime = new Ime(textArea.Handle, textArea.Document.TextEditorProperties.FontContainer.DefaultFont);
             }
             else
             {
                 ime.HWnd = textArea.Handle;
-                ime.Font = textArea.Document.TextEditorProperties.Font;
+                ime.Font = textArea.Document.TextEditorProperties.FontContainer.DefaultFont;
             }
             ime.SetIMEWindowLocation(pos.X, pos.Y);
 

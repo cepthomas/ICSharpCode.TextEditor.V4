@@ -24,115 +24,47 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class TextWord
     {
-        HighlightColor  color;
-        LineSegment     line;
-        Document       document;
+        readonly LineSegment _line;
+        readonly Document _document;
 
-        int          offset;
-        int          length;
+        public static TextWord Space { get; } = new SpaceTextWord();
 
-        public sealed class SpaceTextWord : TextWord
+        public static TextWord Tab { get; } = new TabTextWord();
+
+        public int Offset { get; protected set; }
+
+        public int Length { get; protected set; }
+
+        public bool HasDefaultColor { get; }
+
+        public virtual TextWordType Type { get { return TextWordType.Word; } }
+
+        public string Word { get { return _document == null ? string.Empty : _document.GetText(_line.Offset + Offset, Length); } }
+
+        public Color Color { get { return SyntaxColor == null ? Color.Black : SyntaxColor.Color; } }
+
+        public bool Bold { get { return SyntaxColor == null ? false : SyntaxColor.Bold; } }
+
+        public bool Italic { get { return SyntaxColor == null ? false : SyntaxColor.Italic; } }
+
+        public HighlightColor SyntaxColor { get; set; }
+
+        public virtual bool IsWhiteSpace { get { return false; } }
+
+
+        protected TextWord()
         {
-            public SpaceTextWord()
-            {
-                length = 1;
-            }
-
-            public SpaceTextWord(HighlightColor color)
-            {
-                length = 1;
-                base.SyntaxColor = color;
-            }
-
-            public override Font GetFont(FontContainer fontContainer)
-            {
-                return null;
-            }
-
-            public override TextWordType Type
-            {
-                get
-                {
-                    return TextWordType.Space;
-                }
-            }
-            public override bool IsWhiteSpace
-            {
-                get
-                {
-                    return true;
-                }
-            }
         }
 
-        public sealed class TabTextWord : TextWord
+        public TextWord(Document document, LineSegment line, int offset, int length, HighlightColor color, bool hasDefaultColor)
         {
-            public TabTextWord()
-            {
-                length = 1;
-            }
-            public TabTextWord(HighlightColor color)
-            {
-                length = 1;
-                base.SyntaxColor = color;
-            }
+            _document = document;
+            _line = line;
 
-            public override Font GetFont(FontContainer fontContainer)
-            {
-                return null;
-            }
-
-            public override TextWordType Type
-            {
-                get
-                {
-                    return TextWordType.Tab;
-                }
-            }
-            public override bool IsWhiteSpace
-            {
-                get
-                {
-                    return true;
-                }
-            }
-        }
-
-        static TextWord spaceWord = new SpaceTextWord();
-        static TextWord tabWord   = new TabTextWord();
-
-        bool hasDefaultColor;
-
-        public static TextWord Space
-        {
-            get
-            {
-                return spaceWord;
-            }
-        }
-
-        public static TextWord Tab
-        {
-            get
-            {
-                return tabWord;
-            }
-        }
-
-        public int Offset
-        {
-            get
-            {
-                return offset;
-            }
-        }
-
-        public int Length
-        {
-            get
-            {
-                return length;
-            }
+            SyntaxColor = color;
+            Offset = offset;
+            Length = length;
+            HasDefaultColor = hasDefaultColor;
         }
 
         /// <summary>
@@ -149,123 +81,73 @@ namespace ICSharpCode.TextEditor.Document
             if (pos >= word.Length)
                 throw new ArgumentOutOfRangeException("pos", pos, "pos must be < word.Length");
 #endif
-            TextWord after = new TextWord(word.document, word.line, word.offset + pos, word.length - pos, word.color, word.hasDefaultColor);
-            word = new TextWord(word.document, word.line, word.offset, pos, word.color, word.hasDefaultColor);
+            TextWord after = new TextWord(word._document, word._line, word.Offset + pos, word.Length - pos, word.SyntaxColor, word.HasDefaultColor);
+            word = new TextWord(word._document, word._line, word.Offset, pos, word.SyntaxColor, word.HasDefaultColor);
             return after;
         }
 
-        public bool HasDefaultColor
-        {
-            get
-            {
-                return hasDefaultColor;
-            }
-        }
-
-        public virtual TextWordType Type
-        {
-            get
-            {
-                return TextWordType.Word;
-            }
-        }
-
-        public string Word
-        {
-            get
-            {
-                if (document == null)
-                {
-                    return String.Empty;
-                }
-                return document.GetText(line.Offset + offset, length);
-            }
-        }
 
         public virtual Font GetFont(FontContainer fontContainer)
         {
-            return color.GetFont(fontContainer);
+            return SyntaxColor.GetFont(fontContainer);
+        }
+    }
+
+    public sealed class SpaceTextWord : TextWord
+    {
+        public SpaceTextWord()
+        {
+            Length = 1;
         }
 
-        public Color Color
+        public SpaceTextWord(HighlightColor color)
+        {
+            Length = 1;
+            SyntaxColor = color;
+        }
+
+        public override Font GetFont(FontContainer fontContainer)
+        {
+            return null;
+        }
+
+        public override TextWordType Type
         {
             get
             {
-                if (color == null)
-                    return Color.Black;
-                else
-                    return color.Color;
+                return TextWordType.Space;
             }
         }
 
-        public bool Bold
+        public override bool IsWhiteSpace
         {
             get
             {
-                if (color == null)
-                    return false;
-                else
-                    return color.Bold;
+                return true;
             }
         }
+    }
 
-        public bool Italic
+    public sealed class TabTextWord : TextWord
+    {
+        public TabTextWord()
         {
-            get
-            {
-                if (color == null)
-                    return false;
-                else
-                    return color.Italic;
-            }
+            Length = 1;
         }
 
-        public HighlightColor SyntaxColor
+        public TabTextWord(HighlightColor color)
         {
-            get
-            {
-                return color;
-            }
-            set
-            {
-                Debug.Assert(value != null);
-                color = value;
-            }
+            Length = 1;
+            SyntaxColor = color;
         }
 
-        public virtual bool IsWhiteSpace
+        public override Font GetFont(FontContainer fontContainer)
         {
-            get
-            {
-                return false;
-            }
+            return null;
         }
 
-        protected TextWord()
-        {
-        }
+        public override TextWordType Type { get { return TextWordType.Tab; } }
 
-        // TAB
-        public TextWord(Document document, LineSegment line, int offset, int length, HighlightColor color, bool hasDefaultColor)
-        {
-            Debug.Assert(document != null);
-            Debug.Assert(line != null);
-            Debug.Assert(color != null);
-
-            this.document = document;
-            this.line  = line;
-            this.offset = offset;
-            this.length = length;
-            this.color = color;
-            this.hasDefaultColor = hasDefaultColor;
-        }
-
-        /// <summary>
-        /// Converts a <see cref="TextWord"/> instance to string (for debug purposes)
-        /// </summary>
-        public override string ToString()
-        {
-            return "[TextWord: Word = " + Word + ", Color = " + Color + "]";
-        }
+        public override bool IsWhiteSpace { get { return true; } }
     }
 }

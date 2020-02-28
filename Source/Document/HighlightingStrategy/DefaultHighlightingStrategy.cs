@@ -483,7 +483,7 @@ namespace ICSharpCode.TextEditor.Document
                     PushCurWord(document, ref markNext, words);
                     if (activeSpan != null && activeSpan.Color.HasBackground)
                     {
-                        words.Add(new TextWord.SpaceTextWord(activeSpan.Color));
+                        words.Add(new SpaceTextWord(activeSpan.Color));
                     }
                     else
                     {
@@ -495,7 +495,7 @@ namespace ICSharpCode.TextEditor.Document
                     PushCurWord(document, ref markNext, words);
                     if (activeSpan != null && activeSpan.Color.HasBackground)
                     {
-                        words.Add(new TextWord.TabTextWord(activeSpan.Color));
+                        words.Add(new TabTextWord(activeSpan.Color));
                     }
                     else
                     {

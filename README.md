@@ -28,3 +28,4 @@ Things that have changed from the original (so far):
 - Dynamically load syntax definitions from file.
 - Removed external dependencies so it can build.
 - Upped to .NET 4.7.2, VS2019.
+- Removed some hierarchy and abstraction. Because.

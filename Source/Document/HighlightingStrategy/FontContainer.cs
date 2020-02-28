@@ -11,75 +11,48 @@ using System.Drawing;
 namespace ICSharpCode.TextEditor.Document
 {
     /// <summary>
-    /// This class is used to generate bold, italic and bold/italic fonts out
-    /// of a base font.
+    /// This class is used to generate bold, italic and bold/italic fonts out of a base font.
     /// </summary>
-    public class FontContainer
+    public class FontContainer //TODO2 this is a bit messed up - maybe refactor.
     {
-        Font defaultFont;
-        Font regularfont, boldfont, italicfont, bolditalicfont;
+        Font _defaultFont;
+        static float _twipsPerPixelY = 0;
 
         /// <value>
         /// The scaled, regular version of the base font
         /// </value>
-        public Font RegularFont
-        {
-            get
-            {
-                return regularfont;
-            }
-        }
+        public Font RegularFont { get; private set; }
 
         /// <value>
         /// The scaled, bold version of the base font
         /// </value>
-        public Font BoldFont
-        {
-            get
-            {
-                return boldfont;
-            }
-        }
+        public Font BoldFont { get; private set; }
 
         /// <value>
         /// The scaled, italic version of the base font
         /// </value>
-        public Font ItalicFont
-        {
-            get
-            {
-                return italicfont;
-            }
-        }
+        public Font ItalicFont { get; private set; }
 
         /// <value>
         /// The scaled, bold/italic version of the base font
         /// </value>
-        public Font BoldItalicFont
-        {
-            get
-            {
-                return bolditalicfont;
-            }
-        }
-
-        static float twipsPerPixelY;
+        public Font BoldItalicFont { get; private set; }
 
         public static float TwipsPerPixelY
         {
             get
             {
-                if (twipsPerPixelY == 0)
+                if (_twipsPerPixelY == 0)
                 {
                     using (Bitmap bmp = new Bitmap(1,1))
                     {
                         using (Graphics g = Graphics.FromImage(bmp))
                         {
-                            twipsPerPixelY = 1440 / g.DpiY;
+                            _twipsPerPixelY = 1440 / g.DpiY;
                         }
                     }
                 }
-                return twipsPerPixelY;
+                return _twipsPerPixelY;
             }
         }
 
@@ -90,30 +63,29 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return defaultFont;
+                return _defaultFont;
             }
             set
             {
+                _defaultFont = value;
                 // 1440 twips is one inch
                 float pixelSize = (float)Math.Round(value.SizeInPoints * 20 / TwipsPerPixelY);
-
-                defaultFont    = value;
-                regularfont    = new Font(value.FontFamily, pixelSize * TwipsPerPixelY / 20f, FontStyle.Regular);
-                boldfont       = new Font(regularfont, FontStyle.Bold);
-                italicfont     = new Font(regularfont, FontStyle.Italic);
-                bolditalicfont = new Font(regularfont, FontStyle.Bold | FontStyle.Italic);
+                RegularFont = new Font(value.FontFamily, pixelSize * TwipsPerPixelY / 20f, FontStyle.Regular);
+                BoldFont = new Font(RegularFont, FontStyle.Bold);
+                ItalicFont = new Font(RegularFont, FontStyle.Italic);
+                BoldItalicFont = new Font(RegularFont, FontStyle.Bold | FontStyle.Italic);
             }
         }
 
-        public static Font ParseFont(string font)
-        {
-            string[] descr = font.Split(new char[] {',', '='});
-            return new Font(descr[1], Single.Parse(descr[3]));
-        }
+        //public static Font ParseFont(string font)
+        //{
+        //    string[] descr = font.Split(new char[] {',', '='});
+        //    return new Font(descr[1], Single.Parse(descr[3]));
+        //}
 
         public FontContainer(Font defaultFont)
         {
-            this.DefaultFont = defaultFont;
+            DefaultFont = defaultFont;
         }
     }
 }
