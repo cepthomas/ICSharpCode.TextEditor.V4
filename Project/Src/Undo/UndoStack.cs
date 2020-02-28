@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Undo
         Stack<IUndoableOperation> undostack = new Stack<IUndoableOperation>();
         Stack<IUndoableOperation> redostack = new Stack<IUndoableOperation>();
 
-        public TextEditorControlBase TextEditorControl = null;
+        public TextEditorControl TextEditorControl = null;
 
         /// <summary>
         /// </summary>
