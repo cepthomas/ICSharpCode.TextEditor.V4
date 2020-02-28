@@ -10,7 +10,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// This interface is used to describe a span inside a text sequence
     /// </summary>
-    public interface ISegment // TODO1 needed?
+    public interface ISegment // TODO0 needed?
     {
         /// <value>
         /// The offset where the span begins

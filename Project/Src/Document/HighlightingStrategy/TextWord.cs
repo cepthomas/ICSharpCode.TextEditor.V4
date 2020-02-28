@@ -26,7 +26,7 @@ namespace ICSharpCode.TextEditor.Document
     {
         HighlightColor  color;
         LineSegment     line;
-        IDocument       document;
+        Document       document;
 
         int          offset;
         int          length;
@@ -246,7 +246,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         // TAB
-        public TextWord(IDocument document, LineSegment line, int offset, int length, HighlightColor color, bool hasDefaultColor)
+        public TextWord(Document document, LineSegment line, int offset, int length, HighlightColor color, bool hasDefaultColor)
         {
             Debug.Assert(document != null);
             Debug.Assert(line != null);

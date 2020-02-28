@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
         List<FoldMarker>    foldMarker      = new List<FoldMarker>();
         List<FoldMarker>    foldMarkerByEnd = new List<FoldMarker>();
         IFoldingStrategy    foldingStrategy = null;
-        IDocument document;
+        Document document;
 
         public IList<FoldMarker> FoldMarker
         {
@@ -39,7 +39,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        internal FoldingManager(IDocument document, LineManager lineTracker)
+        internal FoldingManager(Document document, LineManager lineTracker)
         {
             this.document = document;
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);

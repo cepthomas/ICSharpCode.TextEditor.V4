@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class DocumentEventArgs : EventArgs
     {
-        IDocument document;
+        Document document;
         int       offset;
         int       length;
         string    text;
@@ -27,7 +27,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <returns>
         /// always a valid Document which is related to the Event.
         /// </returns>
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -71,28 +71,28 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new instance off <see cref="DocumentEventArgs"/>
         /// </summary>
-        public DocumentEventArgs(IDocument document) : this(document, -1, -1, null)
+        public DocumentEventArgs(Document document) : this(document, -1, -1, null)
         {
         }
 
         /// <summary>
         /// Creates a new instance off <see cref="DocumentEventArgs"/>
         /// </summary>
-        public DocumentEventArgs(IDocument document, int offset) : this(document, offset, -1, null)
+        public DocumentEventArgs(Document document, int offset) : this(document, offset, -1, null)
         {
         }
 
         /// <summary>
         /// Creates a new instance off <see cref="DocumentEventArgs"/>
         /// </summary>
-        public DocumentEventArgs(IDocument document, int offset, int length) : this(document, offset, length, null)
+        public DocumentEventArgs(Document document, int offset, int length) : this(document, offset, length, null)
         {
         }
 
         /// <summary>
         /// Creates a new instance off <see cref="DocumentEventArgs"/>
         /// </summary>
-        public DocumentEventArgs(IDocument document, int offset, int length, string text)
+        public DocumentEventArgs(Document document, int offset, int length, string text)
         {
             this.document = document;
             this.offset   = offset;

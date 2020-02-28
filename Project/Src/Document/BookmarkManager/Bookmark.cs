@@ -16,12 +16,12 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class Bookmark
     {
-        IDocument document;
+        Document document;
         TextAnchor anchor;
         TextLocation location;
         bool isEnabled = true;
 
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -162,11 +162,11 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public Bookmark(IDocument document, TextLocation location) : this(document, location, true)
+        public Bookmark(Document document, TextLocation location) : this(document, location, true)
         {
         }
 
-        public Bookmark(IDocument document, TextLocation location, bool isEnabled)
+        public Bookmark(Document document, TextLocation location, bool isEnabled)
         {
             this.document = document;
             this.isEnabled = isEnabled;

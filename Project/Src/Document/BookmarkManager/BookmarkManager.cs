@@ -14,7 +14,7 @@ namespace ICSharpCode.TextEditor.Document
 {
     public interface IBookmarkFactory
     {
-        Bookmark CreateBookmark(IDocument document, TextLocation location);
+        Bookmark CreateBookmark(Document document, TextLocation location);
     }
 
     /// <summary>
@@ -22,7 +22,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class BookmarkManager
     {
-        IDocument      document;
+        Document      document;
 #if DEBUG_EX
         IList<Bookmark> bookmark = new CheckedList<Bookmark>();
 #else
@@ -40,7 +40,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -51,7 +51,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new instance of <see cref="BookmarkManager"/>
         /// </summary>
-        internal BookmarkManager(IDocument document, LineManager lineTracker)
+        internal BookmarkManager(Document document, LineManager lineTracker)
         {
             this.document = document;
         }

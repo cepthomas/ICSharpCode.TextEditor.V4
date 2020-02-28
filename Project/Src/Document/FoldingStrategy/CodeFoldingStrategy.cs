@@ -21,7 +21,7 @@ namespace ICSharpCode.TextEditor.Document
         #region Methods
 
         /// Interface implementation.
-        public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
         {
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
 

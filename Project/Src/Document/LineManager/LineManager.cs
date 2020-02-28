@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
     {
         LineSegmentTree lineCollection = new LineSegmentTree();
 
-        IDocument document;
+        Document document;
         IHighlightingStrategy highlightingStrategy;
 
         public IList<LineSegment> LineSegmentCollection
@@ -55,7 +55,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public LineManager(IDocument document, IHighlightingStrategy highlightingStrategy)
+        public LineManager(Document document, IHighlightingStrategy highlightingStrategy)
         {
             this.document = document;
             this.highlightingStrategy = highlightingStrategy;

@@ -11,14 +11,14 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class LineCountChangeEventArgs : EventArgs
     {
-        IDocument document;
+        Document document;
         int       start;
         int       moved;
 
         /// <returns>
         /// always a valid Document which is related to the Event.
         /// </returns>
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -48,7 +48,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public LineCountChangeEventArgs(IDocument document, int lineStart, int linesMoved)
+        public LineCountChangeEventArgs(Document document, int lineStart, int linesMoved)
         {
             this.document = document;
             this.start    = lineStart;
@@ -58,10 +58,10 @@ namespace ICSharpCode.TextEditor.Document
 
     public class LineEventArgs : EventArgs
     {
-        IDocument document;
+        Document document;
         LineSegment lineSegment;
 
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -77,7 +77,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public LineEventArgs(IDocument document, LineSegment lineSegment)
+        public LineEventArgs(Document document, LineSegment lineSegment)
         {
             this.document = document;
             this.lineSegment = lineSegment;
@@ -101,7 +101,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public LineLengthChangeEventArgs(IDocument document, LineSegment lineSegment, int moved)
+        public LineLengthChangeEventArgs(Document document, LineSegment lineSegment, int moved)
         : base(document, lineSegment)
         {
             this.lengthDelta = moved;

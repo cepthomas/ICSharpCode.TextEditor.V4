@@ -37,7 +37,7 @@ namespace ICSharpCode.TextEditor.Document
         /// Validates all bookmarks if they're in range of the document.
         /// (removing all bookmarks &lt; 0 and bookmarks &gt; max. line number
         /// </summary>
-        public void CheckMemento(IDocument document)
+        public void CheckMemento(Document document)
         {
             for (int i = 0; i < bookmarks.Count; ++i)
             {

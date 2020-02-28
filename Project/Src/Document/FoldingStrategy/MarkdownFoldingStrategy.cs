@@ -8,7 +8,7 @@ namespace ICSharpCode.TextEditor.Document
     public class MarkdownFoldingStrategy : IFoldingStrategy
     {
         #region Methods
-        public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
         {
             // This is a simple folding strategy - generates folds at each heading.
 
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor.Document
             return foldMarkers;
         }
 
-        public List<FoldMarker> GenerateFoldMarkersRegion(IDocument document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkersRegion(Document document, string fileName, object parseInformation)
         {
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
 

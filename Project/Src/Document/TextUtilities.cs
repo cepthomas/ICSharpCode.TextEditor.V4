@@ -83,7 +83,7 @@ namespace ICSharpCode.TextEditor.Document
         /// </remarks>
         public static string GetExpressionBeforeOffset(TextArea textArea, int initialOffset)
         {
-            IDocument document = textArea.Document;
+            Document document = textArea.Document;
             int offset = initialOffset;
             while (offset - 1 > 0)
             {
@@ -189,7 +189,7 @@ namespace ICSharpCode.TextEditor.Document
             return CharacterType.Other;
         }
 
-        public static int GetFirstNonWSChar(IDocument document, int offset)
+        public static int GetFirstNonWSChar(Document document, int offset)
         {
             while (offset < document.TextLength && Char.IsWhiteSpace(document.GetCharAt(offset)))
             {
@@ -198,7 +198,7 @@ namespace ICSharpCode.TextEditor.Document
             return offset;
         }
 
-        public static int FindWordEnd(IDocument document, int offset)
+        public static int FindWordEnd(Document document, int offset)
         {
             LineSegment line   = document.GetLineSegmentForOffset(offset);
             int     endPos = line.Offset + line.Length;
@@ -210,7 +210,7 @@ namespace ICSharpCode.TextEditor.Document
             return offset;
         }
 
-        public static int FindWordStart(IDocument document, int offset)
+        public static int FindWordStart(Document document, int offset)
         {
             LineSegment line = document.GetLineSegmentForOffset(offset);
             int lineOffset = line.Offset;
@@ -227,7 +227,7 @@ namespace ICSharpCode.TextEditor.Document
         // and then past any whitespace that follows it
         // if the cursor is at the start or in the middle of some whitespace we move to the start of the
         // next word
-        public static int FindNextWordStart(IDocument document, int offset)
+        public static int FindNextWordStart(Document document, int offset)
         {
             int originalOffset = offset;
             LineSegment line   = document.GetLineSegmentForOffset(offset);
@@ -251,7 +251,7 @@ namespace ICSharpCode.TextEditor.Document
         // go back to the start of the word we are on
         // if we are already at the start of a word or if we are in whitespace, then go back
         // to the start of the previous word
-        public static int FindPrevWordStart(IDocument document, int offset)
+        public static int FindPrevWordStart(Document document, int offset)
         {
             int originalOffset = offset;
             if (offset > 0)
@@ -277,18 +277,18 @@ namespace ICSharpCode.TextEditor.Document
             return offset;
         }
 
-        public static string GetLineAsString(IDocument document, int lineNumber)
+        public static string GetLineAsString(Document document, int lineNumber)
         {
             LineSegment line = document.GetLineSegment(lineNumber);
             return document.GetText(line.Offset, line.Length);
         }
 
-        public static int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
+        public static int SearchBracketBackward(Document document, int offset, char openBracket, char closingBracket)
         {
             return document.FormattingStrategy.SearchBracketBackward(document, offset, openBracket, closingBracket);
         }
 
-        public static int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket)
+        public static int SearchBracketForward(Document document, int offset, char openBracket, char closingBracket)
         {
             return document.FormattingStrategy.SearchBracketForward(document, offset, openBracket, closingBracket);
         }
@@ -296,7 +296,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Returns true, if the line lineNumber is empty or filled with whitespaces.
         /// </remarks>
-        public static bool IsEmptyLine(IDocument document, int lineNumber)
+        public static bool IsEmptyLine(Document document, int lineNumber)
         {
             return IsEmptyLine(document, document.GetLineSegment(lineNumber));
         }
@@ -304,7 +304,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Returns true, if the line lineNumber is empty or filled with whitespaces.
         /// </remarks>
-        public static bool IsEmptyLine(IDocument document, LineSegment line)
+        public static bool IsEmptyLine(Document document, LineSegment line)
         {
             for (int i = line.Offset; i < line.Offset + line.Length; ++i)
             {
@@ -322,7 +322,7 @@ namespace ICSharpCode.TextEditor.Document
             return IsLetterDigitOrUnderscore(ch) || ch == '.';
         }
 
-        public static string GetWordAt(IDocument document, int offset)
+        public static string GetWordAt(Document document, int offset)
         {
             if (offset < 0 || offset >= document.TextLength - 1 || !IsWordPart(document.GetCharAt(offset)))
             {

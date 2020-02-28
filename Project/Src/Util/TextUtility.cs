@@ -14,7 +14,7 @@ namespace ICSharpCode.TextEditor.Util
     public class TextUtility
     {
 
-        public static bool RegionMatches(IDocument document, int offset, int length, string word)
+        public static bool RegionMatches(Document.Document document, int offset, int length, string word)
         {
             if (length != word.Length || document.TextLength < offset + length)
             {
@@ -31,7 +31,7 @@ namespace ICSharpCode.TextEditor.Util
             return true;
         }
 
-        public static bool RegionMatches(IDocument document, bool casesensitive, int offset, int length, string word)
+        public static bool RegionMatches(Document.Document document, bool casesensitive, int offset, int length, string word)
         {
             if (casesensitive)
             {
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor.Util
             return true;
         }
 
-        public static bool RegionMatches(IDocument document, int offset, int length, char[] word)
+        public static bool RegionMatches(Document.Document document, int offset, int length, char[] word)
         {
             if (length != word.Length || document.TextLength < offset + length)
             {
@@ -70,7 +70,7 @@ namespace ICSharpCode.TextEditor.Util
             return true;
         }
 
-        public static bool RegionMatches(IDocument document, bool casesensitive, int offset, int length, char[] word)
+        public static bool RegionMatches(Document.Document document, bool casesensitive, int offset, int length, char[] word)
         {
             if (casesensitive)
             {

@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Undo
     /// </summary>
     public class UndoableReplace : IUndoableOperation
     {
-        IDocument document;
+        Document.Document document;
 //		int       oldCaretPos;
         int       offset;
         string    text;
@@ -25,7 +25,7 @@ namespace ICSharpCode.TextEditor.Undo
         /// <summary>
         /// Creates a new instance of <see cref="UndoableReplace"/>
         /// </summary>
-        public UndoableReplace(IDocument document, int offset, string origText, string text)
+        public UndoableReplace(Document.Document document, int offset, string origText, string text)
         {
             if (document == null)
             {

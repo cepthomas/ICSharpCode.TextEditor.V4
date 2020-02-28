@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>This class manages the selection in a document.</summary>
     public class SelectionManager : IDisposable
     {
-        IDocument _document;
+        Document _document;
         TextArea _textArea; // TODO1 which has a SelMgr <--> Actually the whole class structure is tightly coupled.
         bool _isRect;
 
@@ -82,7 +82,7 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <summary>Creates a new instance of <see cref="SelectionManager"/></summary>
-        public SelectionManager(IDocument document, TextArea textArea)
+        public SelectionManager(Document document, TextArea textArea)
         {
             _document = document;
             _textArea = textArea;

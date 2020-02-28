@@ -21,7 +21,7 @@ namespace ICSharpCode.TextEditor.Actions
     public abstract class AbstractLineFormatAction : AbstractEditAction
     {
         protected TextArea textArea;
-        abstract protected void Convert(IDocument document, int startLine, int endLine);
+        abstract protected void Convert(Document.Document document, int startLine, int endLine);
 
         public override void Execute(TextArea textArea)
         {
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor.Actions
     public abstract class AbstractSelectionFormatAction : AbstractEditAction
     {
         protected TextArea textArea;
-        abstract protected void Convert(IDocument document, int offset, int length);
+        abstract protected void Convert(Document.Document document, int offset, int length);
 
         public override void Execute(TextArea textArea)
         {
@@ -82,7 +82,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class RemoveLeadingWS : AbstractLineFormatAction
     {
-        protected override void Convert(IDocument document, int y1, int y2)
+        protected override void Convert(Document.Document document, int y1, int y2)
         {
             for (int i = y1; i < y2; ++i)
             {
@@ -102,7 +102,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class RemoveTrailingWS : AbstractLineFormatAction
     {
-        protected override void Convert(IDocument document, int y1, int y2)
+        protected override void Convert(Document.Document document, int y1, int y2)
         {
             for (int i = y2 - 1; i >= y1; --i)
             {
@@ -122,7 +122,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToUpperCase : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length).ToUpper();
             document.Replace(startOffset, length, what);
@@ -131,7 +131,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToLowerCase : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length).ToLower();
             document.Replace(startOffset, length, what);
@@ -140,7 +140,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class InvertCaseAction : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             StringBuilder what = new StringBuilder(document.GetText(startOffset, length));
 
@@ -155,7 +155,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class CapitalizeAction : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             StringBuilder what = new StringBuilder(document.GetText(startOffset, length));
 
@@ -173,7 +173,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ConvertTabsToSpaces : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length);
             string spaces = new string(' ', document.TextEditorProperties.TabIndent);
@@ -183,7 +183,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ConvertSpacesToTabs : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length);
             string spaces = new string(' ', document.TextEditorProperties.TabIndent);
@@ -193,7 +193,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ConvertLeadingTabsToSpaces : AbstractLineFormatAction
     {
-        protected override void Convert(IDocument document, int y1, int y2)
+        protected override void Convert(Document.Document document, int y1, int y2)
         {
             for (int i = y2; i >= y1; --i)
             {
@@ -220,7 +220,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ConvertLeadingSpacesToTabs : AbstractLineFormatAction
     {
-        protected override void Convert(IDocument document, int y1, int y2)
+        protected override void Convert(Document.Document document, int y1, int y2)
         {
             for (int i = y2; i >= y1; --i)
             {
@@ -242,7 +242,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// </summary>
     public class IndentSelection : AbstractLineFormatAction
     {
-        protected override void Convert(IDocument document, int startLine, int endLine)
+        protected override void Convert(Document.Document document, int startLine, int endLine)
         {
             document.FormattingStrategy.IndentLines(textArea, startLine, endLine);
         }
@@ -251,7 +251,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>Pretty it up.</summary>
     public class FixXml : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string sin = document.GetText(startOffset, length);
             string sout = "";
@@ -315,7 +315,7 @@ namespace ICSharpCode.TextEditor.Actions
             return str1.CompareTo(str2);
         }
 
-        protected override void Convert(IDocument document, int startLine, int endLine)
+        protected override void Convert(Document.Document document, int startLine, int endLine)
         {
             List<string> lines = new List<string>();
             for (int i = startLine; i <= endLine; ++i)
@@ -356,7 +356,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>Convert a (typically) db view or field name such as a_big_dog or A_BIG_DOG into A Big Dog.</summary>
     public class ConvertUnderscoredToReadable : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             StringBuilder sb = new StringBuilder();
             string sin = document.GetText(startOffset, length);
@@ -387,7 +387,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>Convert a readable name into its db equivalent. Opposite of ConvertUnderscoredToReadable().</summary>
     public class ConvertReadableToUnderscored : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string sin = document.GetText(startOffset, length);
             document.Replace(startOffset, length, sin.Replace(' ', '_').ToUpper());
@@ -397,7 +397,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>Lower to upper case transitions get a space.</summary>
     public class ConvertCamelcaseToReadable : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startOffset, int length)
+        protected override void Convert(Document.Document document, int startOffset, int length)
         {
             StringBuilder sb = new StringBuilder();
             string sin = document.GetText(startOffset, length);
@@ -425,7 +425,7 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>No comment needed.</summary>
     public class RemoveBlankLines : AbstractSelectionFormatAction
     {
-        protected override void Convert(IDocument document, int startLine, int endLine)
+        protected override void Convert(Document.Document document, int startLine, int endLine)
         {
             List<string> lines = new List<string>();
             for (int i = startLine; i <= endLine; ++i)

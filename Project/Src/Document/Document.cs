@@ -92,10 +92,9 @@ namespace ICSharpCode.TextEditor.Document
     }
 
     /// <summary>
-    /// The default <see cref="IDocument"/> implementation.
+    /// The default <see cref="Document"/> implementation.
     /// </summary>
-    //internal sealed class DefaultDocument : IDocument // TODO0 don't really need the interface.
-    public class IDocument
+    public class Document
     {
         bool readOnly = false;
 
@@ -540,7 +539,7 @@ namespace ICSharpCode.TextEditor.Document
         public event EventHandler TextContentChanged;
 
         [Conditional("DEBUG_EX")]
-        internal static void ValidatePosition(IDocument document, TextLocation position)
+        internal static void ValidatePosition(Document document, TextLocation position)
         {
             document.GetLineSegment(position.Line);
         }

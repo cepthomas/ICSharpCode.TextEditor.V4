@@ -154,12 +154,12 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public HighlightColor GetColor(IDocument document, LineSegment currentSegment, int currentOffset, int currentLength)
+        public HighlightColor GetColor(Document document, LineSegment currentSegment, int currentOffset, int currentLength)
         {
             return GetColor(defaultRuleSet, document, currentSegment, currentOffset, currentLength);
         }
 
-        protected virtual HighlightColor GetColor(HighlightRuleSet ruleSet, IDocument document, LineSegment currentSegment, int currentOffset, int currentLength)
+        protected virtual HighlightColor GetColor(HighlightRuleSet ruleSet, Document document, LineSegment currentSegment, int currentOffset, int currentLength)
         {
             if (ruleSet != null)
             {
@@ -208,7 +208,7 @@ namespace ICSharpCode.TextEditor.Document
         // Span stack state variable
         protected SpanStack currentSpanStack;
 
-        public virtual void MarkTokens(IDocument document)
+        public virtual void MarkTokens(Document document)
         {
             if (Rules.Count == 0)
             {
@@ -260,7 +260,7 @@ namespace ICSharpCode.TextEditor.Document
             currentLine = null;
         }
 
-        bool MarkTokensInLine(IDocument document, int lineNumber, ref bool spanChanged)
+        bool MarkTokensInLine(Document document, int lineNumber, ref bool spanChanged)
         {
             currentLineNumber = lineNumber;
             bool processNextLine = false;
@@ -388,7 +388,7 @@ namespace ICSharpCode.TextEditor.Document
             return processNextLine;
         }
 
-        public virtual void MarkTokens(IDocument document, List<LineSegment> inputLines)
+        public virtual void MarkTokens(Document document, List<LineSegment> inputLines)
         {
             if (Rules.Count == 0)
             {
@@ -457,7 +457,7 @@ namespace ICSharpCode.TextEditor.Document
             activeRuleSet = GetRuleSet(activeSpan);
         }
 
-        List<TextWord> ParseLine(IDocument document)
+        List<TextWord> ParseLine(Document document)
         {
             List<TextWord> words = new List<TextWord>();
             HighlightColor markNext = null;
@@ -727,11 +727,11 @@ namespace ICSharpCode.TextEditor.Document
             return words;
         }
 
-        protected virtual void OnParsedLine(IDocument document, LineSegment currentLine, List<TextWord> words)
+        protected virtual void OnParsedLine(Document document, LineSegment currentLine, List<TextWord> words)
         {
         }
 
-        protected virtual bool OverrideSpan(string spanBegin, IDocument document, List<TextWord> words, Span span, ref int lineOffset)
+        protected virtual bool OverrideSpan(string spanBegin, Document document, List<TextWord> words, Span span, ref int lineOffset)
         {
             return false;
         }
@@ -740,7 +740,7 @@ namespace ICSharpCode.TextEditor.Document
         /// pushes the curWord string on the word list, with the
         /// correct color.
         /// </summary>
-        void PushCurWord(IDocument document, ref HighlightColor markNext, List<TextWord> words)
+        void PushCurWord(Document document, ref HighlightColor markNext, List<TextWord> words)
         {
             // Svante Lidman : Need to look through the next prev logic.
             if (currentLength > 0)
@@ -835,7 +835,7 @@ namespace ICSharpCode.TextEditor.Document
         /// get the string, which matches the regular expression expr,
         /// in string s2 at index
         /// </summary>
-        static string GetRegString(LineSegment lineSegment, char[] expr, int index, IDocument document)
+        static string GetRegString(LineSegment lineSegment, char[] expr, int index, Document document)
         {
             int j = 0;
             StringBuilder regexpr = new StringBuilder();
@@ -881,7 +881,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// returns true, if the get the string s2 at index matches the expression expr
         /// </summary>
-        static bool MatchExpr(LineSegment lineSegment, char[] expr, int index, IDocument document, bool ignoreCase)
+        static bool MatchExpr(LineSegment lineSegment, char[] expr, int index, Document document, bool ignoreCase)
         {
             for (int i = 0, j = 0; i < expr.Length; ++i, ++j)
             {

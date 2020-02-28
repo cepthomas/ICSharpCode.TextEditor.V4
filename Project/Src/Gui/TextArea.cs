@@ -181,7 +181,7 @@ namespace ICSharpCode.TextEditor
         }
 
         [Browsable(false)]
-        public IDocument Document
+        public Document.Document Document
         {
             get
             {

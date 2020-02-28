@@ -43,7 +43,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <param name="openBracket">The character for the opening bracket.</param>
         /// <param name="closingBracket">The character for the closing bracket.</param>
         /// <returns>Returns the offset of the opening bracket or -1 if no matching bracket was found.</returns>
-        int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket);
+        int SearchBracketBackward(Document document, int offset, char openBracket, char closingBracket);
 
         /// <summary>
         /// Finds the offset of the closing bracket in the block defined by offset skipping
@@ -54,6 +54,6 @@ namespace ICSharpCode.TextEditor.Document
         /// <param name="openBracket">The character for the opening bracket.</param>
         /// <param name="closingBracket">The character for the closing bracket.</param>
         /// <returns>Returns the offset of the closing bracket or -1 if no matching bracket was found.</returns>
-        int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket);
+        int SearchBracketForward(Document document, int offset, char openBracket, char closingBracket);
     }
 }

@@ -48,7 +48,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public IDocument Document
+        public Document.Document Document
         {
             get
             {

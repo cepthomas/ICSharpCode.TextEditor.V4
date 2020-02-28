@@ -95,7 +95,7 @@ namespace ICSharpCode.TextEditor.Document
         /// from 1 and the SharpDevelop text editor line information starts
         /// from 0.</para>
         /// </remarks>
-        public List<FoldMarker> GenerateFoldMarkers(IDocument document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
         {
             //showAttributesWhenFolded = XmlEditorAddInOptions.ShowAttributesWhenFolded;
 
@@ -168,7 +168,7 @@ namespace ICSharpCode.TextEditor.Document
         /// Creates a comment fold if the comment spans more than one line.
         /// </summary>
         /// <remarks>The text displayed when the comment is folded is the first line of the comment.</remarks>
-        void CreateCommentFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader)
+        void CreateCommentFold(Document document, List<FoldMarker> foldMarkers, XmlTextReader reader)
         {
             if (reader.Value != null)
             {
@@ -196,7 +196,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Create an element fold if the start and end tag are on different lines.
         /// </summary>
-        void CreateElementFold(IDocument document, List<FoldMarker> foldMarkers, XmlTextReader reader, XmlFoldStart foldStart)
+        void CreateElementFold(Document document, List<FoldMarker> foldMarkers, XmlTextReader reader, XmlFoldStart foldStart)
         {
             int endLine = reader.LineNumber - 1;
             if (endLine > foldStart.Line)

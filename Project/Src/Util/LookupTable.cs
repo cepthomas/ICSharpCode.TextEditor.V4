@@ -35,7 +35,7 @@ namespace ICSharpCode.TextEditor.Util
         /// Get the object, which was inserted under the keyword (line, at offset, with length length),
         /// returns null, if no such keyword was inserted.
         /// </summary>
-        public object this[IDocument document, LineSegment line, int offset, int length]
+        public object this[Document.Document document, LineSegment line, int offset, int length]
         {
             get
             {

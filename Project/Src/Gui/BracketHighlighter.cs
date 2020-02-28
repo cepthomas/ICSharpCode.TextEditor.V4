@@ -66,7 +66,7 @@ namespace ICSharpCode.TextEditor
             this.closingtag = closingtag;
         }
 
-        public Highlight GetHighlight(IDocument document, int offset)
+        public Highlight GetHighlight(Document.Document document, int offset)
         {
             int searchOffset;
             if (document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After)

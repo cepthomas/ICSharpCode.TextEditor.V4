@@ -44,7 +44,7 @@ namespace ICSharpCode.TextEditor
             internal readonly static SimpleTextWord Tab = new SimpleTextWord(TextWordType.Tab, "\t", false, Color.Black);
         }
 
-        public DrawableLine(IDocument document, LineSegment line, Font monospacedFont, Font boldMonospacedFont)
+        public DrawableLine(Document.Document document, LineSegment line, Font monospacedFont, Font boldMonospacedFont)
         {
             this.monospacedFont = monospacedFont;
             this.boldMonospacedFont = boldMonospacedFont;

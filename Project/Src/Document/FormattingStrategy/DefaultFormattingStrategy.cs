@@ -73,7 +73,7 @@ namespace ICSharpCode.TextEditor.Document
         /// If only whitespace at the beginning and end of the line was changed, this method
         /// only adjusts the whitespace and doesn't replace the other text.
         /// </summary>
-        public static void SmartReplaceLine(IDocument document, LineSegment line, string newLineText)
+        public static void SmartReplaceLine(Document document, LineSegment line, string newLineText)
         {
             if (document == null)
                 throw new ArgumentNullException("document");
@@ -184,7 +184,7 @@ namespace ICSharpCode.TextEditor.Document
             textArea.Document.UndoStack.EndUndoGroup();
         }
 
-        public virtual int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
+        public virtual int SearchBracketBackward(Document document, int offset, char openBracket, char closingBracket)
         {
             int brackets = -1;
             // first try "quick find" - find the matching bracket if there is no string/comment in the way
@@ -217,7 +217,7 @@ namespace ICSharpCode.TextEditor.Document
             return -1;
         }
 
-        public virtual int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket)
+        public virtual int SearchBracketForward(Document document, int offset, char openBracket, char closingBracket)
         {
             int brackets = 1;
             // try "quick find" - find the matching bracket if there is no string/comment in the way

@@ -33,7 +33,7 @@ namespace ICSharpCode.TextEditor
 
         string currentFileName = null;
         int updateLevel = 0;
-        IDocument document;
+        Document.Document document;
 
         /// <summary>
         /// This hashtable contains all editor keys, where
@@ -116,7 +116,7 @@ namespace ICSharpCode.TextEditor
         /// </value>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IDocument Document
+        public Document.Document Document
         {
             get
             {

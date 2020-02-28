@@ -42,14 +42,14 @@ namespace ICSharpCode.TextEditor.Util
             return rtf.ToString();
         }
 
-        static void BuildColorTable(IDocument doc, StringBuilder rtf)
+        static void BuildColorTable(Document.Document doc, StringBuilder rtf)
         {
             rtf.Append(@"{\colortbl ;");
             rtf.Append(colorString.ToString());
             rtf.Append("}");
         }
 
-        static void BuildFontTable(IDocument doc, StringBuilder rtf)
+        static void BuildFontTable(Document.Document doc, StringBuilder rtf)
         {
             rtf.Append(@"{\fonttbl");
             rtf.Append(@"{\f0\fmodern\fprq1\fcharset0 " + doc.TextEditorProperties.Font.Name + ";}");

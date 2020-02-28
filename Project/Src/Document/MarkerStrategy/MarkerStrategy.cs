@@ -17,9 +17,9 @@ namespace ICSharpCode.TextEditor.Document
     public sealed class MarkerStrategy
     {
         List<TextMarker> textMarker = new List<TextMarker>();
-        IDocument document;
+        Document document;
 
-        public IDocument Document
+        public Document Document
         {
             get
             {
@@ -59,7 +59,7 @@ namespace ICSharpCode.TextEditor.Document
             textMarker.RemoveAll(match);
         }
 
-        public MarkerStrategy(IDocument document)
+        public MarkerStrategy(Document document)
         {
             this.document = document;
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);

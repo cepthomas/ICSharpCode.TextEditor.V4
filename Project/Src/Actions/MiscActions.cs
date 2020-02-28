@@ -16,12 +16,12 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class Tab : AbstractEditAction
     {
-        public static string GetIndentationString(IDocument document)
+        public static string GetIndentationString(Document.Document document)
         {
             return GetIndentationString(document, null);
         }
 
-        public static string GetIndentationString(IDocument document, TextArea textArea)
+        public static string GetIndentationString(Document.Document document, TextArea textArea)
         {
             StringBuilder indent = new StringBuilder();
 
@@ -45,7 +45,7 @@ namespace ICSharpCode.TextEditor.Actions
             return indent.ToString();
         }
 
-        void InsertTabs(IDocument document, SelectionManager selmgr, int y1, int y2)
+        void InsertTabs(Document.Document document, SelectionManager selmgr, int y1, int y2)
         {
             string indentationString = GetIndentationString(document);
             for (int i = y2; i >= y1; --i)
@@ -127,7 +127,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftTab : AbstractEditAction
     {
-        void RemoveTabs(IDocument document, SelectionManager selmgr, int y1, int y2)
+        void RemoveTabs(Document.Document document, SelectionManager selmgr, int y1, int y2)
         {
             document.UndoStack.StartUndoGroup();
             for (int i = y2; i >= y1; --i)
@@ -274,7 +274,7 @@ namespace ICSharpCode.TextEditor.Actions
         int firstLine;
         int lastLine;
 
-        void RemoveCommentAt(IDocument document, string comment, SelectionManager selmgr, int y1, int y2)
+        void RemoveCommentAt(Document.Document document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
             lastLine  = y2;
@@ -296,7 +296,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
 
-        void SetCommentAt(IDocument document, string comment, SelectionManager selmgr, int y1, int y2)
+        void SetCommentAt(Document.Document document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
             lastLine  = y2;
@@ -315,7 +315,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
 
-        bool ShouldComment(IDocument document, string comment, SelectionManager selmgr, int startLine, int endLine)
+        bool ShouldComment(Document.Document document, string comment, SelectionManager selmgr, int startLine, int endLine)
         {
             for (int i = endLine; i >= startLine; --i)
             {
@@ -464,7 +464,7 @@ namespace ICSharpCode.TextEditor.Actions
             textArea.AutoClearSelection = false;
         }
 
-        public static BlockCommentRegion FindSelectedCommentRegion(IDocument document, string commentStart, string commentEnd, int selectionStartOffset, int selectionEndOffset)
+        public static BlockCommentRegion FindSelectedCommentRegion(Document.Document document, string commentStart, string commentEnd, int selectionStartOffset, int selectionEndOffset)
         {
             if (document.TextLength == 0)
             {
@@ -547,13 +547,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
 
 
-        void SetCommentAt(IDocument document, int offsetStart, int offsetEnd, string commentStart, string commentEnd)
+        void SetCommentAt(Document.Document document, int offsetStart, int offsetEnd, string commentStart, string commentEnd)
         {
             document.Insert(offsetEnd, commentEnd);
             document.Insert(offsetStart, commentStart);
         }
 
-        void RemoveComment(IDocument document, BlockCommentRegion commentRegion)
+        void RemoveComment(Document.Document document, BlockCommentRegion commentRegion)
         {
             document.Remove(commentRegion.EndOffset, commentRegion.CommentEnd.Length);
             document.Remove(commentRegion.StartOffset, commentRegion.CommentStart.Length);

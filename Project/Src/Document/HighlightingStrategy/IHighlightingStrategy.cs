@@ -38,12 +38,12 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Used internally, do not call
         /// </remarks>
-        void MarkTokens(IDocument document, List<LineSegment> lines);
+        void MarkTokens(Document document, List<LineSegment> lines);
 
         /// <remarks>
         /// Used internally, do not call
         /// </remarks>
-        void MarkTokens(IDocument document);
+        void MarkTokens(Document document);
     }
 
     public interface IHighlightingStrategyUsingRuleSets : IHighlightingStrategy
@@ -56,6 +56,6 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Used internally, do not call
         /// </remarks>
-        HighlightColor GetColor(IDocument document, LineSegment keyWord, int index, int length);
+        HighlightColor GetColor(Document document, LineSegment keyWord, int index, int length);
     }
 }

@@ -17,12 +17,12 @@ namespace ICSharpCode.TextEditor.Document
     public class DocumentFactory
     {
         /// <remarks>
-        /// Creates a new <see cref="IDocument"/> object. Only create
-        /// <see cref="IDocument"/> with this method.
+        /// Creates a new <see cref="Document"/> object. Only create
+        /// <see cref="Document"/> with this method.
         /// </remarks>
-        public IDocument CreateDocument()
+        public Document CreateDocument()
         {
-            IDocument doc = new IDocument();
+            Document doc = new Document();
             doc.TextBufferStrategy  = new GapTextBufferStrategy();
             doc.FormattingStrategy  = new DefaultFormattingStrategy();
             doc.LineManager         = new LineManager(doc, null);
@@ -36,9 +36,9 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new document and loads the given file
         /// </summary>
-        public IDocument CreateFromTextBuffer(ITextBufferStrategy textBuffer)
+        public Document CreateFromTextBuffer(ITextBufferStrategy textBuffer)
         {
-            IDocument doc = (IDocument)CreateDocument();
+            Document doc = (Document)CreateDocument();
             doc.TextContent = textBuffer.GetText(0, textBuffer.Length);
             doc.TextBufferStrategy = textBuffer;
             return doc;
@@ -47,9 +47,9 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new document and loads the given file
         /// </summary>
-        public IDocument CreateFromFile(string fileName)
+        public Document CreateFromFile(string fileName)
         {
-            IDocument document = CreateDocument();
+            Document document = CreateDocument();
             document.TextContent = Util.FileReader.ReadFileContent(fileName, Encoding.Default);
             return document;
         }

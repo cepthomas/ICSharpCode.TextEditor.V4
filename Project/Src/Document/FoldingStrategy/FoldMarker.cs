@@ -22,10 +22,10 @@ namespace ICSharpCode.TextEditor.Document
         bool      isFolded = false;
         string    foldText = "...";
         FoldType  foldType = FoldType.Unspecified;
-        IDocument document = null;
+        Document document = null;
         int startLine = -1, startColumn, endLine = -1, endColumn;
 
-        static void GetPointForOffset(IDocument document, int offset, out int line, out int column)
+        static void GetPointForOffset(Document document, int offset, out int line, out int column)
         {
             if (offset > document.TextLength)
             {
@@ -158,7 +158,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public FoldMarker(IDocument document, int offset, int length, string foldText, bool isFolded)
+        public FoldMarker(Document document, int offset, int length, string foldText, bool isFolded)
         {
             this.document = document;
             this.offset   = offset;
@@ -167,19 +167,19 @@ namespace ICSharpCode.TextEditor.Document
             this.isFolded = isFolded;
         }
 
-        public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn) : this(document, startLine, startColumn, endLine, endColumn, FoldType.Unspecified)
+        public FoldMarker(Document document, int startLine, int startColumn, int endLine, int endColumn) : this(document, startLine, startColumn, endLine, endColumn, FoldType.Unspecified)
         {
         }
 
-        public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType)  : this(document, startLine, startColumn, endLine, endColumn, foldType, "...")
+        public FoldMarker(Document document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType)  : this(document, startLine, startColumn, endLine, endColumn, foldType, "...")
         {
         }
 
-        public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText) : this(document, startLine, startColumn, endLine, endColumn, foldType, foldText, false)
+        public FoldMarker(Document document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText) : this(document, startLine, startColumn, endLine, endColumn, foldType, foldText, false)
         {
         }
 
-        public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText, bool isFolded)
+        public FoldMarker(Document document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText, bool isFolded)
         {
             this.document = document;
 

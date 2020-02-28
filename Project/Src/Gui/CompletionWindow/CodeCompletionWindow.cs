@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
         CodeCompletionListView codeCompletionListView;
         VScrollBar vScrollBar = new VScrollBar();
         ICompletionDataProvider dataProvider;
-        IDocument document;
+        Document.Document document;
         bool showDeclarationWindow = true;
         bool fixedListViewWidth = true;
         const int ScrollbarWidth = 16;

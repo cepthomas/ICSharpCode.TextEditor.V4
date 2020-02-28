@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Undo
     /// </summary>
     public class UndoableInsert : IUndoableOperation
     {
-        IDocument document;
+        Document.Document document;
 //		int      oldCaretPos;
         int      offset;
         string   text;
@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Undo
         /// <summary>
         /// Creates a new instance of <see cref="UndoableInsert"/>
         /// </summary>
-        public UndoableInsert(IDocument document, int offset, string text)
+        public UndoableInsert(Document.Document document, int offset, string text)
         {
             if (document == null)
             {
