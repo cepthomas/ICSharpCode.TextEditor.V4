@@ -149,7 +149,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public bool ReadOnly { get; set; } = false;
 
-        public ITextBufferStrategy TextBufferStrategy { get; set; }
+        public TextBuffer TextBuffer { get; set; }
 
         public IFormattingStrategy FormattingStrategy { get; set; }
 
@@ -171,7 +171,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return TextBufferStrategy.Length;
+                return TextBuffer.Length;
             }
         }
 
@@ -182,14 +182,14 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return GetText(0, TextBufferStrategy.Length);
+                return GetText(0, TextBuffer.Length);
             }
             set
             {
-                Debug.Assert(TextBufferStrategy != null);
+                Debug.Assert(TextBuffer != null);
                 Debug.Assert(LineManager != null);
                 OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
-                TextBufferStrategy.SetContent(value);
+                TextBuffer.SetContent(value);
                 LineManager.SetContent(value); // TODO1*** 6 seconds
                 UndoStack.ClearAll();
                 OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
@@ -205,7 +205,7 @@ namespace ICSharpCode.TextEditor.Document
             }
             OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, -1, text));
 
-            TextBufferStrategy.Insert(offset, text);
+            TextBuffer.Insert(offset, text);
             LineManager.Insert(offset, text);
 
             UndoStack.Push(new UndoableInsert(this, offset, text));
@@ -222,7 +222,7 @@ namespace ICSharpCode.TextEditor.Document
             OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, length));
             UndoStack.Push(new UndoableDelete(this, offset, GetText(offset, length)));
 
-            TextBufferStrategy.Remove(offset, length);
+            TextBuffer.Remove(offset, length);
             LineManager.Remove(offset, length);
 
             OnDocumentChanged(new DocumentEventArgs(this, offset, length));
@@ -237,7 +237,7 @@ namespace ICSharpCode.TextEditor.Document
             OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, length, text));
             UndoStack.Push(new UndoableReplace(this, offset, GetText(offset, length), text));
 
-            TextBufferStrategy.Replace(offset, length, text);
+            TextBuffer.Replace(offset, length, text);
             LineManager.Replace(offset, length, text);
 
             OnDocumentChanged(new DocumentEventArgs(this, offset, length, text));
@@ -245,7 +245,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public char GetCharAt(int offset)
         {
-            return TextBufferStrategy.GetCharAt(offset);
+            return TextBuffer.GetCharAt(offset);
         }
 
         public string GetText(int offset, int length)
@@ -253,7 +253,7 @@ namespace ICSharpCode.TextEditor.Document
 #if DEBUG_EX
             if (length < 0) throw new ArgumentOutOfRangeException("length", length, "length < 0");
 #endif
-            return TextBufferStrategy.GetText(offset, length);
+            return TextBuffer.GetText(offset, length);
         }
 
         public string GetText(LineSegment segment)

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public class GapTextBufferStrategy : ITextBufferStrategy
+    public class TextBuffer
     {
 #if DEBUG_EX
         int creatorThread = System.Threading.Thread.CurrentThread.ManagedThreadId;

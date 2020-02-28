@@ -23,7 +23,7 @@ namespace ICSharpCode.TextEditor.Document
         public Document CreateDocument()
         {
             Document doc = new Document();
-            doc.TextBufferStrategy  = new GapTextBufferStrategy();
+            doc.TextBuffer = new TextBuffer();
             doc.FormattingStrategy  = new DefaultFormattingStrategy();
             doc.LineManager         = new LineManager(doc, null);
             doc.FoldingManager      = new FoldingManager(doc, doc.LineManager);
@@ -36,11 +36,11 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>
         /// Creates a new document and loads the given file
         /// </summary>
-        public Document CreateFromTextBuffer(ITextBufferStrategy textBuffer)
+        public Document CreateFromTextBuffer(TextBuffer textBuffer)
         {
             Document doc = (Document)CreateDocument();
             doc.TextContent = textBuffer.GetText(0, textBuffer.Length);
-            doc.TextBufferStrategy = textBuffer;
+            doc.TextBuffer = textBuffer;
             return doc;
         }
 
