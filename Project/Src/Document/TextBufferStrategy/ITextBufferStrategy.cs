@@ -10,7 +10,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// Interface to describe a sequence of characters that can be edited.
     /// </summary>
-    public interface ITextBufferStrategy
+    public interface ITextBufferStrategy // TODO0 needed?
     {
         /// <value>
         /// The current length of the sequence of characters that can be edited.

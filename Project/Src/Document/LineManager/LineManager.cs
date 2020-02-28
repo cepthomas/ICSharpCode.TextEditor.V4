@@ -12,7 +12,8 @@ using System.Diagnostics;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    internal sealed class LineManager
+    // internal sealed class LineManager
+    public class LineManager
     {
         LineSegmentTree lineCollection = new LineSegmentTree();
 

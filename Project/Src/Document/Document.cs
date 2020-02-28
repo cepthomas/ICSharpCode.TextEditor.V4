@@ -94,7 +94,8 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// The default <see cref="IDocument"/> implementation.
     /// </summary>
-    internal sealed class DefaultDocument : IDocument // TODO1 don't really need the interface.
+    //internal sealed class DefaultDocument : IDocument // TODO0 don't really need the interface.
+    public class IDocument
     {
         bool readOnly = false;
 
