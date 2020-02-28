@@ -18,6 +18,9 @@ namespace ICSharpCode.TextEditor.Document
         After
     }
 
+    /// <summary>
+    /// Properties that apply to all open text editor windows.
+    /// </summary>
     public class TextEditorProperties
     {
         public bool CaretLine { get; set; }
@@ -51,7 +54,7 @@ namespace ICSharpCode.TextEditor.Document
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
         public bool SupportReadOnlySegments { get; set; }
 
-        // Colors relocated from highlighting environment. TODO I did this.
+        // Colors relocated from highlighting environment. TODO1 I did this - good?
         public HighlightColor DefaultColor { get; set; } = new HighlightBackground("WindowText", "Window", false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.Yellow, false, false);
         public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
