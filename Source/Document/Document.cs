@@ -255,7 +255,8 @@ namespace ICSharpCode.TextEditor.Document
 #endif
             return TextBufferStrategy.GetText(offset, length);
         }
-        public string GetText(ISegment segment)
+
+        public string GetText(LineSegment segment)
         {
             return GetText(segment.Offset, segment.Length);
         }
@@ -330,13 +331,13 @@ namespace ICSharpCode.TextEditor.Document
             return Math.Min(this.TextLength, line.Offset + Math.Min(line.Length, p.X));
         }
 
-        public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : ISegment
+        public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : Segment
         {
             int removedCharacters = e.Length > 0 ? e.Length : 0;
             int insertedCharacters = e.Text != null ? e.Text.Length : 0;
             for (int i = 0; i < list.Count; ++i)
             {
-                ISegment s = list[i];
+                Segment s = list[i];
                 int segmentStart = s.Offset;
                 int segmentEnd = s.Offset + s.Length;
 

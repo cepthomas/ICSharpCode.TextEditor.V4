@@ -17,13 +17,20 @@ namespace ICSharpCode.TextEditor.Document
         TypeBody
     }
 
-    public class FoldMarker : AbstractSegment, IComparable
+    public class FoldMarker : Segment, IComparable //, AbstractSegment
     {
+
         bool      isFolded = false;
         string    foldText = "...";
         FoldType  foldType = FoldType.Unspecified;
         Document document = null;
         int startLine = -1, startColumn, endLine = -1, endColumn;
+
+        //public virtual int offset { get; set; } = -1;
+        int offset = -1;
+
+        //public virtual int length { get; set; } = -1;
+        int length = -1;
 
         static void GetPointForOffset(Document document, int offset, out int line, out int column)
         {
@@ -104,28 +111,28 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public override int Offset
+        public int Offset
         {
             get
             {
-                return base.Offset;
+                return offset;
             }
             set
             {
-                base.Offset = value;
+                offset = value;
                 startLine = -1;
                 endLine = -1;
             }
         }
-        public override int Length
+        public int Length
         {
             get
             {
-                return base.Length;
+                return length;
             }
             set
             {
-                base.Length = value;
+                length = value;
                 endLine = -1;
             }
         }
@@ -184,10 +191,10 @@ namespace ICSharpCode.TextEditor.Document
             this.document = document;
 
             startLine = Math.Min(document.TotalNumberOfLines - 1, Math.Max(startLine, 0));
-            ISegment startLineSegment = document.GetLineSegment(startLine);
+            LineSegment startLineSegment = document.GetLineSegment(startLine);
 
             endLine = Math.Min(document.TotalNumberOfLines - 1, Math.Max(endLine, 0));
-            ISegment endLineSegment   = document.GetLineSegment(endLine);
+            LineSegment endLineSegment   = document.GetLineSegment(endLine);
 
             // Prevent the region from completely disappearing
             if (string.IsNullOrEmpty(foldText))

@@ -19,8 +19,14 @@ namespace ICSharpCode.TextEditor.Document
     }
 
     /// <summary>Marks a part of a document.</summary>
-    public class TextMarker : AbstractSegment
+    public class TextMarker : Segment
     {
+        public virtual int Offset { get; set; } = -1;
+
+        public virtual int Length { get; set; } = -1;
+
+
+
         public TextMarkerType TextMarkerType { get; private set; }
 
         public Color Color { get; private set; }
@@ -37,27 +43,27 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>Gets the last offset that is inside the marker region.</summary>
         public int EndOffset { get { return Offset + Length - 1; } }
 
-        public TextMarker(int offset, int length, TextMarkerType textMarkerType) : this(offset, length, textMarkerType, Color.Red)
-        {
-        }
+        //public TextMarker(int offset, int length, TextMarkerType textMarkerType) : this(offset, length, textMarkerType, Color.Red)
+        //{
+        //}
 
         public TextMarker(int offset, int length, TextMarkerType textMarkerType, Color color)
         {
             if (length < 1) length = 1;
-            this.offset          = offset;
-            this.length          = length;
-            TextMarkerType  = textMarkerType;
-            Color           = color;
+            Offset = offset;
+            Length = length;
+            TextMarkerType = textMarkerType;
+            Color = color;
         }
 
         public TextMarker(int offset, int length, TextMarkerType textMarkerType, Color color, Color foreColor)
         {
             if (length < 1) length = 1;
-            this.offset          = offset;
-            this.length          = length;
-            TextMarkerType  = textMarkerType;
-            Color           = color;
-            ForeColor       = foreColor;
+            Offset = offset;
+            Length = length;
+            TextMarkerType = textMarkerType;
+            Color = color;
+            ForeColor = foreColor;
             OverrideForeColor = true;
         }
     }

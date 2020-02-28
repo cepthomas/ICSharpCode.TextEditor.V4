@@ -50,7 +50,6 @@
     <Compile Include="Document\FoldingStrategy\MarkdownFoldingStrategy.cs" />
     <Compile Include="Document\FoldingStrategy\XmlFoldingStrategy.cs" />
     <Compile Include="Document\HighlightingStrategy\HighlightingDefinitionInvalidException.cs" />
-    <Compile Include="Document\ISegment.cs" />
     <Compile Include="Document\LineManager\DeferredEventList.cs" />
     <Compile Include="Document\LineManager\LineSegmentTree.cs" />
     <Compile Include="Document\TextAnchor.cs" />
@@ -117,7 +116,7 @@
     </Compile>
     <Compile Include="Util\RtfWriter.cs" />
     <Compile Include="Document\FoldingStrategy\FoldingManager.cs" />
-    <Compile Include="Document\AbstractSegment.cs" />
+    <Compile Include="Document\Segment.cs" />
     <Compile Include="Document\FoldingStrategy\FoldMarker.cs" />
     <Compile Include="Util\TipPainter.cs" />
     <Compile Include="Util\TipSection.cs" />
