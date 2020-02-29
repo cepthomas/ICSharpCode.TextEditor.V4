@@ -20,7 +20,7 @@ namespace ICSharpCode.TextEditor.Document
     public class SelectionManager : IDisposable
     {
         Document _document;
-        TextArea _textArea; // TODO1 which has a SelMgr <--> Actually the whole class structure is tightly coupled.
+        TextArea _textArea; // TODO0 which has a SelMgr <--> Actually the whole class structure is tightly coupled.
         bool _isRect;
 
         public event EventHandler SelectionChanged;
@@ -86,9 +86,9 @@ namespace ICSharpCode.TextEditor.Document
         {
             _document = document;
             _textArea = textArea;
+            _isRect = false;
             StartPosition = new TextLocation();
             EndPosition = new TextLocation();
-            _isRect = false;
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
         }
 

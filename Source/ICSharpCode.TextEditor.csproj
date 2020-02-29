@@ -33,6 +33,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Dex9\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -40,6 +43,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document\Syntax\Converter.cs" />
     <Compile Include="Document\TextBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Document\Document.cs" />
@@ -171,58 +175,83 @@
     <Compile Include="Gui\ToolTipRequestEventArgs.cs" />
     <Compile Include="Document\HighlightingStrategy\SpanStack.cs" />
     <Compile Include="Util\WeakCollection.cs" />
-    <Content Include="SyntaxDefinition\BAT-Mode.xshd">
+    <None Include="SyntaxDefinition\BAT-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Boo.xshd">
+    </None>
+    <None Include="SyntaxDefinition\CPP-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Coco-Mode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\CPP-Mode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\CSharp-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\CSharp-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="SyntaxDefinition\HTML-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\HTML-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Java-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\Java-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\JavaScript-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\JavaScript-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Mode.xsd">
+    </None>
+    <None Include="SyntaxDefinition\Mode.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Patch-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\Patch-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\PHP-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\PHP-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Tex-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\VBNET-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\VBNET-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\XML-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\XML-Mode.xshd">
+    </None>
+    <None Include="SyntaxDefinition\Lua.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Lua.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SyntaxDefinition\Markdown.xshd">
+    </None>
+    <None Include="SyntaxDefinition\Markdown.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
-    <None Include="SyntaxDefinition\CPP.NET-Mode.xshd">
+    </None>
+    <None Include="packages.config" />
+    <None Include="SyntaxDefinition\cpp.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\csharp.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\default.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\diff.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\html.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\java.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\js.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\lua.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\md.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\php.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\vbnet.syntax">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SyntaxDefinition\xml.syntax">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

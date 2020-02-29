@@ -1,0 +1,449 @@
+{
+   "@name": "cpp",
+   "@folding": "Code",
+  "Extensions": [
+    "c",
+    "h",
+    "cc",
+    "cpp",
+    "hpp"
+  ],
+   "Properties": {
+      "Property": {
+         "@name": "LineComment",
+         "@value": "//"
+      }
+   },
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "DarkBlue"
+   },
+   "RuleSets": {
+      "RuleSet": {
+         "@ignorecase": "false",
+         "Delimiters": "~!%^*()-+=|\\#/{}[]:;\"'<> , .?",
+         "Span": [
+            {
+               "@name": "PreprocessorDirectives",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": "#"
+            },
+            {
+               "@name": "LineComment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": "//"
+            },
+            {
+               "@name": "BlockComment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "false",
+               "Begin": "/*",
+               "End": "*/"
+            },
+            {
+               "@name": "String",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Magenta",
+               "@stopateol": "true",
+               "@escapecharacter": "\\",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "Char",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Magenta",
+               "@stopateol": "true",
+               "@escapecharacter": "\\",
+               "Begin": "'",
+               "End": "'"
+            }
+         ],
+         "MarkPrevious": {
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "MidnightBlue",
+            "#text": "("
+         },
+         "KeyWords": [
+            {
+               "@name": "Punctuation",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkGreen",
+               "Key": [
+                  {
+                     "@word": "?"
+                  },
+                  {
+                     "@word": ","
+                  },
+                  {
+                     "@word": "."
+                  },
+                  {
+                     "@word": ";"
+                  },
+                  {
+                     "@word": "("
+                  },
+                  {
+                     "@word": ")"
+                  },
+                  {
+                     "@word": "["
+                  },
+                  {
+                     "@word": "]"
+                  },
+                  {
+                     "@word": "{"
+                  },
+                  {
+                     "@word": "}"
+                  },
+                  {
+                     "@word": "+"
+                  },
+                  {
+                     "@word": "-"
+                  },
+                  {
+                     "@word": "/"
+                  },
+                  {
+                     "@word": "%"
+                  },
+                  {
+                     "@word": "*"
+                  },
+                  {
+                     "@word": "<"
+                  },
+                  {
+                     "@word": ">"
+                  },
+                  {
+                     "@word": "^"
+                  },
+                  {
+                     "@word": "="
+                  },
+                  {
+                     "@word": "~"
+                  },
+                  {
+                     "@word": "!"
+                  },
+                  {
+                     "@word": "|"
+                  },
+                  {
+                     "@word": "&"
+                  }
+               ]
+            },
+            {
+               "@name": "OperatorKeywords",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "DarkCyan",
+               "Key": [
+                  {
+                     "@word": "and"
+                  },
+                  {
+                     "@word": "and_eq"
+                  },
+                  {
+                     "@word": "bitand"
+                  },
+                  {
+                     "@word": "bitor"
+                  },
+                  {
+                     "@word": "new"
+                  },
+                  {
+                     "@word": "not"
+                  },
+                  {
+                     "@word": "not_eq"
+                  },
+                  {
+                     "@word": "or"
+                  },
+                  {
+                     "@word": "or_eq"
+                  },
+                  {
+                     "@word": "xor"
+                  },
+                  {
+                     "@word": "xor_eq"
+                  }
+               ]
+            },
+            {
+               "@name": "Friends",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Brown",
+               "Key": {
+                  "@word": "friend"
+               }
+            },
+            {
+               "@name": "AccessModifiers",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "private"
+                  },
+                  {
+                     "@word": "protected"
+                  },
+                  {
+                     "@word": "public"
+                  },
+                  {
+                     "@word": "const"
+                  },
+                  {
+                     "@word": "volatile"
+                  },
+                  {
+                     "@word": "static"
+                  }
+               ]
+            },
+            {
+               "@name": "Types",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "Key": [
+                  {
+                     "@word": "bool"
+                  },
+                  {
+                     "@word": "char"
+                  },
+                  {
+                     "@word": "unsigned"
+                  },
+                  {
+                     "@word": "union"
+                  },
+                  {
+                     "@word": "virtual"
+                  },
+                  {
+                     "@word": "double"
+                  },
+                  {
+                     "@word": "float"
+                  },
+                  {
+                     "@word": "short"
+                  },
+                  {
+                     "@word": "signed"
+                  },
+                  {
+                     "@word": "void"
+                  },
+                  {
+                     "@word": "class"
+                  },
+                  {
+                     "@word": "enum"
+                  },
+                  {
+                     "@word": "struct"
+                  }
+               ]
+            },
+            {
+               "@name": "Literals",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Black",
+               "Key": [
+                  {
+                     "@word": "false"
+                  },
+                  {
+                     "@word": "true"
+                  }
+               ]
+            },
+            {
+               "@name": "IterationStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "do"
+                  },
+                  {
+                     "@word": "for"
+                  },
+                  {
+                     "@word": "while"
+                  }
+               ]
+            },
+            {
+               "@name": "JumpStatements",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Navy",
+               "Key": [
+                  {
+                     "@word": "break"
+                  },
+                  {
+                     "@word": "continue"
+                  },
+                  {
+                     "@word": "goto"
+                  },
+                  {
+                     "@word": "return"
+                  }
+               ]
+            },
+            {
+               "@name": "ExceptionHandlingStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Teal",
+               "Key": [
+                  {
+                     "@word": "catch"
+                  },
+                  {
+                     "@word": "throw"
+                  },
+                  {
+                     "@word": "try"
+                  }
+               ]
+            },
+            {
+               "@name": "SelectionStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "case"
+                  },
+                  {
+                     "@word": "else"
+                  },
+                  {
+                     "@word": "if"
+                  },
+                  {
+                     "@word": "switch"
+                  },
+                  {
+                     "@word": "default"
+                  }
+               ]
+            },
+            {
+               "@name": "KEYWORD1",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "asm"
+                  },
+                  {
+                     "@word": "auto"
+                  },
+                  {
+                     "@word": "compl"
+                  },
+                  {
+                     "@word": "mutable"
+                  },
+                  {
+                     "@word": "const_cast"
+                  },
+                  {
+                     "@word": "delete"
+                  },
+                  {
+                     "@word": "dynamic_cast"
+                  },
+                  {
+                     "@word": "explicit"
+                  },
+                  {
+                     "@word": "export"
+                  },
+                  {
+                     "@word": "extern"
+                  },
+                  {
+                     "@word": "inline"
+                  },
+                  {
+                     "@word": "int"
+                  },
+                  {
+                     "@word": "long"
+                  },
+                  {
+                     "@word": "operator"
+                  },
+                  {
+                     "@word": "register"
+                  },
+                  {
+                     "@word": "reinterpret_cast"
+                  },
+                  {
+                     "@word": "sizeof"
+                  },
+                  {
+                     "@word": "static_cast"
+                  },
+                  {
+                     "@word": "template"
+                  },
+                  {
+                     "@word": "typedef"
+                  },
+                  {
+                     "@word": "typeid"
+                  },
+                  {
+                     "@word": "typename"
+                  }
+               ]
+            }
+         ]
+      }
+   }
+}

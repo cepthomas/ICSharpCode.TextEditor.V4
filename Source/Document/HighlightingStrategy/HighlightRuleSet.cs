@@ -15,102 +15,31 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class HighlightRuleSet
     {
-        LookupTable keyWords;
-        ArrayList   spans = new ArrayList();
-        LookupTable prevMarkers;
-        LookupTable nextMarkers;
-        char escapeCharacter;
+        internal IHighlightingStrategyUsingRuleSets Highlighter; // TODO0 messed up binding
 
-        bool ignoreCase = false;
-        string name     = null;
+        public ArrayList Spans { get; private set; } = new ArrayList();
 
-        bool[] delimiters = new bool[256];
+        public LookupTable KeyWords { get; }
 
-        string      reference  = null;
+        public LookupTable PrevMarkers { get; }
 
-        public ArrayList Spans
-        {
-            get
-            {
-                return spans;
-            }
-        }
+        public LookupTable NextMarkers { get; }
 
-        internal IHighlightingStrategyUsingRuleSets Highlighter;
+        public bool[] Delimiters { get; } = new bool[256]; //TODO0 fix this later
 
-        public LookupTable KeyWords
-        {
-            get
-            {
-                return keyWords;
-            }
-        }
+        public char EscapeCharacter { get; }
 
-        public LookupTable PrevMarkers
-        {
-            get
-            {
-                return prevMarkers;
-            }
-        }
+        public bool IgnoreCase { get; } = false;
 
-        public LookupTable NextMarkers
-        {
-            get
-            {
-                return nextMarkers;
-            }
-        }
+        public string Name { get; set; } = null;
 
-        public bool[] Delimiters
-        {
-            get
-            {
-                return delimiters;
-            }
-        }
-
-        public char EscapeCharacter
-        {
-            get
-            {
-                return escapeCharacter;
-            }
-        }
-
-        public bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-            set
-            {
-                name = value;
-            }
-        }
-
-        public string Reference
-        {
-            get
-            {
-                return reference;
-            }
-        }
+        public string Reference { get; } = null;
 
         public HighlightRuleSet()
         {
-            keyWords    = new LookupTable(false);
-            prevMarkers = new LookupTable(false);
-            nextMarkers = new LookupTable(false);
+            KeyWords    = new LookupTable(false);
+            PrevMarkers = new LookupTable(false);
+            NextMarkers = new LookupTable(false);
         }
 
         public HighlightRuleSet(XmlElement el)
@@ -124,22 +53,22 @@ namespace ICSharpCode.TextEditor.Document
 
             if (el.HasAttribute("escapecharacter"))
             {
-                escapeCharacter = el.GetAttribute("escapecharacter")[0];
+                EscapeCharacter = el.GetAttribute("escapecharacter")[0];
             }
 
             if (el.Attributes["reference"] != null)
             {
-                reference = el.Attributes["reference"].InnerText;
+                Reference = el.Attributes["reference"].InnerText;
             }
 
             if (el.Attributes["ignorecase"] != null)
             {
-                ignoreCase  = Boolean.Parse(el.Attributes["ignorecase"].InnerText);
+                IgnoreCase  = Boolean.Parse(el.Attributes["ignorecase"].InnerText);
             }
 
             for (int i  = 0; i < Delimiters.Length; ++i)
             {
-                delimiters[i] = false;
+                Delimiters[i] = false;
             }
 
             if (el["Delimiters"] != null)
@@ -147,15 +76,15 @@ namespace ICSharpCode.TextEditor.Document
                 string delimiterString = el["Delimiters"].InnerText;
                 foreach (char ch in delimiterString)
                 {
-                    delimiters[(int)ch] = true;
+                    Delimiters[(int)ch] = true;
                 }
             }
 
 //			Spans       = new LookupTable(!IgnoreCase);
 
-            keyWords    = new LookupTable(!IgnoreCase);
-            prevMarkers = new LookupTable(!IgnoreCase);
-            nextMarkers = new LookupTable(!IgnoreCase);
+            KeyWords    = new LookupTable(!IgnoreCase);
+            PrevMarkers = new LookupTable(!IgnoreCase);
+            NextMarkers = new LookupTable(!IgnoreCase);
 
             nodes = el.GetElementsByTagName("KeyWords");
             foreach (XmlElement el2 in nodes)
@@ -165,7 +94,7 @@ namespace ICSharpCode.TextEditor.Document
                 XmlNodeList keys = el2.GetElementsByTagName("Key");
                 foreach (XmlElement node in keys)
                 {
-                    keyWords[node.Attributes["word"].InnerText] = color;
+                    KeyWords[node.Attributes["word"].InnerText] = color;
                 }
             }
 
@@ -182,14 +111,14 @@ namespace ICSharpCode.TextEditor.Document
             foreach (XmlElement el2 in nodes)
             {
                 PrevMarker prev = new PrevMarker(el2);
-                prevMarkers[prev.What] = prev;
+                PrevMarkers[prev.What] = prev;
             }
 
             nodes = el.GetElementsByTagName("MarkFollowing");
             foreach (XmlElement el2 in nodes)
             {
                 NextMarker next = new NextMarker(el2);
-                nextMarkers[next.What] = next;
+                NextMarkers[next.What] = next;
             }
         }
 
@@ -198,14 +127,14 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public void MergeFrom(HighlightRuleSet ruleSet)
         {
-            for (int i = 0; i < delimiters.Length; i++)
+            for (int i = 0; i < Delimiters.Length; i++)
             {
-                delimiters[i] |= ruleSet.delimiters[i];
+                Delimiters[i] |= ruleSet.Delimiters[i];
             }
             // insert merged spans in front of old spans
-            ArrayList oldSpans = spans;
-            spans = (ArrayList)ruleSet.spans.Clone();
-            spans.AddRange(oldSpans);
+            ArrayList oldSpans = Spans;
+            Spans = (ArrayList)ruleSet.Spans.Clone();
+            Spans.AddRange(oldSpans);
             //keyWords.MergeFrom(ruleSet.keyWords);
             //prevMarkers.MergeFrom(ruleSet.prevMarkers);
             //nextMarkers.MergeFrom(ruleSet.nextMarkers);

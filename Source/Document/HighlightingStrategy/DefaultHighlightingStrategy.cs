@@ -703,7 +703,7 @@ namespace ICSharpCode.TextEditor.Document
                     }
 
                     // check if the char is a delimiter
-                    if (activeRuleSet != null && (int)ch < 256 && activeRuleSet.Delimiters[(int)ch])
+                    if (activeRuleSet != null && ch < 256 && activeRuleSet.Delimiters[ch])
                     {
                         PushCurWord(document, ref markNext, words);
                         if (currentOffset + currentLength +1 < currentLine.Length)

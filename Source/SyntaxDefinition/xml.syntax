@@ -1,0 +1,162 @@
+
+{
+   "@name": "xml",
+   "@folding": "Xml",
+  "Extensions": [
+    "xml",
+    "xsl",
+    "xslt",
+    "xsd",
+    "manifest",
+    "config",
+    "addin",
+    "xshd",
+    "wxs",
+    "wxi",
+    "wxl",
+    "proj",
+    "csproj",
+    "vbproj",
+    "ilproj",
+    "booproj",
+    "build",
+    "xfrm",
+    "targets",
+    "xaml",
+    "xpt",
+    "xft",
+    "map",
+    "wsdl",
+    "disco"
+  ],
+   "Properties": [
+      {
+         "@name": "BlockCommentBegin",
+         "@value": "<!--"
+      },
+      {
+         "@name": "BlockCommentEnd",
+         "@value": "-->"
+      }
+   ],
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "DarkBlue"
+   },
+   "RuleSets": [
+      {
+         "@ignorecase": "false",
+         "Delimiters": [],
+         "Span": [
+            {
+               "@name": "Comment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "false",
+               "Begin": "<!--",
+               "End": "-->"
+            },
+            {
+               "@name": "CDataSection",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "false",
+               "Begin": "<![CDATA[",
+               "End": "]]>"
+            },
+            {
+               "@name": "DocTypeSection",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "false",
+               "Begin": "<!DOCTYPE",
+               "End": ">"
+            },
+            {
+               "@name": "XmlDecl",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "false",
+               "Begin": "<?",
+               "End": "?>"
+            },
+            {
+               "@name": "XmlTag",
+               "@rule": "XmlTagSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkMagenta",
+               "@stopateol": "false",
+               "Begin": "<",
+               "End": ">"
+            },
+            {
+               "@name": "EntityReference",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "&",
+               "End": ";"
+            }
+         ]
+      },
+      {
+         "@name": "XmlTagSet",
+         "@ignorecase": "false",
+         "Delimiters": "/=",
+         "Span": [
+            {
+               "@name": "String",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "Char",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "'",
+               "End": "'"
+            }
+         ],
+         "MarkPrevious": {
+            "@bold": "false",
+            "@italic": "false",
+            "@color": "Red",
+            "#text": "="
+         },
+         "KeyWords": [
+            {
+               "@name": "Slash",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkMagenta",
+               "Key": {
+                  "@word": "/"
+               }
+            },
+            {
+               "@name": "Assignment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": {
+                  "@word": "="
+               }
+            }
+         ]
+      }
+   ]
+}

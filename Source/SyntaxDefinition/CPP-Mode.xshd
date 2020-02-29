@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- syntaxdefinition for C/C++ 2001 by Andrea Paatz and Mike Krueger -->
 
-<SyntaxDefinition name = "C++" folding="Code" extensions = ".c;.h;.cc;.C;.cpp;.hpp">
+<SyntaxDefinition name = "C++" folding="Code" extensions = ".c;.h;.cc;.cpp;.hpp">
 	
 	<Properties>
 		<Property name="LineComment" value="//"/>
@@ -67,10 +67,8 @@
 			<KeyWords name = "OperatorKeywords" bold="true" italic="false" color="DarkCyan">
 				<Key word = "and" />
 				<Key word = "and_eq" />
-				
 				<Key word = "bitand" />
 				<Key word = "bitor" />
-				
 				<Key word = "new" />
 				<Key word = "not" />
 				<Key word = "not_eq" />
@@ -88,10 +86,8 @@
 				<Key word = "private" />
 				<Key word = "protected" />
 				<Key word = "public" />
-			
 				<Key word = "const" />
 				<Key word = "volatile" />
-				
 				<Key word = "static" />
 			</KeyWords>
 			
@@ -107,7 +103,6 @@
 				<Key word = "signed" />
 				<Key word = "void" />
 				<Key word = "class" />
-				
 				<Key word = "enum" />
 				<Key word = "struct" />
 			</KeyWords>

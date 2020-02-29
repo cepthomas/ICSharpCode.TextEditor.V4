@@ -1,0 +1,695 @@
+
+{
+   "@name": "vbnet",
+  "Extensions": [
+    "vb"
+  ],
+   "Properties": {
+      "Property": {
+         "@name": "LineComment",
+         "@value": "'"
+      }
+   },
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "Black"
+   },
+   "RuleSets": [
+      {
+         "@ignorecase": "true",
+         "Delimiters": "~!@%^*()-+=|\\#/{}[]:;\"'<>,.?",
+         "Span": [
+            {
+               "@name": "STRING",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Black",
+               "@stopateol": "true",
+               "@escapecharacter": "\"",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "PREPROCESSORDIRECTIVE",
+               "@rule": "PreprocessorSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Maroon",
+               "@stopateol": "true",
+               "Begin": {
+                  "@startofline": "true",
+                  "#text": "#"
+               }
+            },
+            {
+               "@name": "DATELITERAL",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": {
+                  "@startofline": "false",
+                  "#text": "#"
+               },
+               "End": "#"
+            },
+            {
+               "@name": "LINECOMMENT",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": "'"
+            },
+            {
+               "@name": "LINECOMMENT",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": {
+                  "@singleword": "true",
+                  "#text": "REM@C"
+               }
+            }
+         ],
+         "KeyWords": [
+            {
+               "@name": "DataTypes",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "#6F002F",
+               "Key": [
+                  {
+                     "@word": "Boolean"
+                  },
+                  {
+                     "@word": "Byte"
+                  },
+                  {
+                     "@word": "Char"
+                  },
+                  {
+                     "@word": "Date"
+                  },
+                  {
+                     "@word": "Decimal"
+                  },
+                  {
+                     "@word": "Double"
+                  },
+                  {
+                     "@word": "Integer"
+                  },
+                  {
+                     "@word": "Long"
+                  },
+                  {
+                     "@word": "Object"
+                  },
+                  {
+                     "@word": "SByte"
+                  },
+                  {
+                     "@word": "Short"
+                  },
+                  {
+                     "@word": "Single"
+                  },
+                  {
+                     "@word": "String"
+                  },
+                  {
+                     "@word": "UInteger"
+                  },
+                  {
+                     "@word": "ULong"
+                  },
+                  {
+                     "@word": "UShort"
+                  },
+                  {
+                     "@word": "Variant"
+                  }
+               ]
+            },
+            {
+               "@name": "Operators",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "#8515EA",
+               "Key": [
+                  {
+                     "@word": "AddressOf"
+                  },
+                  {
+                     "@word": "And"
+                  },
+                  {
+                     "@word": "AndAlso"
+                  },
+                  {
+                     "@word": "Is"
+                  },
+                  {
+                     "@word": "IsNot"
+                  },
+                  {
+                     "@word": "Like"
+                  },
+                  {
+                     "@word": "Mod"
+                  },
+                  {
+                     "@word": "New"
+                  },
+                  {
+                     "@word": "Not"
+                  },
+                  {
+                     "@word": "Or"
+                  },
+                  {
+                     "@word": "OrElse"
+                  },
+                  {
+                     "@word": "Xor"
+                  }
+               ]
+            },
+            {
+               "@name": "Constants",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "False"
+                  },
+                  {
+                     "@word": "Me"
+                  },
+                  {
+                     "@word": "MyBase"
+                  },
+                  {
+                     "@word": "MyClass"
+                  },
+                  {
+                     "@word": "Nothing"
+                  },
+                  {
+                     "@word": "True"
+                  }
+               ]
+            },
+            {
+               "@name": "CommonKeywords",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "As"
+                  },
+                  {
+                     "@word": "Of"
+                  },
+                  {
+                     "@word": "New"
+                  },
+                  {
+                     "@word": "End"
+                  }
+               ]
+            },
+            {
+               "@name": "FunctionKeywords",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "CBool"
+                  },
+                  {
+                     "@word": "CByte"
+                  },
+                  {
+                     "@word": "CChar"
+                  },
+                  {
+                     "@word": "CDate"
+                  },
+                  {
+                     "@word": "CDec"
+                  },
+                  {
+                     "@word": "CDbl"
+                  },
+                  {
+                     "@word": "CInt"
+                  },
+                  {
+                     "@word": "CLng"
+                  },
+                  {
+                     "@word": "CObj"
+                  },
+                  {
+                     "@word": "CSByte"
+                  },
+                  {
+                     "@word": "CShort"
+                  },
+                  {
+                     "@word": "CSng"
+                  },
+                  {
+                     "@word": "CStr"
+                  },
+                  {
+                     "@word": "CType"
+                  },
+                  {
+                     "@word": "CUInt"
+                  },
+                  {
+                     "@word": "CULng"
+                  },
+                  {
+                     "@word": "CUShort"
+                  },
+                  {
+                     "@word": "DirectCast"
+                  },
+                  {
+                     "@word": "GetType"
+                  },
+                  {
+                     "@word": "TryCast"
+                  },
+                  {
+                     "@word": "TypeOf"
+                  }
+               ]
+            },
+            {
+               "@name": "ParamModifiers",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "ByRef"
+                  },
+                  {
+                     "@word": "ByVal"
+                  },
+                  {
+                     "@word": "Optional"
+                  },
+                  {
+                     "@word": "ParamArray"
+                  }
+               ]
+            },
+            {
+               "@name": "AccessModifiers",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Friend"
+                  },
+                  {
+                     "@word": "Private"
+                  },
+                  {
+                     "@word": "Protected"
+                  },
+                  {
+                     "@word": "Public"
+                  }
+               ]
+            },
+            {
+               "@name": "OtherModifiers",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Const"
+                  },
+                  {
+                     "@word": "Custom"
+                  },
+                  {
+                     "@word": "Default"
+                  },
+                  {
+                     "@word": "Global"
+                  },
+                  {
+                     "@word": "MustInherit"
+                  },
+                  {
+                     "@word": "MustOverride"
+                  },
+                  {
+                     "@word": "Narrowing"
+                  },
+                  {
+                     "@word": "NotInheritable"
+                  },
+                  {
+                     "@word": "NotOverridable"
+                  },
+                  {
+                     "@word": "Overloads"
+                  },
+                  {
+                     "@word": "Overridable"
+                  },
+                  {
+                     "@word": "Overrides"
+                  },
+                  {
+                     "@word": "Partial"
+                  },
+                  {
+                     "@word": "ReadOnly"
+                  },
+                  {
+                     "@word": "Shadows"
+                  },
+                  {
+                     "@word": "Shared"
+                  },
+                  {
+                     "@word": "Static"
+                  },
+                  {
+                     "@word": "Widening"
+                  },
+                  {
+                     "@word": "WithEvents"
+                  },
+                  {
+                     "@word": "WriteOnly"
+                  }
+               ]
+            },
+            {
+               "@name": "Statements",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Throw"
+                  },
+                  {
+                     "@word": "Stop"
+                  },
+                  {
+                     "@word": "Return"
+                  },
+                  {
+                     "@word": "Resume"
+                  },
+                  {
+                     "@word": "AddHandler"
+                  },
+                  {
+                     "@word": "RemoveHandler"
+                  },
+                  {
+                     "@word": "RaiseEvent"
+                  },
+                  {
+                     "@word": "Option"
+                  },
+                  {
+                     "@word": "Let"
+                  },
+                  {
+                     "@word": "GoTo"
+                  },
+                  {
+                     "@word": "GoSub"
+                  },
+                  {
+                     "@word": "Call"
+                  },
+                  {
+                     "@word": "Continue"
+                  },
+                  {
+                     "@word": "Dim"
+                  },
+                  {
+                     "@word": "ReDim"
+                  },
+                  {
+                     "@word": "Erase"
+                  },
+                  {
+                     "@word": "On"
+                  },
+                  {
+                     "@word": "Error"
+                  },
+                  {
+                     "@word": "Exit"
+                  }
+               ]
+            },
+            {
+               "@name": "GlobalConstructs",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Namespace"
+                  },
+                  {
+                     "@word": "Class"
+                  },
+                  {
+                     "@word": "Imports"
+                  },
+                  {
+                     "@word": "Implements"
+                  },
+                  {
+                     "@word": "Inherits"
+                  },
+                  {
+                     "@word": "Interface"
+                  },
+                  {
+                     "@word": "Delegate"
+                  },
+                  {
+                     "@word": "Module"
+                  },
+                  {
+                     "@word": "Structure"
+                  },
+                  {
+                     "@word": "Enum"
+                  }
+               ]
+            },
+            {
+               "@name": "TypeLevelConstructs",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Sub"
+                  },
+                  {
+                     "@word": "Function"
+                  },
+                  {
+                     "@word": "Handles"
+                  },
+                  {
+                     "@word": "Declare"
+                  },
+                  {
+                     "@word": "Lib"
+                  },
+                  {
+                     "@word": "Alias"
+                  },
+                  {
+                     "@word": "Get"
+                  },
+                  {
+                     "@word": "Set"
+                  },
+                  {
+                     "@word": "Property"
+                  },
+                  {
+                     "@word": "Operator"
+                  },
+                  {
+                     "@word": "Event"
+                  }
+               ]
+            },
+            {
+               "@name": "Constructs",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "SyncLock"
+                  },
+                  {
+                     "@word": "Using"
+                  },
+                  {
+                     "@word": "With"
+                  },
+                  {
+                     "@word": "Do"
+                  },
+                  {
+                     "@word": "While"
+                  },
+                  {
+                     "@word": "Loop"
+                  },
+                  {
+                     "@word": "Wend"
+                  },
+                  {
+                     "@word": "Try"
+                  },
+                  {
+                     "@word": "Catch"
+                  },
+                  {
+                     "@word": "When"
+                  },
+                  {
+                     "@word": "Finally"
+                  },
+                  {
+                     "@word": "If"
+                  },
+                  {
+                     "@word": "Then"
+                  },
+                  {
+                     "@word": "Else"
+                  },
+                  {
+                     "@word": "ElseIf"
+                  },
+                  {
+                     "@word": "EndIf"
+                  },
+                  {
+                     "@word": "For"
+                  },
+                  {
+                     "@word": "To"
+                  },
+                  {
+                     "@word": "Step"
+                  },
+                  {
+                     "@word": "Each"
+                  },
+                  {
+                     "@word": "In"
+                  },
+                  {
+                     "@word": "Next"
+                  },
+                  {
+                     "@word": "Select"
+                  },
+                  {
+                     "@word": "Case"
+                  }
+               ]
+            },
+            {
+               "@name": "ContextKeywords",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "Ansi"
+                  },
+                  {
+                     "@word": "Auto"
+                  },
+                  {
+                     "@word": "Unicode"
+                  },
+                  {
+                     "@word": "Preserve"
+                  },
+                  {
+                     "@word": "Until"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "@name": "PreprocessorSet",
+         "@ignorecase": "true",
+         "Delimiters": "~!@%^*()-+=|\\#/{}[]:;\"'<>,.?",
+         "KeyWords": {
+            "@name": "PreProcessor",
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "Maroon",
+            "Key": [
+               {
+                  "@word": "Const"
+               },
+               {
+                  "@word": "If"
+               },
+               {
+                  "@word": "ElseIf"
+               },
+               {
+                  "@word": "Else"
+               },
+               {
+                  "@word": "End"
+               },
+               {
+                  "@word": "ExternalSource"
+               },
+               {
+                  "@word": "Region"
+               },
+               {
+                  "@word": "ExternalChecksum"
+               }
+            ]
+         }
+      }
+   ]
+}
+

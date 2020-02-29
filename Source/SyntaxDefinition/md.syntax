@@ -1,0 +1,38 @@
+
+{
+   "@name": "md",
+   "@folding": "Markdown",
+  "Extensions": [
+    "md",
+    "markdown",
+    "mkdown"
+  ],
+   "RuleSets": {
+      "RuleSet": [
+         {
+            "@name": "B1",
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "Blue",
+            "@stopateol": "true",
+            "Begin": "=="
+         },
+         {
+            "@name": "B2",
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "Green",
+            "@stopateol": "true",
+            "Begin": "--"
+         },
+         {
+            "@name": "B3",
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "Red",
+            "@stopateol": "true",
+            "Begin": "#"
+         }
+      ]
+   }
+}

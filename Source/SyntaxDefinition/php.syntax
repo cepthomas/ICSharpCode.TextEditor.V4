@@ -1,0 +1,488 @@
+
+{
+   "@name": "php",
+   "@folding": "Code",
+  "Extensions": [
+    "php"
+  ],
+     "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "DarkBlue"
+   },
+   "RuleSets": [
+      {
+         "@ignorecase": "false",
+         "Delimiters": "~!%^*()-+=|\\#/{}[]:;\"'<> , .?",
+         "Span": [
+            {
+               "@name": "PreprocessorDirectives",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": "#"
+            },
+            {
+               "@name": "LINECOMMENT",
+               "@rule": "DocumentSet",
+               "@bold": "false",
+               "@italic": "true",
+               "@color": "SlateGray",
+               "@stopateol": "true",
+               "Begin": "///"
+            },
+            {
+               "@name": "LINECOMMENT",
+               "@rule": "TestSet",
+               "@bold": "false",
+               "@italic": "true",
+               "@color": "SlateGray",
+               "@stopateol": "true",
+               "Begin": "//@!/@"
+            },
+            {
+               "@name": "BLOCKCOMMENT",
+               "@rule": "TestSet",
+               "@bold": "false",
+               "@italic": "true",
+               "@color": "SlateGray",
+               "@stopateol": "false",
+               "Begin": "/*",
+               "End": "*/"
+            },
+            {
+               "@name": "STRING",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Magenta",
+               "@stopateol": "true",
+               "@escapecharacter": "\\",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "MORELINEDSTRING",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Magenta",
+               "@stopateol": "false",
+               "@escapecharacter": "\\",
+               "Begin": "@@\"",
+               "End": "\""
+            },
+            {
+               "@name": "CHAR",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Magenta",
+               "@stopateol": "true",
+               "@escapecharacter": "\\",
+               "Begin": "'",
+               "End": "'"
+            }
+         ],
+         "MarkPrevious": {
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "MidnightBlue",
+            "#text": "("
+         },
+         "KeyWords": [
+            {
+               "@name": "Punctuation",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkGreen",
+               "Key": [
+                  {
+                     "@word": "?"
+                  },
+                  {
+                     "@word": ","
+                  },
+                  {
+                     "@word": "."
+                  },
+                  {
+                     "@word": "("
+                  },
+                  {
+                     "@word": ")"
+                  },
+                  {
+                     "@word": "["
+                  },
+                  {
+                     "@word": "]"
+                  },
+                  {
+                     "@word": "{"
+                  },
+                  {
+                     "@word": "}"
+                  },
+                  {
+                     "@word": "+"
+                  },
+                  {
+                     "@word": "-"
+                  },
+                  {
+                     "@word": "/"
+                  },
+                  {
+                     "@word": "%"
+                  },
+                  {
+                     "@word": "*"
+                  },
+                  {
+                     "@word": "<"
+                  },
+                  {
+                     "@word": ">"
+                  },
+                  {
+                     "@word": "^"
+                  },
+                  {
+                     "@word": "!"
+                  },
+                  {
+                     "@word": "|"
+                  }
+               ]
+            },
+            {
+               "@name": "AccessKeywords",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Black",
+               "Key": [
+                  {
+                     "@word": "global"
+                  },
+                  {
+                     "@word": "my"
+                  }
+               ]
+            },
+            {
+               "@name": "OperatorKeywords",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "DarkCyan",
+               "Key": [
+                  {
+                     "@word": "and"
+                  },
+                  {
+                     "@word": "or"
+                  },
+                  {
+                     "@word": "new"
+                  },
+                  {
+                     "@word": "xor"
+                  },
+                  {
+                     "@word": "true"
+                  },
+                  {
+                     "@word": "false"
+                  }
+               ]
+            },
+            {
+               "@name": "SelectionStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "else"
+                  },
+                  {
+                     "@word": "if"
+                  },
+                  {
+                     "@word": "switch"
+                  },
+                  {
+                     "@word": "case"
+                  },
+                  {
+                     "@word": "endif"
+                  },
+                  {
+                     "@word": "elseif"
+                  }
+               ]
+            },
+            {
+               "@name": "IterationStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "do"
+                  },
+                  {
+                     "@word": "for"
+                  },
+                  {
+                     "@word": "foreach"
+                  },
+                  {
+                     "@word": "while"
+                  },
+                  {
+                     "@word": "endwhile"
+                  },
+                  {
+                     "@word": "exit"
+                  }
+               ]
+            },
+            {
+               "@name": "JumpStatements",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Navy",
+               "Key": [
+                  {
+                     "@word": "break"
+                  },
+                  {
+                     "@word": "continue"
+                  },
+                  {
+                     "@word": "default"
+                  },
+                  {
+                     "@word": "goto"
+                  },
+                  {
+                     "@word": "return"
+                  }
+               ]
+            },
+            {
+               "@name": "ExceptionHandlingStatements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Teal",
+               "Key": [
+                  {
+                     "@word": "require"
+                  },
+                  {
+                     "@word": "include"
+                  },
+                  {
+                     "@word": "function"
+                  },
+                  {
+                     "@word": "return"
+                  },
+                  {
+                     "@word": "old_function"
+                  }
+               ]
+            },
+            {
+               "@name": "ValueTypes",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Red",
+               "Key": [
+                  {
+                     "@word": "int"
+                  },
+                  {
+                     "@word": "integer"
+                  },
+                  {
+                     "@word": "real"
+                  },
+                  {
+                     "@word": "double"
+                  },
+                  {
+                     "@word": "float"
+                  },
+                  {
+                     "@word": "string"
+                  },
+                  {
+                     "@word": "array"
+                  },
+                  {
+                     "@word": "object"
+                  }
+               ]
+            },
+            {
+               "@name": "ReferenceTypes",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "Key": [
+                  {
+                     "@word": "class"
+                  },
+                  {
+                     "@word": "new"
+                  }
+               ]
+            },
+            {
+               "@name": "Void",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "Key": {
+                  "@word": "void"
+               }
+            },
+            {
+               "@name": "AccessModifiers",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "public"
+                  },
+                  {
+                     "@word": "private"
+                  }
+               ]
+            },
+            {
+               "@name": "GetSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SaddleBrown",
+               "Key": [
+                  {
+                     "@word": "get"
+                  },
+                  {
+                     "@word": "set"
+                  }
+               ]
+            },
+            {
+               "@name": "Literals",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Black",
+               "Key": [
+                  {
+                     "@word": null
+                  },
+                  {
+                     "@word": "value"
+                  }
+               ]
+            },
+            {
+               "@name": "Statements",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "DarkBlue",
+               "Key": [
+                  {
+                     "@word": "var"
+                  },
+                  {
+                     "@word": "extends"
+                  },
+                  {
+                     "@word": "list"
+                  },
+                  {
+                     "@word": "each"
+                  },
+                  {
+                     "@word": "PHP_SELF"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "@name": "TestSet",
+         "@ignorecase": "true",
+         "Delimiters": "~!@%^*()-+=|\\#/{}[]:;\"'<> , .?",
+         "KeyWords": {
+            "@name": "Testword",
+            "@bold": "true",
+            "@italic": "true",
+            "@color": "Red",
+            "Key": {
+               "@word": "TODO"
+            }
+         }
+      },
+      {
+         "@name": "DocumentSet",
+         "@ignorecase": "false",
+         "Delimiters": "~!@%^*()-+=|\\#/{}[]:;\"'<> , .?",
+         "Span": {
+            "@name": "XMLTAG",
+            "@rule": "XMLDocuSet",
+            "@bold": "false",
+            "@italic": "true",
+            "@color": "Gray",
+            "@stopateol": "true",
+            "Begin": "<",
+            "End": ">"
+         },
+         "KeyWords": {
+            "@name": "Testword",
+            "@bold": "true",
+            "@italic": "true",
+            "@color": "Red",
+            "Key": {
+               "@word": "TODO"
+            }
+         }
+      },
+      {
+         "@name": "XMLDocuSet",
+         "@ignorecase": "false",
+         "Delimiters": "~!@%^*()-+=|\\#/{}[]:;\"'<> , .?",
+         "Span": {
+            "@name": "STRING",
+            "@bold": "true",
+            "@italic": "true",
+            "@color": "Silver",
+            "@stopateol": "true",
+            "Begin": "\"",
+            "End": "\""
+         },
+         "KeyWords": {
+            "@name": "Punctuation",
+            "@bold": "true",
+            "@italic": "true",
+            "@color": "Gray",
+            "Key": [
+               {
+                  "@word": "/"
+               },
+               {
+                  "@word": "|"
+               },
+               {
+                  "@word": "="
+               }
+            ]
+         }
+      }
+   ]
+}

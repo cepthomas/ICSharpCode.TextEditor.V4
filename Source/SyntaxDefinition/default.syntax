@@ -1,0 +1,17 @@
+{
+   "@name": "default",
+  "Extensions": [
+  ],
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "Yellow"
+   },
+   "RuleSets": {
+      "RuleSet": {
+         "@ignorecase": "false",
+         "Delimiters": []
+      }
+   }
+}

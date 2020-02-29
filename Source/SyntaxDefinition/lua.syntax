@@ -1,0 +1,212 @@
+
+{
+   "@name": "lua",
+  "Extensions": [
+    "lua"
+  ],
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "DarkBlue"
+   },
+   "RuleSets": {
+      "RuleSet": {
+         "@ignorecase": "false",
+         "Delimiters": "(),.;:",
+         "Span": [
+            {
+               "@name": "BlockComment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "false",
+               "Begin": "--[[",
+               "End": "]]--"
+            },
+            {
+               "@name": "LineComment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Green",
+               "@stopateol": "true",
+               "Begin": "--"
+            },
+            {
+               "@name": "String",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "@stopateol": "false",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "Char",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "@stopateol": "false",
+               "Begin": "'",
+               "End": "'"
+            }
+         ],
+         "MarkPrevious": {
+            "@bold": "true",
+            "@italic": "false",
+            "@color": "MidnightBlue",
+            "#text": "("
+         },
+         "KeyWords": [
+            {
+               "@name": "Punctuation",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkGreen",
+               "Key": [
+                  {
+                     "@word": "?"
+                  },
+                  {
+                     "@word": ","
+                  },
+                  {
+                     "@word": "."
+                  },
+                  {
+                     "@word": ";"
+                  },
+                  {
+                     "@word": "("
+                  },
+                  {
+                     "@word": ")"
+                  },
+                  {
+                     "@word": "["
+                  },
+                  {
+                     "@word": "]"
+                  },
+                  {
+                     "@word": "{"
+                  },
+                  {
+                     "@word": "}"
+                  },
+                  {
+                     "@word": "+"
+                  },
+                  {
+                     "@word": "-"
+                  },
+                  {
+                     "@word": "/"
+                  },
+                  {
+                     "@word": "%"
+                  },
+                  {
+                     "@word": "*"
+                  },
+                  {
+                     "@word": "^"
+                  },
+                  {
+                     "@word": "="
+                  },
+                  {
+                     "@word": "~"
+                  },
+                  {
+                     "@word": "!"
+                  },
+                  {
+                     "@word": "|"
+                  }
+               ]
+            },
+            {
+               "@name": "AccessKeywords",
+               "@bold": "true",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": {
+                  "@word": "self"
+               }
+            },
+            {
+               "@name": "LanguageKeywords",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": [
+                  {
+                     "@word": "and"
+                  },
+                  {
+                     "@word": "break"
+                  },
+                  {
+                     "@word": "do"
+                  },
+                  {
+                     "@word": "else"
+                  },
+                  {
+                     "@word": "elseif"
+                  },
+                  {
+                     "@word": "end"
+                  },
+                  {
+                     "@word": "false"
+                  },
+                  {
+                     "@word": "for"
+                  },
+                  {
+                     "@word": "function"
+                  },
+                  {
+                     "@word": "if"
+                  },
+                  {
+                     "@word": "in"
+                  },
+                  {
+                     "@word": "local"
+                  },
+                  {
+                     "@word": "nil"
+                  },
+                  {
+                     "@word": "not"
+                  },
+                  {
+                     "@word": "or"
+                  },
+                  {
+                     "@word": "repeat"
+                  },
+                  {
+                     "@word": "return"
+                  },
+                  {
+                     "@word": "then"
+                  },
+                  {
+                     "@word": "true"
+                  },
+                  {
+                     "@word": "until"
+                  },
+                  {
+                     "@word": "while"
+                  }
+               ]
+            }
+         ]
+      }
+   }
+}

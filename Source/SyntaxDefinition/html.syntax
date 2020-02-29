@@ -1,0 +1,1072 @@
+{
+   "@name": "html",
+   "@folding": "Xml",
+  "Extensions": [
+    "htm",
+    "html"
+  ],
+   "Digits": {
+      "@name": "Digits",
+      "@bold": "false",
+      "@italic": "false",
+      "@color": "DarkBlue"
+   },
+   "RuleSets": [
+      {
+         "@ignorecase": "true",
+         "Delimiters": [],
+         "Span": [
+            {
+               "@name": "Comment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkSlateGray",
+               "@stopateol": "false",
+               "Begin": "<!--",
+               "End": "-->"
+            },
+            {
+               "@name": "ScriptTag",
+               "@rule": "JavaScriptSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SpringGreen",
+               "@stopateol": "false",
+               "Begin": "<script>",
+               "End": "<\/script>"
+            },
+            {
+               "@name": "JavaScriptTag",
+               "@rule": "JavaScriptSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SpringGreen",
+               "@stopateol": "false",
+               "Begin": "<script lang=\"JavaScript\">",
+               "End": "<\/script>"
+            },
+            {
+               "@name": "JScriptTag",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SpringGreen",
+               "@stopateol": "false",
+               "Begin": "<script lang=\"JScript\">",
+               "End": "<\/script>"
+            },
+            {
+               "@name": "VBScriptTag",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SpringGreen",
+               "@stopateol": "false",
+               "Begin": "<script lang=\"VBScript\">",
+               "End": "<\/script>"
+            },
+            {
+               "@name": "UnknownScriptTag",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "SpringGreen",
+               "@stopateol": "false",
+               "Begin": "<script@C",
+               "End": "<\/script>"
+            },
+            {
+               "@name": "HtmlTag",
+               "@rule": "HtmlTagSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkMagenta",
+               "@stopateol": "false",
+               "Begin": "<",
+               "End": ">"
+            },
+            {
+               "@name": "EntityReference",
+               "@rule": "EntityReferenceSet",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "&",
+               "End": ";"
+            }
+         ]
+      },
+      {
+         "@name": "JavaScriptSet",
+         "@reference": "JavaScript"
+      },
+      {
+         "@name": "EntityReferenceSet",
+         "@ignorecase": "false",
+         "KeyWords": {
+            "@name": "Entities",
+            "@bold": "false",
+            "@italic": "false",
+            "@color": "Green",
+            "Key": [
+               {
+                  "@word": "aacute"
+               },
+               {
+                  "@word": "agrave"
+               },
+               {
+                  "@word": "acirc"
+               },
+               {
+                  "@word": "amp"
+               },
+               {
+                  "@word": "atilde"
+               },
+               {
+                  "@word": "aring"
+               },
+               {
+                  "@word": "auml"
+               },
+               {
+                  "@word": "aelig"
+               },
+               {
+                  "@word": "ccedil"
+               },
+               {
+                  "@word": "copy"
+               },
+               {
+                  "@word": "eacute"
+               },
+               {
+                  "@word": "egrave"
+               },
+               {
+                  "@word": "ecirc"
+               },
+               {
+                  "@word": "euml"
+               },
+               {
+                  "@word": "iacute"
+               },
+               {
+                  "@word": "igrave"
+               },
+               {
+                  "@word": "icirc"
+               },
+               {
+                  "@word": "iuml"
+               },
+               {
+                  "@word": "eth"
+               },
+               {
+                  "@word": "gt"
+               },
+               {
+                  "@word": "lt"
+               },
+               {
+                  "@word": "nbsp"
+               },
+               {
+                  "@word": "ntilde"
+               },
+               {
+                  "@word": "oacute"
+               },
+               {
+                  "@word": "ograve"
+               },
+               {
+                  "@word": "ocirc"
+               },
+               {
+                  "@word": "otilde"
+               },
+               {
+                  "@word": "ouml"
+               },
+               {
+                  "@word": "oslash"
+               },
+               {
+                  "@word": "quot"
+               },
+               {
+                  "@word": "reg"
+               },
+               {
+                  "@word": "szlig"
+               },
+               {
+                  "@word": "uacute"
+               },
+               {
+                  "@word": "ugrave"
+               },
+               {
+                  "@word": "ucirc"
+               },
+               {
+                  "@word": "uuml"
+               },
+               {
+                  "@word": "yacute"
+               },
+               {
+                  "@word": "thorn"
+               },
+               {
+                  "@word": "trade"
+               },
+               {
+                  "@word": "yuml"
+               }
+            ]
+         }
+      },
+      {
+         "@name": "HtmlTagSet",
+         "@ignorecase": "false",
+         "Delimiters": "/=",
+         "Span": [
+            {
+               "@name": "String",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "\"",
+               "End": "\""
+            },
+            {
+               "@name": "Char",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "@stopateol": "true",
+               "Begin": "'",
+               "End": "'"
+            }
+         ],
+         "MarkPrevious": {
+            "@bold": "false",
+            "@italic": "false",
+            "@color": "Red",
+            "#text": "="
+         },
+         "KeyWords": [
+            {
+               "@name": "Slash",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkMagenta",
+               "Key": {
+                  "@word": "/"
+               }
+            },
+            {
+               "@name": "Assignment",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Blue",
+               "Key": {
+                  "@word": "="
+               }
+            },
+            {
+               "@name": "Tags",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "DarkMagenta",
+               "Key": [
+                  {
+                     "@word": "!DOCTYPE"
+                  },
+                  {
+                     "@word": "A"
+                  },
+                  {
+                     "@word": "ABBR"
+                  },
+                  {
+                     "@word": "ACRONYM"
+                  },
+                  {
+                     "@word": "ADDRESS"
+                  },
+                  {
+                     "@word": "APPLET"
+                  },
+                  {
+                     "@word": "AREA"
+                  },
+                  {
+                     "@word": "B"
+                  },
+                  {
+                     "@word": "BASE"
+                  },
+                  {
+                     "@word": "BASEFONT"
+                  },
+                  {
+                     "@word": "BGSOUND"
+                  },
+                  {
+                     "@word": "BDO"
+                  },
+                  {
+                     "@word": "BIG"
+                  },
+                  {
+                     "@word": "BLINK"
+                  },
+                  {
+                     "@word": "BLOCKQUOTE"
+                  },
+                  {
+                     "@word": "BODY"
+                  },
+                  {
+                     "@word": "BR"
+                  },
+                  {
+                     "@word": "BUTTON"
+                  },
+                  {
+                     "@word": "CAPTION"
+                  },
+                  {
+                     "@word": "CENTER"
+                  },
+                  {
+                     "@word": "CITE"
+                  },
+                  {
+                     "@word": "CODE"
+                  },
+                  {
+                     "@word": "COL"
+                  },
+                  {
+                     "@word": "COLGROUP"
+                  },
+                  {
+                     "@word": "COMMENT"
+                  },
+                  {
+                     "@word": "DD"
+                  },
+                  {
+                     "@word": "DEL"
+                  },
+                  {
+                     "@word": "DFN"
+                  },
+                  {
+                     "@word": "DIR"
+                  },
+                  {
+                     "@word": "DIV"
+                  },
+                  {
+                     "@word": "DL"
+                  },
+                  {
+                     "@word": "DT"
+                  },
+                  {
+                     "@word": "EM"
+                  },
+                  {
+                     "@word": "EMBED"
+                  },
+                  {
+                     "@word": "FIELDSET"
+                  },
+                  {
+                     "@word": "FONT"
+                  },
+                  {
+                     "@word": "FORM"
+                  },
+                  {
+                     "@word": "FRAME"
+                  },
+                  {
+                     "@word": "FRAMESET"
+                  },
+                  {
+                     "@word": "H"
+                  },
+                  {
+                     "@word": "H1"
+                  },
+                  {
+                     "@word": "H2"
+                  },
+                  {
+                     "@word": "H3"
+                  },
+                  {
+                     "@word": "H4"
+                  },
+                  {
+                     "@word": "H5"
+                  },
+                  {
+                     "@word": "H6"
+                  },
+                  {
+                     "@word": "HEAD"
+                  },
+                  {
+                     "@word": "HR"
+                  },
+                  {
+                     "@word": "HTA:APPLICATION"
+                  },
+                  {
+                     "@word": "HTML"
+                  },
+                  {
+                     "@word": "I"
+                  },
+                  {
+                     "@word": "IFRAME"
+                  },
+                  {
+                     "@word": "IMG"
+                  },
+                  {
+                     "@word": "INPUT"
+                  },
+                  {
+                     "@word": "INS"
+                  },
+                  {
+                     "@word": "ISINDEX"
+                  },
+                  {
+                     "@word": "KBD"
+                  },
+                  {
+                     "@word": "LABEL"
+                  },
+                  {
+                     "@word": "LEGEnd"
+                  },
+                  {
+                     "@word": "LI"
+                  },
+                  {
+                     "@word": "LINK"
+                  },
+                  {
+                     "@word": "LISTING"
+                  },
+                  {
+                     "@word": "MAP"
+                  },
+                  {
+                     "@word": "MARQUEE"
+                  },
+                  {
+                     "@word": "MENU"
+                  },
+                  {
+                     "@word": "META"
+                  },
+                  {
+                     "@word": "MULTICOL"
+                  },
+                  {
+                     "@word": "NEXTID"
+                  },
+                  {
+                     "@word": "NOBR"
+                  },
+                  {
+                     "@word": "NOFRAMES"
+                  },
+                  {
+                     "@word": "NOSCRIPT"
+                  },
+                  {
+                     "@word": "OBJECT"
+                  },
+                  {
+                     "@word": "OL"
+                  },
+                  {
+                     "@word": "OPTGROUP"
+                  },
+                  {
+                     "@word": "OPTION"
+                  },
+                  {
+                     "@word": "P"
+                  },
+                  {
+                     "@word": "PARAM"
+                  },
+                  {
+                     "@word": "PLAINTEXT"
+                  },
+                  {
+                     "@word": "PRE"
+                  },
+                  {
+                     "@word": "Q"
+                  },
+                  {
+                     "@word": "S"
+                  },
+                  {
+                     "@word": "SAMP"
+                  },
+                  {
+                     "@word": "SCRIPT"
+                  },
+                  {
+                     "@word": "SELECT"
+                  },
+                  {
+                     "@word": "SERVER"
+                  },
+                  {
+                     "@word": "SMALL"
+                  },
+                  {
+                     "@word": "SOUND"
+                  },
+                  {
+                     "@word": "SPACER"
+                  },
+                  {
+                     "@word": "Span"
+                  },
+                  {
+                     "@word": "STRONG"
+                  },
+                  {
+                     "@word": "STYLE"
+                  },
+                  {
+                     "@word": "SUB"
+                  },
+                  {
+                     "@word": "SUP"
+                  },
+                  {
+                     "@word": "TABLE"
+                  },
+                  {
+                     "@word": "TBODY"
+                  },
+                  {
+                     "@word": "TD"
+                  },
+                  {
+                     "@word": "TEXTAREA"
+                  },
+                  {
+                     "@word": "TEXTFLOW"
+                  },
+                  {
+                     "@word": "TFOOT"
+                  },
+                  {
+                     "@word": "TH"
+                  },
+                  {
+                     "@word": "THEAD"
+                  },
+                  {
+                     "@word": "TITLE"
+                  },
+                  {
+                     "@word": "TR"
+                  },
+                  {
+                     "@word": "TT"
+                  },
+                  {
+                     "@word": "U"
+                  },
+                  {
+                     "@word": "VAR"
+                  },
+                  {
+                     "@word": "WBR"
+                  },
+                  {
+                     "@word": "XMP"
+                  }
+               ]
+            },
+            {
+               "@name": "Attributes",
+               "@bold": "false",
+               "@italic": "false",
+               "@color": "Red",
+               "Key": [
+                  {
+                     "@word": "abbr"
+                  },
+                  {
+                     "@word": "accept-charset"
+                  },
+                  {
+                     "@word": "accept"
+                  },
+                  {
+                     "@word": "accesskey"
+                  },
+                  {
+                     "@word": "action"
+                  },
+                  {
+                     "@word": "align"
+                  },
+                  {
+                     "@word": "alink"
+                  },
+                  {
+                     "@word": "alt"
+                  },
+                  {
+                     "@word": "applicationname"
+                  },
+                  {
+                     "@word": "archive"
+                  },
+                  {
+                     "@word": "axis"
+                  },
+                  {
+                     "@word": "background"
+                  },
+                  {
+                     "@word": "behavior"
+                  },
+                  {
+                     "@word": "bgcolor"
+                  },
+                  {
+                     "@word": "bgproperties"
+                  },
+                  {
+                     "@word": "border"
+                  },
+                  {
+                     "@word": "bordercolor"
+                  },
+                  {
+                     "@word": "bordercolordark"
+                  },
+                  {
+                     "@word": "bordercolorligh"
+                  },
+                  {
+                     "@word": "borderstyle"
+                  },
+                  {
+                     "@word": "caption"
+                  },
+                  {
+                     "@word": "cellpadding"
+                  },
+                  {
+                     "@word": "cellspacing"
+                  },
+                  {
+                     "@word": "char"
+                  },
+                  {
+                     "@word": "charoff"
+                  },
+                  {
+                     "@word": "charset"
+                  },
+                  {
+                     "@word": "checked"
+                  },
+                  {
+                     "@word": "cite"
+                  },
+                  {
+                     "@word": "class"
+                  },
+                  {
+                     "@word": "classid"
+                  },
+                  {
+                     "@word": "clear"
+                  },
+                  {
+                     "@word": "code"
+                  },
+                  {
+                     "@word": "codetype"
+                  },
+                  {
+                     "@word": "color"
+                  },
+                  {
+                     "@word": "cols"
+                  },
+                  {
+                     "@word": "colspan"
+                  },
+                  {
+                     "@word": "compact"
+                  },
+                  {
+                     "@word": "content"
+                  },
+                  {
+                     "@word": "coords"
+                  },
+                  {
+                     "@word": "data"
+                  },
+                  {
+                     "@word": "datetime"
+                  },
+                  {
+                     "@word": "declare"
+                  },
+                  {
+                     "@word": "defer"
+                  },
+                  {
+                     "@word": "dir"
+                  },
+                  {
+                     "@word": "direction"
+                  },
+                  {
+                     "@word": "disabled"
+                  },
+                  {
+                     "@word": "dynsrc"
+                  },
+                  {
+                     "@word": "enctype"
+                  },
+                  {
+                     "@word": "face"
+                  },
+                  {
+                     "@word": "for"
+                  },
+                  {
+                     "@word": "frame"
+                  },
+                  {
+                     "@word": "frameborder"
+                  },
+                  {
+                     "@word": "framespacing"
+                  },
+                  {
+                     "@word": "gutter"
+                  },
+                  {
+                     "@word": "headers"
+                  },
+                  {
+                     "@word": "height"
+                  },
+                  {
+                     "@word": "href"
+                  },
+                  {
+                     "@word": "hreflang"
+                  },
+                  {
+                     "@word": "hspace"
+                  },
+                  {
+                     "@word": "http-equiv"
+                  },
+                  {
+                     "@word": "icon"
+                  },
+                  {
+                     "@word": "id"
+                  },
+                  {
+                     "@word": "ismap"
+                  },
+                  {
+                     "@word": "label"
+                  },
+                  {
+                     "@word": "language"
+                  },
+                  {
+                     "@word": "leftmargin"
+                  },
+                  {
+                     "@word": "link"
+                  },
+                  {
+                     "@word": "longdesc"
+                  },
+                  {
+                     "@word": "loop"
+                  },
+                  {
+                     "@word": "lowsrc"
+                  },
+                  {
+                     "@word": "marginheight"
+                  },
+                  {
+                     "@word": "marginwidth"
+                  },
+                  {
+                     "@word": "maximizebutton"
+                  },
+                  {
+                     "@word": "maxlength"
+                  },
+                  {
+                     "@word": "media"
+                  },
+                  {
+                     "@word": "method"
+                  },
+                  {
+                     "@word": "methods"
+                  },
+                  {
+                     "@word": "minimizebutton"
+                  },
+                  {
+                     "@word": "multiple"
+                  },
+                  {
+                     "@word": "name"
+                  },
+                  {
+                     "@word": "nohref"
+                  },
+                  {
+                     "@word": "noresize"
+                  },
+                  {
+                     "@word": "noshade"
+                  },
+                  {
+                     "@word": "nowrap"
+                  },
+                  {
+                     "@word": "object"
+                  },
+                  {
+                     "@word": "onabort"
+                  },
+                  {
+                     "@word": "onblur"
+                  },
+                  {
+                     "@word": "onchange"
+                  },
+                  {
+                     "@word": "onclick"
+                  },
+                  {
+                     "@word": "ondblclick"
+                  },
+                  {
+                     "@word": "onerror"
+                  },
+                  {
+                     "@word": "onfocus"
+                  },
+                  {
+                     "@word": "onkeydown"
+                  },
+                  {
+                     "@word": "onkeypress"
+                  },
+                  {
+                     "@word": "onkeyup"
+                  },
+                  {
+                     "@word": "onload"
+                  },
+                  {
+                     "@word": "onmousedown"
+                  },
+                  {
+                     "@word": "onmousemove"
+                  },
+                  {
+                     "@word": "onmouseout"
+                  },
+                  {
+                     "@word": "onmouseover"
+                  },
+                  {
+                     "@word": "onmouseup"
+                  },
+                  {
+                     "@word": "onreset"
+                  },
+                  {
+                     "@word": "onselect"
+                  },
+                  {
+                     "@word": "onsubmit"
+                  },
+                  {
+                     "@word": "onunload"
+                  },
+                  {
+                     "@word": "profile"
+                  },
+                  {
+                     "@word": "prompt"
+                  },
+                  {
+                     "@word": "readonly"
+                  },
+                  {
+                     "@word": "rel"
+                  },
+                  {
+                     "@word": "rev"
+                  },
+                  {
+                     "@word": "rows"
+                  },
+                  {
+                     "@word": "rowspan"
+                  },
+                  {
+                     "@word": "rules"
+                  },
+                  {
+                     "@word": "runat"
+                  },
+                  {
+                     "@word": "scheme"
+                  },
+                  {
+                     "@word": "scope"
+                  },
+                  {
+                     "@word": "scrollamount"
+                  },
+                  {
+                     "@word": "scrolldelay"
+                  },
+                  {
+                     "@word": "scrolling"
+                  },
+                  {
+                     "@word": "selected"
+                  },
+                  {
+                     "@word": "shape"
+                  },
+                  {
+                     "@word": "showintaskbar"
+                  },
+                  {
+                     "@word": "singleinstance"
+                  },
+                  {
+                     "@word": "size"
+                  },
+                  {
+                     "@word": "span"
+                  },
+                  {
+                     "@word": "src"
+                  },
+                  {
+                     "@word": "standby"
+                  },
+                  {
+                     "@word": "start"
+                  },
+                  {
+                     "@word": "style"
+                  },
+                  {
+                     "@word": "summary"
+                  },
+                  {
+                     "@word": "sysmenu"
+                  },
+                  {
+                     "@word": "tabindex"
+                  },
+                  {
+                     "@word": "target"
+                  },
+                  {
+                     "@word": "text"
+                  },
+                  {
+                     "@word": "title"
+                  },
+                  {
+                     "@word": "topmargin"
+                  },
+                  {
+                     "@word": "type"
+                  },
+                  {
+                     "@word": "urn"
+                  },
+                  {
+                     "@word": "usemap"
+                  },
+                  {
+                     "@word": "valign"
+                  },
+                  {
+                     "@word": "value"
+                  },
+                  {
+                     "@word": "valuetype"
+                  },
+                  {
+                     "@word": "version"
+                  },
+                  {
+                     "@word": "vlink"
+                  },
+                  {
+                     "@word": "vrml"
+                  },
+                  {
+                     "@word": "vspace"
+                  },
+                  {
+                     "@word": "width"
+                  },
+                  {
+                     "@word": "windowstate"
+                  },
+                  {
+                     "@word": "wrap"
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}

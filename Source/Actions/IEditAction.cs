@@ -14,16 +14,12 @@ namespace ICSharpCode.TextEditor.Actions
     /// To define a new key for the textarea, you must write a class which
     /// implements this interface.
     /// </summary>
-    public interface IEditAction
+    public interface IEditAction //TODO1 refactor all
     {
         /// <value>
         /// An array of keys on which this edit action occurs.
         /// </value>
-        Keys[] Keys
-        {
-            get;
-            set;
-        }
+        Keys[] Keys { get; set; }
 
         /// <remarks>
         /// When the key which is defined per XML is pressed, this method will be launched.
