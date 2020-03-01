@@ -19,6 +19,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class HighlightColor
     {
+        #region Properties
         public bool HasForeground { get; } = false;
 
         public bool HasBackground { get; } = false;
@@ -30,87 +31,9 @@ namespace ICSharpCode.TextEditor.Document
         public Color BackgroundColor { get; } = Color.WhiteSmoke;
 
         public Color Color { get; } = Color.Black;
+        #endregion
 
-
-        public Font GetFont(FontContainer fontContainer)//TODO2 clean this up.
-        {
-            if (Bold)
-            {
-                return Italic ? fontContainer.BoldItalicFont : fontContainer.BoldFont;
-            }
-            return Italic ? fontContainer.ItalicFont : fontContainer.RegularFont;
-        }
-
-        Color ParseColorString(string colorName)//TODO2??
-        {
-            string[] cNames = colorName.Split('*');
-            PropertyInfo myPropInfo = typeof(SystemColors).GetProperty(cNames[0], BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-            Color c = (Color)myPropInfo.GetValue(null, null);
-
-            if (cNames.Length == 2)
-            {
-                // hack : can't figure out how to parse doubles with '.' (culture info might set the '.' to ',')
-                double factor = double.Parse(cNames[1]) / 100;
-                c = Color.FromArgb((int)(c.R * factor), (int)(c.G * factor), (int)(c.B * factor));
-            }
-
-            return c;
-        }
-
-        public HighlightColor(XmlElement el)//TODO2
-        {
-            Debug.Assert(el != null, "ICSharpCode.TextEditor.Document.SyntaxColor(XmlElement el) : el == null");
-            if (el.Attributes["bold"] != null)
-            {
-                Bold = bool.Parse(el.Attributes["bold"].InnerText);
-            }
-
-            if (el.Attributes["italic"] != null)
-            {
-                Italic = bool.Parse(el.Attributes["italic"].InnerText);
-            }
-
-            if (el.Attributes["color"] != null)
-            {
-                string c = el.Attributes["color"].InnerText;
-                if (c[0] == '#')
-                {
-                    Color = ParseColor(c);
-                }
-                else if (c.StartsWith("SystemColors."))
-                {
-                    Color = ParseColorString(c.Substring("SystemColors.".Length));
-                }
-                else
-                {
-                    Color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
-                }
-                HasForeground = true;
-            }
-            else
-            {
-                Color = Color.Transparent; // to set it to the default value.
-            }
-
-            if (el.Attributes["bgcolor"] != null)
-            {
-                string c = el.Attributes["bgcolor"].InnerText;
-                if (c[0] == '#')
-                {
-                    BackgroundColor = ParseColor(c);
-                }
-                else if (c.StartsWith("SystemColors."))
-                {
-                    BackgroundColor = ParseColorString(c.Substring("SystemColors.".Length));
-                }
-                else
-                {
-                    BackgroundColor = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
-                }
-                HasBackground = true;
-            }
-        }
-
+        #region Lifecycle
         public HighlightColor(XmlElement el, HighlightColor defaultColor)
         {
             Debug.Assert(el != null, "ICSharpCode.TextEditor.Document.SyntaxColor(XmlElement el) : el == null");
@@ -177,6 +100,59 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
+        public HighlightColor(XmlElement el)
+        {
+            if (el.Attributes["bold"] != null)
+            {
+                Bold = bool.Parse(el.Attributes["bold"].InnerText);
+            }
+
+            if (el.Attributes["italic"] != null)
+            {
+                Italic = bool.Parse(el.Attributes["italic"].InnerText);
+            }
+
+            if (el.Attributes["color"] != null)
+            {
+                string c = el.Attributes["color"].InnerText;
+                if (c[0] == '#')
+                {
+                    Color = ParseColor(c);
+                }
+                else if (c.StartsWith("SystemColors."))
+                {
+                    Color = ParseColorString(c.Substring("SystemColors.".Length));
+                }
+                else
+                {
+                    Color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+                }
+                HasForeground = true;
+            }
+            else
+            {
+                Color = Color.Transparent; // to set it to the default value.
+            }
+
+            if (el.Attributes["bgcolor"] != null)
+            {
+                string c = el.Attributes["bgcolor"].InnerText;
+                if (c[0] == '#')
+                {
+                    BackgroundColor = ParseColor(c);
+                }
+                else if (c.StartsWith("SystemColors."))
+                {
+                    BackgroundColor = ParseColorString(c.Substring("SystemColors.".Length));
+                }
+                else
+                {
+                    BackgroundColor = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+                }
+                HasBackground = true;
+            }
+        }
+
         public HighlightColor(Color color, bool bold, bool italic)
         {
             HasForeground = true;
@@ -217,6 +193,40 @@ namespace ICSharpCode.TextEditor.Document
             Italic = italic;
         }
 
+        public HighlightColor()
+        {
+
+        }
+        #endregion
+
+        #region Public functions
+        public Font GetFont(FontContainer fontContainer)//TODO2 clean this up.
+        {
+            if (Bold)
+            {
+                return Italic ? fontContainer.BoldItalicFont : fontContainer.BoldFont;
+            }
+            return Italic ? fontContainer.ItalicFont : fontContainer.RegularFont;
+        }
+        #endregion
+
+        #region Private functions
+        Color ParseColorString(string colorName)//TODO2??
+        {
+            string[] cNames = colorName.Split('*');
+            PropertyInfo myPropInfo = typeof(SystemColors).GetProperty(cNames[0], BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            Color c = (Color)myPropInfo.GetValue(null, null);
+
+            if (cNames.Length == 2)
+            {
+                // hack : can't figure out how to parse doubles with '.' (culture info might set the '.' to ',')
+                double factor = double.Parse(cNames[1]) / 100;
+                c = Color.FromArgb((int)(c.R * factor), (int)(c.G * factor), (int)(c.B * factor));
+            }
+
+            return c;
+        }
+
         static Color ParseColor(string c)
         {
             int a = 255;
@@ -232,13 +242,6 @@ namespace ICSharpCode.TextEditor.Document
             int b = int.Parse(c.Substring(5 + offset,2), NumberStyles.HexNumber);
             return Color.FromArgb(a, r, g, b);
         }
-
-        //public override string ToString()
-        //{
-        //    return "[HighlightColor: Bold = " + Bold +
-        //           ", Italic = " + Italic +
-        //           ", Color = " + Color +
-        //           ", BackgroundColor = " + BackgroundColor + "]";
-        //}
+        #endregion
     }
 }

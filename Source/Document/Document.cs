@@ -14,6 +14,7 @@ using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {
+    #region Enums
     /// <summary>
     /// Describes the caret marker
     /// </summary>
@@ -89,49 +90,41 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         Additive
     }
+    #endregion
 
     /// <summary>
-    /// The default <see cref="Document"/> implementation.
+    /// This delegate is used for document events.
+    /// </summary>
+    public delegate void DocumentEventHandler(object sender, DocumentEventArgs e);
+
+    // TODO2 update events
+    //public event EventHandler<DocumentEventArgs> DocumentEventHandler;
+
+    public class DocumentEventArgs : EventArgs
+    {
+        /// <returns>always a valid Document which is related to the Event.</returns>
+        public Document Document { get; set; } = null;
+
+        /// <returns>-1 if no offset was specified for this event</returns>
+        public int Offset { get; set; } = 0;
+
+        /// <returns>null if no text was specified for this event</returns>
+        public string Text { get; set; } = null;
+
+        /// <returns>-1 if no length was specified for this event</returns>
+        public int Length { get; set; } = 0;
+    }
+
+    /// <summary>
+    /// 
     /// </summary>
     public class Document
     {
+        #region Fields
+        #endregion
+
+        #region Properties
         public LineManager LineManager { get; set; }
-
-        public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
-        {
-            add
-            {
-                LineManager.LineLengthChanged += value;
-            }
-            remove
-            {
-                LineManager.LineLengthChanged -= value;
-            }
-        }
-
-        public event EventHandler<LineCountChangeEventArgs> LineCountChanged
-        {
-            add
-            {
-                LineManager.LineCountChanged += value;
-            }
-            remove
-            {
-                LineManager.LineCountChanged -= value;
-            }
-        }
-
-        public event EventHandler<LineEventArgs> LineDeleted
-        {
-            add
-            {
-                LineManager.LineDeleted += value;
-            }
-            remove
-            {
-                LineManager.LineDeleted -= value;
-            }
-        }
 
         public MarkerStrategy MarkerStrategy { get; set; }
 
@@ -141,10 +134,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public IList<LineSegment> LineSegmentCollection
         {
-            get
-            {
-                return LineManager.LineSegmentCollection;
-            }
+            get { return LineManager.LineSegmentCollection; }
         }
 
         public bool ReadOnly { get; set; } = false;
@@ -155,28 +145,25 @@ namespace ICSharpCode.TextEditor.Document
 
         public FoldingManager FoldingManager { get; set; }
 
-        public IHighlightingStrategy HighlightingStrategy
+        public HighlightingStrategy HighlightingStrategy
         {
-            get
-            {
-                return LineManager.HighlightingStrategy;
-            }
-            set
-            {
-                LineManager.HighlightingStrategy = value;
-            }
+            get { return LineManager.HighlightingStrategy; }
+            set { LineManager.HighlightingStrategy = value; }
         }
 
         public int TextLength
         {
-            get
-            {
-                return TextBuffer.Length;
-            }
+            get { return TextBuffer.Length; }
         }
 
         public BookmarkManager BookmarkManager { get; set; }
 
+        public int TotalNumberOfLines
+        {
+            get { return LineManager.TotalNumberOfLines; }
+        }
+
+        public List<TextAreaUpdate> UpdateQueue { get; } = new List<TextAreaUpdate>();
 
         public string TextContent
         {
@@ -186,31 +173,71 @@ namespace ICSharpCode.TextEditor.Document
             }
             set
             {
-                Debug.Assert(TextBuffer != null);
-                Debug.Assert(LineManager != null);
-                OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
+                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 TextBuffer.SetContent(value);
                 LineManager.SetContent(value); // TODO1*** 6 seconds
                 UndoStack.ClearAll();
-                OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
+                OnDocumentChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 OnTextContentChanged(EventArgs.Empty);
             }
         }
+        #endregion
 
+        #region Events
+        public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
+        {
+            add { LineManager.LineLengthChanged += value; }
+            remove { LineManager.LineLengthChanged -= value; }
+        }
+
+        public event EventHandler<LineCountChangeEventArgs> LineCountChanged
+        {
+            add { LineManager.LineCountChanged += value; }
+            remove { LineManager.LineCountChanged -= value; }
+        }
+
+        public event EventHandler<LineEventArgs> LineDeleted
+        {
+            add { LineManager.LineDeleted += value; }
+            remove { LineManager.LineDeleted -= value; }
+        }
+
+        public event EventHandler UpdateCommited;
+        public event EventHandler TextContentChanged;
+
+        public event DocumentEventHandler DocumentAboutToBeChanged;
+        public event DocumentEventHandler DocumentChanged;
+
+        #endregion
+
+        #region Lifecycle
+        public Document()
+        {
+            TextBuffer = new TextBuffer();
+            FormattingStrategy = new DefaultFormattingStrategy();
+            LineManager = new LineManager(this, null);
+            FoldingManager = new FoldingManager(this, LineManager);
+            FoldingManager.FoldingStrategy = null; //new ParserFoldingStrategy();
+            MarkerStrategy = new MarkerStrategy(this);
+            BookmarkManager = new BookmarkManager(this, LineManager);
+        }
+        #endregion
+
+        #region Public functions
         public void Insert(int offset, string text)
         {
             if (ReadOnly)
             {
                 return;
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, -1, text));
+            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text } );
 
             TextBuffer.Insert(offset, text);
             LineManager.Insert(offset, text);
 
             UndoStack.Push(new UndoableInsert(this, offset, text));
 
-            OnDocumentChanged(new DocumentEventArgs(this, offset, -1, text));
+            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
         }
 
         public void Remove(int offset, int length)
@@ -219,13 +246,13 @@ namespace ICSharpCode.TextEditor.Document
             {
                 return;
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, length));
+            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length }); 
             UndoStack.Push(new UndoableDelete(this, offset, GetText(offset, length)));
 
             TextBuffer.Remove(offset, length);
             LineManager.Remove(offset, length);
 
-            OnDocumentChanged(new DocumentEventArgs(this, offset, length));
+            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
         }
 
         public void Replace(int offset, int length, string text)
@@ -234,13 +261,13 @@ namespace ICSharpCode.TextEditor.Document
             {
                 return;
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, length, text));
+            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
             UndoStack.Push(new UndoableReplace(this, offset, GetText(offset, length), text));
 
             TextBuffer.Replace(offset, length, text);
             LineManager.Replace(offset, length, text);
 
-            OnDocumentChanged(new DocumentEventArgs(this, offset, length, text));
+            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
         }
 
         public char GetCharAt(int offset)
@@ -259,14 +286,6 @@ namespace ICSharpCode.TextEditor.Document
         public string GetText(LineSegment segment)
         {
             return GetText(segment.Offset, segment.Length);
-        }
-
-        public int TotalNumberOfLines
-        {
-            get
-            {
-                return LineManager.TotalNumberOfLines;
-            }
         }
 
         public int GetLineNumberForOffset(int offset)
@@ -375,39 +394,9 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        void OnDocumentAboutToBeChanged(DocumentEventArgs e)
-        {
-            if (DocumentAboutToBeChanged != null)
-            {
-                DocumentAboutToBeChanged(this, e);
-            }
-        }
-
-        void OnDocumentChanged(DocumentEventArgs e)
-        {
-            if (DocumentChanged != null)
-            {
-                DocumentChanged(this, e);
-            }
-        }
-
-        public event DocumentEventHandler DocumentAboutToBeChanged;
-        public event DocumentEventHandler DocumentChanged;
-
-        // UPDATE STUFF
-        List<TextAreaUpdate> updateQueue = new List<TextAreaUpdate>();
-
-        public List<TextAreaUpdate> UpdateQueue
-        {
-            get
-            {
-                return updateQueue;
-            }
-        }
-
         public void RequestUpdate(TextAreaUpdate update)
         {
-            if (updateQueue.Count == 1 && updateQueue[0].TextAreaUpdateType == TextAreaUpdateType.WholeTextArea)
+            if (UpdateQueue.Count == 1 && UpdateQueue[0].TextAreaUpdateType == TextAreaUpdateType.WholeTextArea)
             {
                 // if we're going to update the whole text area, we don't need to store detail updates
                 return;
@@ -416,35 +405,33 @@ namespace ICSharpCode.TextEditor.Document
             if (update.TextAreaUpdateType == TextAreaUpdateType.WholeTextArea)
             {
                 // if we're going to update the whole text area, we don't need to store detail updates
-                updateQueue.Clear();
+                UpdateQueue.Clear();
             }
 
-            updateQueue.Add(update);
+            UpdateQueue.Add(update);
         }
 
         public void CommitUpdate()
         {
-            if (UpdateCommited != null)
-            {
-                UpdateCommited(this, EventArgs.Empty);
-            }
+            UpdateCommited?.Invoke(this, EventArgs.Empty);
         }
+        #endregion
 
+        #region Private functions
         void OnTextContentChanged(EventArgs e)
         {
-            if (TextContentChanged != null)
-            {
-                TextContentChanged(this, e);
-            }
+            TextContentChanged?.Invoke(this, e);
         }
 
-        public event EventHandler UpdateCommited;
-        public event EventHandler TextContentChanged;
-
-        [Conditional("DEBUG_EX")]
-        internal static void ValidatePosition(Document document, TextLocation position)
+        void OnDocumentAboutToBeChanged(DocumentEventArgs e)
         {
-            document.GetLineSegment(position.Line);
+            DocumentAboutToBeChanged?.Invoke(this, e);
         }
+
+        void OnDocumentChanged(DocumentEventArgs e)
+        {
+            DocumentChanged?.Invoke(this, e);
+        }
+        #endregion
     }
 }

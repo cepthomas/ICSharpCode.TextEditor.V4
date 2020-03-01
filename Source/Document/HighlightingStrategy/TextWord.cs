@@ -22,11 +22,14 @@ namespace ICSharpCode.TextEditor.Document
     /// This class represents single words with color information, two special versions of a word are
     /// spaces and tabs.
     /// </summary>
-    public class TextWord
+    public class TextWord // TODO2 Could use some refactoring.
     {
+        #region Fields
         readonly LineSegment _line;
         readonly Document _document;
+        #endregion
 
+        #region Properties
         public static TextWord Space { get; } = new SpaceTextWord();
 
         public static TextWord Tab { get; } = new TabTextWord();
@@ -50,8 +53,9 @@ namespace ICSharpCode.TextEditor.Document
         public HighlightColor SyntaxColor { get; set; }
 
         public virtual bool IsWhiteSpace { get { return false; } }
+        #endregion
 
-
+        #region Lifecycle
         protected TextWord()
         {
         }
@@ -66,7 +70,9 @@ namespace ICSharpCode.TextEditor.Document
             Length = length;
             HasDefaultColor = hasDefaultColor;
         }
+        #endregion
 
+        #region Public functions
         /// <summary>
         /// Splits the <paramref name="word"/> into two parts: the part before <paramref name="pos"/> is assigned to
         /// the reference parameter <paramref name="word"/>, the part after <paramref name="pos"/> is returned.
@@ -86,11 +92,11 @@ namespace ICSharpCode.TextEditor.Document
             return after;
         }
 
-
         public virtual Font GetFont(FontContainer fontContainer)
         {
             return SyntaxColor.GetFont(fontContainer);
         }
+        #endregion
     }
 
     public sealed class SpaceTextWord : TextWord

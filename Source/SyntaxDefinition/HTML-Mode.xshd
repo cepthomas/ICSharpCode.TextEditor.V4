@@ -15,6 +15,10 @@
 				<Begin>&lt;!--</Begin>
 				<End>--&gt;</End>
 			</Span>
+
+		
+			<!-- TODO0 
+
 			<Span name="ScriptTag" rule="JavaScriptSet" bold="false" italic="false" color="SpringGreen" stopateol="false">
 				<Begin>&lt;script&gt;</Begin>
 				<End>&lt;/script&gt;</End>
@@ -35,6 +39,8 @@
 				<Begin>&lt;script@C</Begin>
 				<End>&lt;/script&gt;</End>
 			</Span>
+			 -->
+
 			<Span name="HtmlTag" rule="HtmlTagSet" bold="false" italic="false" color="DarkMagenta" stopateol="false">
 				<Begin>&lt;</Begin>
 				<End>&gt;</End>
@@ -47,7 +53,7 @@
 
 		</RuleSet>
 		
-		<RuleSet name="JavaScriptSet" reference="JavaScript" />
+		<!-- TODO0 reference probably needs to be .js <RuleSet name="JavaScriptSet" reference="JavaScript" /> -->
 		
 		<RuleSet name="EntityReferenceSet" ignorecase="false">
 			<KeyWords name = "Entities" bold="false" italic="false" color="Green">

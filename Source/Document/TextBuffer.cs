@@ -22,33 +22,39 @@ namespace ICSharpCode.TextEditor.Document
         }
 #endif
 
-        char[] buffer = new char[0];
-        string cachedContent;
 
-        int gapBeginOffset = 0;
-        int gapEndOffset = 0;
-        int gapLength = 0; // gapLength == gapEndOffset - gapBeginOffset
+        #region Fields
+        char[] _buffer = new char[0];
+        string _cachedContent;
 
-        const int minGapLength = 128;
-        const int maxGapLength = 2048;
+        int _gapBeginOffset = 0;
+        int _gapEndOffset = 0;
+        int _gapLength = 0; // gapLength == gapEndOffset - gapBeginOffset
 
-        public int Length
-        {
-            get
-            {
-                return buffer.Length - gapLength;
-            }
-        }
+        const int MIN_GAP_LEN = 128;
+        const int MAX_GAP_LEN = 2048;
+        #endregion
 
+        #region Properties
+        public int Length { get { return _buffer.Length - _gapLength; } }
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public functions
         public void SetContent(string text)
         {
             if (text == null)
             {
                 text = String.Empty;
             }
-            cachedContent = text;
-            buffer = text.ToCharArray();
-            gapBeginOffset = gapEndOffset = gapLength = 0;
+            _cachedContent = text;
+            _buffer = text.ToCharArray();
+            _gapBeginOffset = _gapEndOffset = _gapLength = 0;
         }
 
         public char GetCharAt(int offset)
@@ -62,7 +68,7 @@ namespace ICSharpCode.TextEditor.Document
                 throw new ArgumentOutOfRangeException("offset", offset, "0 <= offset < " + Length.ToString());
             }
 
-            return offset < gapBeginOffset ? buffer[offset] : buffer[offset + gapLength];
+            return offset < _gapBeginOffset ? _buffer[offset] : _buffer[offset + _gapLength];
         }
 
         public string GetText(int offset, int length)
@@ -81,38 +87,15 @@ namespace ICSharpCode.TextEditor.Document
             }
             if (offset == 0 && length == Length)
             {
-                if (cachedContent != null)
-                    return cachedContent;
+                if (_cachedContent != null)
+                    return _cachedContent;
                 else
-                    return cachedContent = GetTextInternal(offset, length);
+                    return _cachedContent = GetTextInternal(offset, length);
             }
             else
             {
                 return GetTextInternal(offset, length);
             }
-        }
-
-        string GetTextInternal(int offset, int length)
-        {
-            int end = offset + length;
-
-            if (end < gapBeginOffset)
-            {
-                return new string(buffer, offset, length);
-            }
-
-            if (offset > gapBeginOffset)
-            {
-                return new string(buffer, offset + gapLength, length);
-            }
-
-            int block1Size = gapBeginOffset - offset;
-            int block2Size = end - gapBeginOffset;
-
-            StringBuilder buf = new StringBuilder(block1Size + block2Size);
-            buf.Append(buffer, offset,       block1Size);
-            buf.Append(buffer, gapEndOffset, block2Size);
-            return buf.ToString();
         }
 
         public void Insert(int offset, string text)
@@ -145,73 +128,100 @@ namespace ICSharpCode.TextEditor.Document
                 throw new ArgumentOutOfRangeException("length", length, "0 <= length, offset+length <= " + Length.ToString());
             }
 
-            cachedContent = null;
+            _cachedContent = null;
 
             // Math.Max is used so that if we need to resize the array
             // the new array has enough space for all old chars
             PlaceGap(offset, text.Length - length);
-            gapEndOffset += length; // delete removed text
-            text.CopyTo(0, buffer, gapBeginOffset, text.Length);
-            gapBeginOffset += text.Length;
-            gapLength = gapEndOffset - gapBeginOffset;
-            if (gapLength > maxGapLength)
+            _gapEndOffset += length; // delete removed text
+            text.CopyTo(0, _buffer, _gapBeginOffset, text.Length);
+            _gapBeginOffset += text.Length;
+            _gapLength = _gapEndOffset - _gapBeginOffset;
+            if (_gapLength > MAX_GAP_LEN)
             {
-                MakeNewBuffer(gapBeginOffset, minGapLength);
+                MakeNewBuffer(_gapBeginOffset, MIN_GAP_LEN);
             }
+        }
+
+        #endregion
+
+        #region Private functions
+        string GetTextInternal(int offset, int length)
+        {
+            int end = offset + length;
+
+            if (end < _gapBeginOffset)
+            {
+                return new string(_buffer, offset, length);
+            }
+
+            if (offset > _gapBeginOffset)
+            {
+                return new string(_buffer, offset + _gapLength, length);
+            }
+
+            int block1Size = _gapBeginOffset - offset;
+            int block2Size = end - _gapBeginOffset;
+
+            StringBuilder buf = new StringBuilder(block1Size + block2Size);
+            buf.Append(_buffer, offset, block1Size);
+            buf.Append(_buffer, _gapEndOffset, block2Size);
+            return buf.ToString();
         }
 
         void PlaceGap(int newGapOffset, int minRequiredGapLength)
         {
-            if (gapLength < minRequiredGapLength)
+            if (_gapLength < minRequiredGapLength)
             {
                 // enlarge gap
                 MakeNewBuffer(newGapOffset, minRequiredGapLength);
             }
             else
             {
-                while (newGapOffset < gapBeginOffset)
+                while (newGapOffset < _gapBeginOffset)
                 {
-                    buffer[--gapEndOffset] = buffer[--gapBeginOffset];
+                    _buffer[--_gapEndOffset] = _buffer[--_gapBeginOffset];
                 }
-                while (newGapOffset > gapBeginOffset)
+                while (newGapOffset > _gapBeginOffset)
                 {
-                    buffer[gapBeginOffset++] = buffer[gapEndOffset++];
+                    _buffer[_gapBeginOffset++] = _buffer[_gapEndOffset++];
                 }
             }
         }
 
         void MakeNewBuffer(int newGapOffset, int newGapLength)
         {
-            if (newGapLength < minGapLength) newGapLength = minGapLength;
+            if (newGapLength < MIN_GAP_LEN) newGapLength = MIN_GAP_LEN;
 
             char[] newBuffer = new char[Length + newGapLength];
-            if (newGapOffset < gapBeginOffset)
+            if (newGapOffset < _gapBeginOffset)
             {
                 // gap is moving backwards
 
                 // first part:
-                Array.Copy(buffer, 0, newBuffer, 0, newGapOffset);
+                Array.Copy(_buffer, 0, newBuffer, 0, newGapOffset);
                 // moving middle part:
-                Array.Copy(buffer, newGapOffset, newBuffer, newGapOffset + newGapLength, gapBeginOffset - newGapOffset);
+                Array.Copy(_buffer, newGapOffset, newBuffer, newGapOffset + newGapLength, _gapBeginOffset - newGapOffset);
                 // last part:
-                Array.Copy(buffer, gapEndOffset, newBuffer, newBuffer.Length - (buffer.Length - gapEndOffset), buffer.Length - gapEndOffset);
+                Array.Copy(_buffer, _gapEndOffset, newBuffer, newBuffer.Length - (_buffer.Length - _gapEndOffset), _buffer.Length - _gapEndOffset);
             }
             else
             {
                 // gap is moving forwards
                 // first part:
-                Array.Copy(buffer, 0, newBuffer, 0, gapBeginOffset);
+                Array.Copy(_buffer, 0, newBuffer, 0, _gapBeginOffset);
                 // moving middle part:
-                Array.Copy(buffer, gapEndOffset, newBuffer, gapBeginOffset, newGapOffset - gapBeginOffset);
+                Array.Copy(_buffer, _gapEndOffset, newBuffer, _gapBeginOffset, newGapOffset - _gapBeginOffset);
                 // last part:
                 int lastPartLength = newBuffer.Length - (newGapOffset + newGapLength);
-                Array.Copy(buffer, buffer.Length - lastPartLength, newBuffer, newGapOffset + newGapLength, lastPartLength);
+                Array.Copy(_buffer, _buffer.Length - lastPartLength, newBuffer, newGapOffset + newGapLength, lastPartLength);
             }
 
-            gapBeginOffset = newGapOffset;
-            gapEndOffset = newGapOffset + newGapLength;
-            gapLength = newGapLength;
-            buffer = newBuffer;
+            _gapBeginOffset = newGapOffset;
+            _gapEndOffset = newGapOffset + newGapLength;
+            _gapLength = newGapLength;
+            _buffer = newBuffer;
         }
+        #endregion
     }
 }

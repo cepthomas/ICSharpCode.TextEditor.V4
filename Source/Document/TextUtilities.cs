@@ -11,7 +11,6 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-
     public sealed class TextUtilities
     {
         /// <remarks>
@@ -178,7 +177,6 @@ namespace ICSharpCode.TextEditor.Document
             string expression = document.GetText(offset, textArea.Caret.Offset - offset ).Trim();
             return expression;
         }
-
 
         public static CharacterType GetCharacterType(char c)
         {

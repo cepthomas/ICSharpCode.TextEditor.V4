@@ -12,139 +12,37 @@ namespace ICSharpCode.TextEditor.Document
 {
     public sealed class Span
     {
-        bool        stopEOL;
-        HighlightColor color;
-        HighlightColor beginColor;
-        HighlightColor endColor;
-        char[]      begin;
-        char[]      end;
-        string      name;
-        string      rule;
-        HighlightRuleSet ruleSet;
-        char escapeCharacter;
-        bool ignoreCase;
-        bool isBeginSingleWord;
-        bool? isBeginStartOfLine;
-        bool isEndSingleWord;
+        #region Fields
+        HighlightColor _beginColor;
+        HighlightColor _endColor;
+        #endregion
 
-        internal HighlightRuleSet RuleSet
-        {
-            get
-            {
-                return ruleSet;
-            }
-            set
-            {
-                ruleSet = value;
-            }
-        }
+        #region Properties
+        internal HighlightRuleSet RuleSet { get; set; }
 
-        public bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-            set
-            {
-                ignoreCase = value;
-            }
-        }
+        public bool IgnoreCase { get; set; }
 
-        public bool StopEOL
-        {
-            get
-            {
-                return stopEOL;
-            }
-        }
+        public bool StopEOL { get; }
 
-        public bool? IsBeginStartOfLine
-        {
-            get
-            {
-                return isBeginStartOfLine;
-            }
-        }
+        public bool? IsBeginStartOfLine { get; }
 
-        public bool IsBeginSingleWord
-        {
-            get
-            {
-                return isBeginSingleWord;
-            }
-        }
+        public bool IsBeginSingleWord { get; }
 
-        public bool IsEndSingleWord
-        {
-            get
-            {
-                return isEndSingleWord;
-            }
-        }
+        public bool IsEndSingleWord { get; }
 
-        public HighlightColor Color
-        {
-            get
-            {
-                return color;
-            }
-        }
+        public HighlightColor Color { get; }
 
-        public HighlightColor BeginColor
-        {
-            get
-            {
-                if(beginColor != null)
-                {
-                    return beginColor;
-                }
-                else
-                {
-                    return color;
-                }
-            }
-        }
+        public HighlightColor BeginColor { get { return _beginColor != null ? _beginColor : Color; } }
 
-        public HighlightColor EndColor
-        {
-            get
-            {
-                return endColor!=null ? endColor : color;
-            }
-        }
+        public HighlightColor EndColor { get { return _endColor != null ? _endColor : Color; } }
 
-        public char[] Begin
-        {
-            get
-            {
-                return begin;
-            }
-        }
+        public char[] Begin { get; }
 
-        public char[] End
-        {
-            get
-            {
-                return end;
-            }
-        }
+        public char[] End { get; }
 
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name { get; }
 
-        public string Rule
-        {
-            get
-            {
-                return rule;
-            }
-        }
+        public string Rule { get; }
 
         /// <summary>
         /// Gets the escape character of the span. The escape character is a character that can be used in front
@@ -152,56 +50,53 @@ namespace ICSharpCode.TextEditor.Document
         /// means the escape character was escaped like in @"a "" b" literals in C#.
         /// The default value '\0' means no escape character is allowed.
         /// </summary>
-        public char EscapeCharacter
-        {
-            get
-            {
-                return escapeCharacter;
-            }
-        }
+        public char EscapeCharacter { get; }
+        #endregion
 
+        #region Lifecycle
         public Span(XmlElement span)
         {
-            color   = new HighlightColor(span);
+            Color   = new HighlightColor(span);
 
             if (span.HasAttribute("rule"))
             {
-                rule = span.GetAttribute("rule");
+                Rule = span.GetAttribute("rule");
             }
 
             if (span.HasAttribute("escapecharacter"))
             {
-                escapeCharacter = span.GetAttribute("escapecharacter")[0];
+                EscapeCharacter = span.GetAttribute("escapecharacter")[0];
             }
 
-            name = span.GetAttribute("name");
+            Name = span.GetAttribute("name");
             if (span.HasAttribute("stopateol"))
             {
-                stopEOL = Boolean.Parse(span.GetAttribute("stopateol"));
+                StopEOL = Boolean.Parse(span.GetAttribute("stopateol"));
             }
 
-            begin   = span["Begin"].InnerText.ToCharArray();
-            beginColor = new HighlightColor(span["Begin"], color);
+            Begin   = span["Begin"].InnerText.ToCharArray();
+            _beginColor = new HighlightColor(span["Begin"], Color);
 
             if (span["Begin"].HasAttribute("singleword"))
             {
-                this.isBeginSingleWord = Boolean.Parse(span["Begin"].GetAttribute("singleword"));
+                IsBeginSingleWord = Boolean.Parse(span["Begin"].GetAttribute("singleword"));
             }
             if (span["Begin"].HasAttribute("startofline"))
             {
-                this.isBeginStartOfLine = Boolean.Parse(span["Begin"].GetAttribute("startofline"));
+                IsBeginStartOfLine = Boolean.Parse(span["Begin"].GetAttribute("startofline"));
             }
 
             if (span["End"] != null)
             {
-                end  = span["End"].InnerText.ToCharArray();
-                endColor = new HighlightColor(span["End"], color);
+                End  = span["End"].InnerText.ToCharArray();
+                _endColor = new HighlightColor(span["End"], Color);
                 if (span["End"].HasAttribute("singleword"))
                 {
-                    this.isEndSingleWord = Boolean.Parse(span["End"].GetAttribute("singleword"));
+                    IsEndSingleWord = Boolean.Parse(span["End"].GetAttribute("singleword"));
                 }
 
             }
         }
+        #endregion
     }
 }

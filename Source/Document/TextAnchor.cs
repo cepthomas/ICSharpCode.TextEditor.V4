@@ -28,109 +28,60 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public sealed class TextAnchor
     {
-        static Exception AnchorDeletedError()
-        {
-            return new InvalidOperationException("The text containing the anchor was deleted");
-        }
+        #region Fields
+        #endregion
 
-        LineSegment lineSegment;
-        int columnNumber;
+        #region Properties
+        public LineSegment Line { get; internal set; }
 
-        public LineSegment Line
-        {
-            get
-            {
-                if (lineSegment == null) throw AnchorDeletedError();
-                return lineSegment;
-            }
-            internal set
-            {
-                lineSegment = value;
-            }
-        }
+        public bool IsDeleted { get { return Line == null; } }
 
-        public bool IsDeleted
-        {
-            get
-            {
-                return lineSegment == null;
-            }
-        }
+        public int LineNumber { get { return Line.LineNumber; } }
 
-        public int LineNumber
-        {
-            get
-            {
-                return this.Line.LineNumber;
-            }
-        }
+        public int ColumnNumber { get; internal set; }
 
-        public int ColumnNumber
-        {
-            get
-            {
-                if (lineSegment == null) throw AnchorDeletedError();
-                return columnNumber;
-            }
-            internal set
-            {
-                columnNumber = value;
-            }
-        }
+        public TextLocation Location { get { return new TextLocation(ColumnNumber, LineNumber); } }
 
-        public TextLocation Location
-        {
-            get
-            {
-                return new TextLocation(this.ColumnNumber, this.LineNumber);
-            }
-        }
+        public int Offset { get { return Line.Offset + ColumnNumber; } }
 
-        public int Offset
-        {
-            get
-            {
-                return this.Line.Offset + columnNumber;
-            }
-        }
+        public AnchorMovementType MovementType { get; set; }
+        #endregion
 
-        /// <summary>
-        /// Controls how the anchor moves.
-        /// </summary>
-        public AnchorMovementType MovementType
-        {
-            get;
-            set;
-        }
-
+        #region Events
         public event EventHandler Deleted;
+        #endregion
 
+        #region Lifecycle
+        #endregion
+
+        #region Public functions
+        #endregion
+
+        #region Private functions
         internal void Delete(ref DeferredEventList deferredEventList)
         {
             // we cannot fire an event here because this method is called while the LineManager adjusts the
             // lineCollection, so an event handler could see inconsistent state
-            lineSegment = null;
+            Line = null;
             deferredEventList.AddDeletedAnchor(this);
         }
 
         internal void RaiseDeleted()
         {
-            if (Deleted != null)
-                Deleted(this, EventArgs.Empty);
+            Deleted?.Invoke(this, EventArgs.Empty);
         }
 
         internal TextAnchor(LineSegment lineSegment, int columnNumber)
         {
-            this.lineSegment = lineSegment;
-            this.columnNumber = columnNumber;
+            Line = lineSegment;
+            ColumnNumber = columnNumber;
         }
+        #endregion
 
-        public override string ToString()
-        {
-            if (this.IsDeleted)
-                return "[TextAnchor (deleted)]";
-            else
-                return "[TextAnchor " + this.Location.ToString() + "]";
-        }
+        // old:
+        //static Exception AnchorDeletedError()
+        //{
+        //    return new InvalidOperationException("The text containing the anchor was deleted");
+        //}
     }
 }

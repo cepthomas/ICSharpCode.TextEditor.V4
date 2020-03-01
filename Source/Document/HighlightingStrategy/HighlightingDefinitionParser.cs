@@ -17,17 +17,8 @@ namespace ICSharpCode.TextEditor.Document
 {
     public static class HighlightingDefinitionParser
     {
-        public static DefaultHighlightingStrategy Parse(SyntaxMode syntaxMode, XmlReader xmlReader)
+        public static HighlightingStrategy Parse(XmlReader xmlReader)
         {
-            return Parse(null, syntaxMode, xmlReader);
-        }
-
-        public static DefaultHighlightingStrategy Parse(DefaultHighlightingStrategy highlighter, SyntaxMode syntaxMode, XmlReader xmlReader)
-        {
-            if (syntaxMode == null)
-                throw new ArgumentNullException("syntaxMode");
-            if (xmlReader == null)
-                throw new ArgumentNullException("xmlTextReader");
             try
             {
                 List<ValidationEventArgs> errors = null;
@@ -50,22 +41,22 @@ namespace ICSharpCode.TextEditor.Document
                 XmlDocument doc = new XmlDocument();
                 doc.Load(validatingReader);
 
-                if (highlighter == null)
-                    highlighter = new DefaultHighlightingStrategy(doc.DocumentElement.Attributes["name"].InnerText);
+                HighlightingStrategy highlighter = new HighlightingStrategy(doc.DocumentElement.Attributes["name"].InnerText);
 
-                if (doc.DocumentElement.HasAttribute("extends"))
-                {
-                    KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> entry = HighlightingManager.Instance.FindHighlighterEntry(doc.DocumentElement.GetAttribute("extends"));
-                    if (entry.Key == null)
-                    {
-                        throw new HighlightingDefinitionInvalidException("Cannot find referenced highlighting source " + doc.DocumentElement.GetAttribute("extends"));
-                    }
-                    else
-                    {
-                        highlighter = Parse(highlighter, entry.Key, entry.Value.GetSyntaxModeFile(entry.Key));
-                        if (highlighter == null) return null;
-                    }
-                }
+                //TODO2 this is not used right now:
+                //if (doc.DocumentElement.HasAttribute("extends"))
+                //{
+                //    KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> entry = HighlightingManager.Instance.FindHighlighterEntry(doc.DocumentElement.GetAttribute("extends"));
+                //    if (entry.Key == null)
+                //    {
+                //        throw new HighlightingDefinitionInvalidException("Cannot find referenced highlighting source " + doc.DocumentElement.GetAttribute("extends"));
+                //    }
+                //    else
+                //    {
+                //        highlighter = Parse(highlighter, entry.Key, entry.Value.GetSyntaxModeFile(entry.Key));
+                //        if (highlighter == null) return null;
+                //    }
+                //}
 
                 if (doc.DocumentElement.HasAttribute("extensions"))
                 {
@@ -106,7 +97,7 @@ namespace ICSharpCode.TextEditor.Document
                     {
                         msg.AppendLine(args.Message);
                     }
-                    throw new HighlightingDefinitionInvalidException(msg.ToString());
+                    throw new Exception(msg.ToString());
                 }
                 else
                 {
@@ -115,7 +106,7 @@ namespace ICSharpCode.TextEditor.Document
             }
             catch (Exception e)
             {
-                throw new HighlightingDefinitionInvalidException("Could not load mode definition file '" + syntaxMode.FileName + "'.\n", e);
+                throw new Exception("Could not load mode definition file", e);
             }
         }
     }

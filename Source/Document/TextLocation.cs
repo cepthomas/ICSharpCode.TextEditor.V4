@@ -12,21 +12,13 @@ namespace ICSharpCode.TextEditor
     /// <summary>A line/column position. Text editor lines/columns are counting from zero.</summary>
     public class TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
+        #region Fields
+        #endregion
+
+        #region Properties
         public int X { get; set; }
+
         public int Y { get; set; }
-
-        /// <summary>Represents no text location (-1, -1).</summary>
-        public TextLocation()
-        {
-            X = -1;
-            Y = -1;
-        }
-
-        public TextLocation(int column, int line)
-        {
-            X = column;
-            Y = line;
-        }
 
         public int Line
         {
@@ -44,16 +36,33 @@ namespace ICSharpCode.TextEditor
         {
             get { return X >= 0 && Y >= 0; }
         }
+        #endregion
 
-        public override string ToString()
+        #region Events
+        #endregion
+
+        #region Lifecycle
+        /// <summary>Represents no text location (-1, -1).</summary>
+        public TextLocation()
         {
-            return string.Format("(Line {1}, Col {0})", X, Y);
+            X = -1;
+            Y = -1;
         }
 
-        //public override int GetHashCode()
-        //{
-        //    return unchecked (87 * X.GetHashCode() ^ Y.GetHashCode());
-        //}
+        public TextLocation(int column, int line)
+        {
+            X = column;
+            Y = line;
+        }
+        #endregion
+
+        #region Public functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+        #region Interface implementations
 
         public override bool Equals(object obj)
         {
@@ -117,5 +126,6 @@ namespace ICSharpCode.TextEditor
             else
                 return 1;
         }
+        #endregion
     }
 }

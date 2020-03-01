@@ -11,11 +11,18 @@ using System.Collections.Generic;
 namespace ICSharpCode.TextEditor.Document
 {
     /// <summary>
-    /// A stack of Span instances. Works like Stack&lt;Span&gt;, but can be cloned quickly
+    /// A stack of Span instances. Works like Stack<Span>, but can be cloned quickly
     /// because it is implemented as linked list.
     /// </summary>
     public sealed class SpanStack : ICloneable, IEnumerable<Span>
     {
+        #region Fields
+        StackNode _top = null;
+        #endregion
+
+        #region Properties
+        #endregion
+
         internal sealed class StackNode
         {
             public readonly StackNode Previous;
@@ -23,60 +30,68 @@ namespace ICSharpCode.TextEditor.Document
 
             public StackNode(StackNode previous, Span data)
             {
-                this.Previous = previous;
-                this.Data = data;
+                Previous = previous;
+                Data = data;
             }
         }
 
-        StackNode top = null;
+        #region Lifecycle
 
+        #endregion
+
+        #region Public functions
         public Span Pop()
         {
-            Span s = top.Data;
-            top = top.Previous;
+            Span s = _top.Data;
+            _top = _top.Previous;
             return s;
         }
 
         public Span Peek()
         {
-            return top.Data;
+            return _top.Data;
         }
 
         public void Push(Span s)
         {
-            top = new StackNode(top, s);
+            _top = new StackNode(_top, s);
         }
 
         public bool IsEmpty
         {
             get
             {
-                return top == null;
+                return _top == null;
             }
         }
 
         public SpanStack Clone()
         {
             SpanStack n = new SpanStack();
-            n.top = this.top;
+            n._top = _top;
             return n;
         }
+        #endregion
+
+        #region Interfaces implementation
         object ICloneable.Clone()
         {
-            return this.Clone();
+            return Clone();
         }
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(new StackNode(top, null));
+            return new Enumerator(new StackNode(_top, null));
         }
+
         IEnumerator<Span> IEnumerable<Span>.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
+
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         public struct Enumerator : IEnumerator<Span>
@@ -120,5 +135,6 @@ namespace ICSharpCode.TextEditor.Document
                 throw new NotSupportedException();
             }
         }
+        #endregion
     }
 }

@@ -15,15 +15,18 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class HighlightRuleSet
     {
-        internal IHighlightingStrategyUsingRuleSets Highlighter; // TODO0 messed up binding
+        #region Fields
+        internal HighlightingStrategy Highlighter; // TODO0 messed up binding
+        #endregion
 
+        #region Properties
         public ArrayList Spans { get; private set; } = new ArrayList();
 
-        public LookupTable KeyWords { get; }
+        public LookupTable KeyWords { get; } = new LookupTable(false);
 
-        public LookupTable PrevMarkers { get; }
+        public LookupTable PrevMarkers { get; } = new LookupTable(false);
 
-        public LookupTable NextMarkers { get; }
+        public LookupTable NextMarkers { get; } = new LookupTable(false);
 
         public bool[] Delimiters { get; } = new bool[256]; //TODO0 fix this later
 
@@ -34,12 +37,11 @@ namespace ICSharpCode.TextEditor.Document
         public string Name { get; set; } = null;
 
         public string Reference { get; } = null;
+        #endregion
 
+        #region Lifecycle
         public HighlightRuleSet()
         {
-            KeyWords    = new LookupTable(false);
-            PrevMarkers = new LookupTable(false);
-            NextMarkers = new LookupTable(false);
         }
 
         public HighlightRuleSet(XmlElement el)
@@ -110,17 +112,18 @@ namespace ICSharpCode.TextEditor.Document
             nodes = el.GetElementsByTagName("MarkPrevious");
             foreach (XmlElement el2 in nodes)
             {
-                PrevMarker prev = new PrevMarker(el2);
+                AdjacentMarker prev = new AdjacentMarker(el2);
                 PrevMarkers[prev.What] = prev;
             }
 
             nodes = el.GetElementsByTagName("MarkFollowing");
             foreach (XmlElement el2 in nodes)
             {
-                NextMarker next = new NextMarker(el2);
+                AdjacentMarker next = new AdjacentMarker(el2);
                 NextMarkers[next.What] = next;
             }
         }
+        #endregion
 
         /// <summary>
         /// Merges spans etc. from the other rule set into this rule set.

@@ -18,8 +18,7 @@ namespace ICSharpCode.TextEditor.Document
         LineSegmentTree lineCollection = new LineSegmentTree();
 
         Document document;
-        /*IHighlightingStrategy*/
-        IHighlightingStrategy highlightingStrategy;
+        HighlightingStrategy highlightingStrategy;
 
         public IList<LineSegment> LineSegmentCollection
         {
@@ -37,7 +36,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public /*IHighlightingStrategy*/ IHighlightingStrategy HighlightingStrategy
+        public HighlightingStrategy HighlightingStrategy
         {
             get
             {
@@ -56,7 +55,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public LineManager(Document document, /*IHighlightingStrategy*/ IHighlightingStrategy highlightingStrategy)
+        public LineManager(Document document, HighlightingStrategy highlightingStrategy)
         {
             this.document = document;
             this.highlightingStrategy = highlightingStrategy;
@@ -89,22 +88,22 @@ namespace ICSharpCode.TextEditor.Document
 
         public void Replace(int offset, int length, string text)
         {
-            Logger.Info("LineManager.Replace entry");
+            //Logger.Info("LineManager.Replace entry");
 
             //Debug.WriteLine("Replace offset="+offset+" length="+length+" text.Length="+text.Length);
             int lineStart = GetLineNumberForOffset(offset);
             int oldNumberOfLines = this.TotalNumberOfLines;
             DeferredEventList deferredEventList = new DeferredEventList();
-            Logger.Info("LineManager.Replace 10");
+            //Logger.Info("LineManager.Replace 10");
 
             RemoveInternal(ref deferredEventList, offset, length);
             int numberOfLinesAfterRemoving = this.TotalNumberOfLines;
 
-            Logger.Info("LineManager.Replace 20");
+            //Logger.Info("LineManager.Replace 20");
 
             InsertInternal(offset, text ?? "");
             //TODO1*** 1.5 sec
-            Logger.Info("LineManager.Replace 30");
+            //Logger.Info("LineManager.Replace 30");
 
 #if DEBUG_EX
 			Console.WriteLine("New line collection:");
@@ -117,7 +116,7 @@ namespace ICSharpCode.TextEditor.Document
             RunHighlighter(lineStart, 1 + Math.Max(0, this.TotalNumberOfLines - numberOfLinesAfterRemoving));
 
             //TODO1*** 5 sec
-            Logger.Info("LineManager.Replace 40");
+            //Logger.Info("LineManager.Replace 40");
 
             if (deferredEventList.removedLines != null)
             {
@@ -125,14 +124,14 @@ namespace ICSharpCode.TextEditor.Document
                     OnLineDeleted(new LineEventArgs(document, ls));
             }
 
-            Logger.Info("LineManager.Replace 50");
+            //Logger.Info("LineManager.Replace 50");
 
             deferredEventList.RaiseEvents();
             if (this.TotalNumberOfLines != oldNumberOfLines)
             {
                 OnLineCountChanged(new LineCountChangeEventArgs(document, lineStart, this.TotalNumberOfLines - oldNumberOfLines));
             }
-            Logger.Info("LineManager.Replace exit");
+            //Logger.Info("LineManager.Replace exit");
         }
 
         void RemoveInternal(ref DeferredEventList deferredEventList, int offset, int length)

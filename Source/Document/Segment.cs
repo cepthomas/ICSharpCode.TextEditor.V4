@@ -22,34 +22,5 @@ namespace ICSharpCode.TextEditor.Document
         //protected int offset = -1;
         //[CLSCompliant(false)]
         //protected int length = -1;
-
-        //public virtual int Offset
-        //{
-        //    get
-        //    {
-        //        return offset;
-        //    }
-        //    set
-        //    {
-        //        offset = value;
-        //    }
-        //}
-
-        //public virtual int Length
-        //{
-        //    get
-        //    {
-        //        return length;
-        //    }
-        //    set
-        //    {
-        //        length = value;
-        //    }
-        //}
-
-        //public override string ToString()
-        //{
-        //    return String.Format("[AbstractSegment: Offset = {0}, Length = {1}]", Offset, Length);
-        //}
     }
 }

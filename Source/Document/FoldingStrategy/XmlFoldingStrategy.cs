@@ -27,7 +27,7 @@ namespace ICSharpCode.TextEditor.Document
         string prefix = "";
         #endregion Fields
 
-        #region Constructors
+        #region Lifecycle
         public XmlFoldStart(string prefix, string name, int line, int col)
         {
             this.line = line;
@@ -35,7 +35,7 @@ namespace ICSharpCode.TextEditor.Document
             this.prefix = prefix;
             this.name = name;
         }
-        #endregion Constructors
+        #endregion
 
         #region Properties
         /// <summary>
@@ -76,13 +76,13 @@ namespace ICSharpCode.TextEditor.Document
 
         #endregion Fields
 
-        #region Constructors
+        #region Lifecycle
 
         public XmlFoldingStrategy()
         {
         }
 
-        #endregion Constructors
+        #endregion
 
         #region Methods
 

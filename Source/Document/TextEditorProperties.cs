@@ -23,6 +23,27 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class TextEditorProperties // TODO0 put some in settings, some in theme/scheme
     {
+        #region Fields
+        #endregion
+
+        #region Properties
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Lifecycle
+        #endregion
+
+        #region Public functions
+        #endregion
+
+        #region Private functions
+        #endregion
+
+
+
+
         public bool CaretLine { get; set; }
         public bool AutoInsertCurlyBracket { get; set; } = true;
         public bool HideMouseCursor { get; set; }
@@ -53,16 +74,18 @@ namespace ICSharpCode.TextEditor.Document
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
         public bool SupportReadOnlySegments { get; set; }
 
+
+
         /////// Colors relocated from highlighting environment. >>>>> I did this - good? background, text color, 
-        public HighlightColor DefaultColor { get; set; } = new HighlightBackground("WindowText", "Window", false, false);
+        public HighlightColor DefaultColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.Yellow, false, false);
         public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
         public HighlightColor EOLMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
         public HighlightColor SpaceMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
         public HighlightColor TabMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
         public HighlightColor InvalidLinesColor { get; set; } = new HighlightColor(Color.Red, false, false);
-        public HighlightColor CaretLineColor { get; set; } = new HighlightBackground("ControlLight", "Window", false, false);
-        public HighlightColor LineNumbersColor { get; set; } = new HighlightBackground("ControlDark", "Window", false, false);
+        public HighlightColor CaretLineColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
+        public HighlightColor LineNumbersColor { get; set; } = new HighlightColor("ControlDark", "Window", false, false);
         public HighlightColor FoldLineColor { get; set; } = new HighlightColor("ControlDark", false, false);
         public HighlightColor FoldMarkerColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
         public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor("WindowText", false, false);

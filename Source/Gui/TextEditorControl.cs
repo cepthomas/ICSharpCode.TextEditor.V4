@@ -591,10 +591,7 @@ namespace ICSharpCode.TextEditor
             {
                 activeTextAreaControl = value;
 
-                if (ActiveTextAreaControlChanged != null)
-                {
-                    ActiveTextAreaControlChanged(this, EventArgs.Empty);
-                }
+                ActiveTextAreaControlChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -605,18 +602,16 @@ namespace ICSharpCode.TextEditor
             //base:
             //Font = new Font("Consolas", 10);
             GenerateDefaultActions();
-            HighlightingManager.Instance.ReloadSyntaxHighlighting += new EventHandler(OnReloadHighlighting);
-
-
 
             SetStyle(ControlStyles.ContainerControl, true);
 
             textAreaPanel.Dock = DockStyle.Fill;
 
-            Document = (new DocumentFactory()).CreateDocument();
-            Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy();
+            //Document = (new DocumentFactory()).CreateDocument();
+            //Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy();
+            Document = new Document.Document();
 
-            primaryTextArea  = new TextAreaControl(this);
+            primaryTextArea = new TextAreaControl(this);
             activeTextAreaControl = primaryTextArea;
 
             primaryTextArea.TextArea.GotFocus += delegate
@@ -635,23 +630,6 @@ namespace ICSharpCode.TextEditor
 
         protected virtual void InitializeTextAreaControl(TextAreaControl newControl)
         {
-        }
-
-
-        protected virtual void OnReloadHighlighting(object sender, EventArgs e)
-        {
-            if (Document.HighlightingStrategy != null)
-            {
-                try
-                {
-                    Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(Document.HighlightingStrategy.Name);
-                }
-                catch (HighlightingDefinitionInvalidException ex)
-                {
-                    MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                OptionsChanged();
-            }
         }
 
         public bool IsEditAction(Keys keyData)
@@ -777,9 +755,9 @@ namespace ICSharpCode.TextEditor
             {
                 try
                 {
-                    document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
+                    document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
                 }
-                catch (HighlightingDefinitionInvalidException ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -909,10 +887,8 @@ namespace ICSharpCode.TextEditor
                     textAreaPanel = null;
                 }
 
-                HighlightingManager.Instance.ReloadSyntaxHighlighting -= new EventHandler(OnReloadHighlighting);
                 document.HighlightingStrategy = null;
                 document.UndoStack.TextEditorControl = null;
-
             }
 
             base.Dispose(disposing);
@@ -1035,12 +1011,6 @@ namespace ICSharpCode.TextEditor
                 EndUpdate();
             }
         }
-
-        public virtual void SetHighlighting(string name)
-        {
-            Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(name);
-        }
-
 
         #region Update Methods
 
