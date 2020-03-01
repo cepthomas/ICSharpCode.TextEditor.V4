@@ -9,8 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Util
 {
@@ -52,7 +53,7 @@ namespace ICSharpCode.TextEditor.Util
         static void BuildFontTable(Document.Document doc, StringBuilder rtf)
         {
             rtf.Append(@"{\fonttbl");
-            rtf.Append(@"{\f0\fmodern\fprq1\fcharset0 " + doc.TextEditorProperties.FontContainer.DefaultFont.Name + ";}");
+            rtf.Append(@"{\f0\fmodern\fprq1\fcharset0 " + Shared.TEP.FontContainer.DefaultFont.Name + ";}");
             rtf.Append("}");
         }
 
@@ -149,7 +150,7 @@ namespace ICSharpCode.TextEditor.Util
 
                                 if (firstLine)
                                 {
-                                    rtf.Append(@"\f0\fs" + (textArea.TextEditorProperties.FontContainer.DefaultFont.Size * 2));
+                                    rtf.Append(@"\f0\fs" + (Shared.TEP.FontContainer.DefaultFont.Size * 2));
                                     firstLine = false;
                                 }
 

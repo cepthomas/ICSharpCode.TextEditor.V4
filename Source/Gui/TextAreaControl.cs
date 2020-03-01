@@ -9,8 +9,9 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -64,15 +65,15 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public TextEditorProperties TextEditorProperties
-        {
-            get
-            {
-                if (motherTextEditorControl != null)
-                    return motherTextEditorControl.TextEditorProperties;
-                return null;
-            }
-        }
+        //public TextEditorProperties TextEditorProperties
+        //{
+        //    get
+        //    {
+        //        if (motherTextEditorControl != null)
+        //            return motherTextEditorControl.TextEditorProperties;
+        //        return null;
+        //    }
+        //}
 
         public VScrollBar VScrollBar
         {
@@ -298,7 +299,7 @@ namespace ICSharpCode.TextEditor
         {
             textArea.OptionsChanged();
 
-            if (textArea.TextEditorProperties.ShowHorizontalRuler)
+            if (Shared.TEP.ShowHorizontalRuler)
             {
                 if (hRuler == null)
                 {
@@ -345,7 +346,7 @@ namespace ICSharpCode.TextEditor
             int scrollDistance = mouseWheelHandler.GetScrollAmount(e);
             if (scrollDistance == 0)
                 return;
-            if ((Control.ModifierKeys & Keys.Control) != 0 && TextEditorProperties.MouseWheelTextZoom)
+            if ((Control.ModifierKeys & Keys.Control) != 0 && Shared.TEP.MouseWheelTextZoom)
             {
                 if (scrollDistance > 0)
                 {
@@ -360,7 +361,7 @@ namespace ICSharpCode.TextEditor
             }
             else
             {
-                if (TextEditorProperties.MouseWheelScrollDown)
+                if (Shared.TEP.MouseWheelScrollDown)
                     scrollDistance = -scrollDistance;
                 int newValue = vScrollBar.Value + vScrollBar.SmallChange * scrollDistance;
                 vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum - vScrollBar.LargeChange + 1, newValue));

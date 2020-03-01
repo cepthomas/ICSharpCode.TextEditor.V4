@@ -56,13 +56,13 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public TextEditorProperties TextEditorProperties
-        {
-            get
-            {
-                return textArea.Document.TextEditorProperties;
-            }
-        }
+        //public TextEditorProperties TextEditorProperties
+        //{
+        //    get
+        //    {
+        //        return textArea.Document.TextEditorProperties;
+        //    }
+        //}
 
         public virtual Cursor Cursor
         {

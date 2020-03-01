@@ -7,6 +7,8 @@
 
 using System;
 using System.Text;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -153,7 +155,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             textArea.Document.UndoStack.StartUndoGroup();
             int result;
-            switch (textArea.Document.TextEditorProperties.IndentStyle)
+            switch (Shared.TEP.IndentStyle)
             {
             case IndentStyle.None:
                 result = 0;
@@ -165,7 +167,7 @@ namespace ICSharpCode.TextEditor.Document
                 result = SmartIndentLine(textArea, line);
                 break;
             default:
-                throw new NotSupportedException("Unsupported value for IndentStyle: " + textArea.Document.TextEditorProperties.IndentStyle);
+                throw new NotSupportedException("Unsupported value for IndentStyle: " + Shared.TEP.IndentStyle);
             }
             textArea.Document.UndoStack.EndUndoGroup();
             return result;

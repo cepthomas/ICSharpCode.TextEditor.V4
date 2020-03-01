@@ -15,6 +15,8 @@ using ICSharpCode.TextEditor.Document;
 //using ICSharpCode.TextEditor;
 //using ICSharpCode.TextEditor.Document;
 //using ICSharpCode.TextEditor.Actions;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Actions
 {
@@ -176,7 +178,7 @@ namespace ICSharpCode.TextEditor.Actions
         protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length);
-            string spaces = new string(' ', document.TextEditorProperties.TabIndent);
+            string spaces = new string(' ', Shared.TEP.TabIndent);
             document.Replace(startOffset, length, what.Replace("\t", spaces));
         }
     }
@@ -186,7 +188,7 @@ namespace ICSharpCode.TextEditor.Actions
         protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string what = document.GetText(startOffset, length);
-            string spaces = new string(' ', document.TextEditorProperties.TabIndent);
+            string spaces = new string(' ', Shared.TEP.TabIndent);
             document.Replace(startOffset, length, what.Replace(spaces, "\t"));
         }
     }
@@ -210,7 +212,7 @@ namespace ICSharpCode.TextEditor.Actions
                     if(whiteSpace > 0)
                     {
                         string newLine = document.GetText(line.Offset,whiteSpace);
-                        string newPrefix = newLine.Replace("\t",new string(' ', document.TextEditorProperties.TabIndent));
+                        string newPrefix = newLine.Replace("\t",new string(' ', Shared.TEP.TabIndent));
                         document.Replace(line.Offset,whiteSpace,newPrefix);
                     }
                 }
@@ -230,7 +232,7 @@ namespace ICSharpCode.TextEditor.Actions
                     // note: some users may prefer a more radical ConvertLeadingSpacesToTabs that
                     // means there can be no spaces before the first character even if the spaces
                     // didn't add up to a whole number of tabs
-                    string newLine = TextUtilities.LeadingWhiteSpaceToTabs(document.GetText(line.Offset,line.Length), document.TextEditorProperties.TabIndent);
+                    string newLine = TextUtilities.LeadingWhiteSpaceToTabs(document.GetText(line.Offset,line.Length), Shared.TEP.TabIndent);
                     document.Replace(line.Offset,line.Length,newLine);
                 }
             }

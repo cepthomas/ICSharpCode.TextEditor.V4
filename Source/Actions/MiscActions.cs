@@ -11,6 +11,8 @@ using System.Drawing;
 using System.Text;
 
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Actions
 {
@@ -25,9 +27,9 @@ namespace ICSharpCode.TextEditor.Actions
         {
             StringBuilder indent = new StringBuilder();
 
-            if (document.TextEditorProperties.ConvertTabsToSpaces)
+            if (Shared.TEP.ConvertTabsToSpaces)
             {
-                int tabIndent = document.TextEditorProperties.IndentationSize;
+                int tabIndent = Shared.TEP.IndentationSize;
                 if (textArea != null)
                 {
                     int column = textArea.TextView.GetVisualColumn(textArea.Caret.Line, textArea.Caret.Column);
@@ -171,7 +173,7 @@ namespace ICSharpCode.TextEditor.Actions
                         else if(document.GetCharAt(line.Offset) == ' ')
                         {
                             int leadingSpaces = 1;
-                            int tabIndent = document.TextEditorProperties.IndentationSize;
+                            int tabIndent = Shared.TEP.IndentationSize;
                             for (leadingSpaces = 1; leadingSpaces < line.Length && document.GetCharAt(line.Offset + leadingSpaces) == ' '; leadingSpaces++)
                             {
                                 // deliberately empty
@@ -228,7 +230,7 @@ namespace ICSharpCode.TextEditor.Actions
                 // column is updated to that column.
                 LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
                 string startOfLine = textArea.Document.GetText(line.Offset,textArea.Caret.Offset - line.Offset);
-                int tabIndent = textArea.Document.TextEditorProperties.IndentationSize;
+                int tabIndent = Shared.TEP.IndentationSize;
                 int currentColumn = textArea.Caret.Column;
                 int remainder = currentColumn % tabIndent;
                 if (remainder == 0)
@@ -1014,7 +1016,7 @@ namespace ICSharpCode.TextEditor.Actions
                 TextLocation p2 = new TextLocation(highlight.OpenBrace.X + 1, highlight.OpenBrace.Y);
                 if (p1 == textArea.Caret.Position)
                 {
-                    if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After)
+                    if (Shared.TEP.BracketMatchingStyle == BracketMatchingStyle.After)
                     {
                         textArea.Caret.Position = p2;
                     }
@@ -1025,7 +1027,7 @@ namespace ICSharpCode.TextEditor.Actions
                 }
                 else
                 {
-                    if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After)
+                    if (Shared.TEP.BracketMatchingStyle == BracketMatchingStyle.After)
                     {
                         textArea.Caret.Position = p1;
                     }

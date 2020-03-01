@@ -9,6 +9,8 @@ using ICSharpCode.TextEditor.Src.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -256,7 +258,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public int GetVisibleLine(int logicalLineNumber)
         {
-            if (!document.TextEditorProperties.EnableFolding)
+            if (!Shared.TEP.EnableFolding)
             {
                 return logicalLineNumber;
             }
@@ -287,7 +289,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public int GetFirstLogicalLine(int visibleLineNumber)
         {
-            if (!document.TextEditorProperties.EnableFolding)
+            if (!Shared.TEP.EnableFolding)
             {
                 return visibleLineNumber;
             }
@@ -314,7 +316,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public int GetLastLogicalLine(int visibleLineNumber)
         {
-            if (!document.TextEditorProperties.EnableFolding)
+            if (!Shared.TEP.EnableFolding)
             {
                 return visibleLineNumber;
             }
@@ -326,7 +328,7 @@ namespace ICSharpCode.TextEditor.Document
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
         {
             int curLineNumber = lineNumber;
-            if (document.TextEditorProperties.EnableFolding)
+            if (Shared.TEP.EnableFolding)
             {
                 for (int i = 0; i < lineCount && curLineNumber < TotalNumberOfLines; ++i)
                 {
@@ -347,7 +349,7 @@ namespace ICSharpCode.TextEditor.Document
         public int GetNextVisibleLineBelow(int lineNumber, int lineCount)
         {
             int curLineNumber = lineNumber;
-            if (document.TextEditorProperties.EnableFolding)
+            if (Shared.TEP.EnableFolding)
             {
                 for (int i = 0; i < lineCount; ++i)
                 {

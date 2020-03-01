@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -158,7 +159,7 @@ namespace ICSharpCode.TextEditor
             int line   = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 1, pos.Y));
             int column = Math.Max(0, pos.X);
 
-            if (column == int.MaxValue || !textArea.TextEditorProperties.AllowCaretBeyondEOL)
+            if (column == int.MaxValue || !Shared.TEP.AllowCaretBeyondEOL)
             {
                 LineSegment lineSegment = textArea.Document.GetLineSegment(line);
                 column = Math.Min(column, lineSegment.Length);
@@ -175,7 +176,7 @@ namespace ICSharpCode.TextEditor
             line = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 1, line));
             column = Math.Max(0, column);
 
-            if (column == int.MaxValue || !textArea.TextEditorProperties.AllowCaretBeyondEOL)
+            if (column == int.MaxValue || !Shared.TEP.AllowCaretBeyondEOL)
             {
                 LineSegment lineSegment = textArea.Document.GetLineSegment(line);
                 column = Math.Min(column, lineSegment.Length);
@@ -265,10 +266,10 @@ namespace ICSharpCode.TextEditor
 
         void PaintCaretLine(Graphics g)
         {
-            if (!textArea.Document.TextEditorProperties.CaretLine)
+            if (!Shared.TEP.CaretLine)
                 return;
 
-            HighlightColor caretLineColor = textArea.Document.TextEditorProperties.CaretLineColor;
+            HighlightColor caretLineColor = Shared.TEP.CaretLineColor;
 
             g.DrawLine(BrushRegistry.GetDotPen(caretLineColor.Color),
                        currentPos.X,
@@ -281,7 +282,7 @@ namespace ICSharpCode.TextEditor
         {
             Log("UpdateCaretPosition");
 
-            if (textArea.TextEditorProperties.CaretLine)
+            if (Shared.TEP.CaretLine)
             {
                 textArea.Invalidate();
             }
@@ -295,7 +296,7 @@ namespace ICSharpCode.TextEditor
                 }
                 else
                 {
-                    if (textArea.MotherTextAreaControl.TextEditorProperties.LineViewerStyle == LineViewerStyle.FullRow && oldLine != line)
+                    if (Shared.TEP.LineViewerStyle == LineViewerStyle.FullRow && oldLine != line)
                     {
                         textArea.UpdateLine(oldLine);
                         textArea.UpdateLine(line);
@@ -338,12 +339,12 @@ namespace ICSharpCode.TextEditor
             // set the input method editor location
             if (ime == null)
             {
-                ime = new Ime(textArea.Handle, textArea.Document.TextEditorProperties.FontContainer.DefaultFont);
+                ime = new Ime(textArea.Handle, Shared.TEP.FontContainer.DefaultFont);
             }
             else
             {
                 ime.HWnd = textArea.Handle;
-                ime.Font = textArea.Document.TextEditorProperties.FontContainer.DefaultFont;
+                ime.Font = Shared.TEP.FontContainer.DefaultFont;
             }
             ime.SetIMEWindowLocation(pos.X, pos.Y);
 

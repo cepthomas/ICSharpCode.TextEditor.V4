@@ -13,10 +13,11 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -198,13 +199,13 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        public TextEditorProperties TextEditorProperties
-        {
-            get
-            {
-                return _motherTextEditorControl.TextEditorProperties;
-            }
-        }
+        //public TextEditorProperties TextEditorProperties
+        //{
+        //    get
+        //    {
+        //        return _motherTextEditorControl.TextEditorProperties;
+        //    }
+        //}
 
         public TextArea(TextEditorControl motherTextEditorControl, TextAreaControl motherTextAreaControl)
         {
@@ -260,7 +261,7 @@ namespace ICSharpCode.TextEditor
 
         void SearchMatchingBracket(object sender, EventArgs e)
         {
-            if (!TextEditorProperties.ShowMatchingBracket)
+            if (!Shared.TEP.ShowMatchingBracket)
             {
                 _textView.Highlight = null;
                 return;
@@ -574,7 +575,7 @@ namespace ICSharpCode.TextEditor
 
             bool isFullRepaint = clipRectangle.X == 0 && clipRectangle.Y == 0  && clipRectangle.Width == this.Width && clipRectangle.Height == this.Height;
 
-            g.TextRenderingHint = this.TextEditorProperties.TextRenderingHint;
+            g.TextRenderingHint = Shared.TEP.TextRenderingHint;
 
             if (updateMargin != null)
             {
@@ -680,7 +681,7 @@ namespace ICSharpCode.TextEditor
             {
                 return true;
             }
-            if (TextEditorProperties.SupportReadOnlySegments)
+            if (Shared.TEP.SupportReadOnlySegments)
             {
                 return Document.MarkerStrategy.GetMarkers(offset).Exists(m=>m.IsReadOnly);
             }
@@ -696,7 +697,7 @@ namespace ICSharpCode.TextEditor
             {
                 return true;
             }
-            if (TextEditorProperties.SupportReadOnlySegments)
+            if (Shared.TEP.SupportReadOnlySegments)
             {
                 return Document.MarkerStrategy.GetMarkers(offset, length).Exists(m=>m.IsReadOnly);
             }
@@ -723,7 +724,7 @@ namespace ICSharpCode.TextEditor
                 return;
             }
 
-            if (!_hiddenMouseCursor && TextEditorProperties.HideMouseCursor)
+            if (!_hiddenMouseCursor && Shared.TEP.HideMouseCursor)
             {
                 if (this.ClientRectangle.Contains(PointToClient(Cursor.Position)))
                 {
@@ -797,7 +798,7 @@ namespace ICSharpCode.TextEditor
                         action.Execute(this);
                         if (SelectionManager.HasSomethingSelected && AutoClearSelection /*&& caretchanged*/)
                         {
-                            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal)
+                            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal)
                             {
                                 SelectionManager.ClearSelection();
                             }
@@ -876,7 +877,7 @@ namespace ICSharpCode.TextEditor
             }
 
             Document.UndoStack.StartUndoGroup();
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
             {
                 Caret.Position = SelectionManager.StartPosition;
                 SelectionManager.RemoveSelectedText();
@@ -923,7 +924,7 @@ namespace ICSharpCode.TextEditor
             try
             {
                 Document.UndoStack.StartUndoGroup();
-                if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+                if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
                 {
                     Caret.Position = SelectionManager.StartPosition;
                     SelectionManager.RemoveSelectedText();
@@ -975,7 +976,7 @@ namespace ICSharpCode.TextEditor
                 BeginUpdate();
             }
 
-            if (Document.TextEditorProperties.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
             {
                 Caret.Position = SelectionManager.StartPosition;
                 SelectionManager.RemoveSelectedText();

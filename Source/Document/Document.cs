@@ -128,7 +128,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public MarkerStrategy MarkerStrategy { get; set; }
 
-        public TextEditorProperties TextEditorProperties { get; set; } = new TextEditorProperties();
+        //public TextEditorProperties TextEditorProperties { get; set; } = new TextEditorProperties();
 
         public UndoStack UndoStack { get; } = new UndoStack();
 
@@ -216,8 +216,10 @@ namespace ICSharpCode.TextEditor.Document
             TextBuffer = new TextBuffer();
             FormattingStrategy = new DefaultFormattingStrategy();
             LineManager = new LineManager(this, null);
-            FoldingManager = new FoldingManager(this, LineManager);
-            FoldingManager.FoldingStrategy = null; //new ParserFoldingStrategy();
+            FoldingManager = new FoldingManager(this, LineManager)
+            {
+                FoldingStrategy = null //new ParserFoldingStrategy();
+            };
             MarkerStrategy = new MarkerStrategy(this);
             BookmarkManager = new BookmarkManager(this, LineManager);
         }

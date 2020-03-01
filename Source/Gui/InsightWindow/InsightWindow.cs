@@ -9,9 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
 using ICSharpCode.TextEditor.Util;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Gui.InsightWindow
 {
@@ -76,7 +77,7 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
             int xpos = control.ActiveTextAreaControl.TextArea.TextView.GetDrawingXPos(caretPos.Y, caretPos.X);
             int ypos = (control.ActiveTextAreaControl.Document.GetVisibleLine(caretPos.Y) + 1) * control.ActiveTextAreaControl.TextArea.TextView.FontHeight
                        - control.ActiveTextAreaControl.TextArea.VirtualTop.Y;
-            int rulerHeight = control.TextEditorProperties.ShowHorizontalRuler ? control.ActiveTextAreaControl.TextArea.TextView.FontHeight : 0;
+            int rulerHeight = Shared.TEP.ShowHorizontalRuler ? control.ActiveTextAreaControl.TextArea.TextView.FontHeight : 0;
 
             Point p = control.ActiveTextAreaControl.PointToScreen(new Point(xpos, ypos + rulerHeight));
             if (p.Y != Location.Y)
@@ -115,7 +116,7 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
             if (DataProvider != null && DataProvider.InsightDataCount > 0)
             {
                 int distance = mouseWheelHandler.GetScrollAmount(e);
-                if (control.TextEditorProperties.MouseWheelScrollDown)
+                if (Shared.TEP.MouseWheelScrollDown)
                     distance = -distance;
                 if (distance > 0)
                 {

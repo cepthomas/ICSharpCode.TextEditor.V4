@@ -9,8 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -34,7 +35,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return textArea.TextEditorProperties.EnableFolding;
+                return Shared.TEP.EnableFolding;
             }
         }
 
@@ -48,7 +49,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
-            HighlightColor lineNumberPainterColor = textArea.Document.TextEditorProperties.LineNumbersColor;
+            HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
 
 
             for (int y = 0; y < (DrawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder) / textArea.TextView.FontHeight + 1; ++y)
@@ -61,7 +62,7 @@ namespace ICSharpCode.TextEditor
                 if (rect.IntersectsWith(markerRectangle))
                 {
                     // draw dotted separator line
-                    if (textArea.Document.TextEditorProperties.ShowLineNumbers)
+                    if (Shared.TEP.ShowLineNumbers)
                     {
                         g.FillRectangle(BrushRegistry.GetBrush(textArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder),
                                         markerRectangle);
@@ -103,8 +104,8 @@ namespace ICSharpCode.TextEditor
 
         void PaintFoldMarker(Graphics g, int lineNumber, Rectangle drawingRectangle)
         {
-            HighlightColor foldLineColor = textArea.Document.TextEditorProperties.FoldLineColor;
-            HighlightColor selectedFoldLine = textArea.Document.TextEditorProperties.SelectedFoldLineColor;
+            HighlightColor foldLineColor = Shared.TEP.FoldLineColor;
+            HighlightColor selectedFoldLine = Shared.TEP.SelectedFoldLineColor;
 
             List<FoldMarker> foldingsWithStart = textArea.Document.FoldingManager.GetFoldingsWithStart(lineNumber);
             List<FoldMarker> foldingsBetween   = textArea.Document.FoldingManager.GetFoldingsContainsLineNumber(lineNumber);
@@ -222,7 +223,7 @@ namespace ICSharpCode.TextEditor
 
         public override void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
         {
-            bool  showFolding  = textArea.Document.TextEditorProperties.EnableFolding;
+            bool  showFolding  = Shared.TEP.EnableFolding;
             int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
             int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
 
@@ -249,7 +250,7 @@ namespace ICSharpCode.TextEditor
 
         public override void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
         {
-            bool  showFolding  = textArea.Document.TextEditorProperties.EnableFolding;
+            bool  showFolding  = Shared.TEP.EnableFolding;
             int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
             int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
 
@@ -281,9 +282,9 @@ namespace ICSharpCode.TextEditor
         #region Drawing functions
         void DrawFoldMarker(Graphics g, RectangleF rectangle, bool isOpened, bool isSelected)
         {
-            HighlightColor foldMarkerColor = textArea.Document.TextEditorProperties.FoldMarkerColor;
-            HighlightColor foldLineColor   = textArea.Document.TextEditorProperties.FoldLineColor;
-            HighlightColor selectedFoldLine = textArea.Document.TextEditorProperties.SelectedFoldLineColor;
+            HighlightColor foldMarkerColor = Shared.TEP.FoldMarkerColor;
+            HighlightColor foldLineColor   = Shared.TEP.FoldLineColor;
+            HighlightColor selectedFoldLine = Shared.TEP.SelectedFoldLineColor;
 
             Rectangle intRect = new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
             g.FillRectangle(BrushRegistry.GetBrush(foldMarkerColor.BackgroundColor), intRect);

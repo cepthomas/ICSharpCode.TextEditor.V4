@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Diagnostics;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -68,7 +70,7 @@ namespace ICSharpCode.TextEditor.Document
                 if (_document.ReadOnly)
                     return true;
 
-                if (_document.TextEditorProperties.SupportReadOnlySegments)
+                if (Shared.TEP.SupportReadOnlySegments)
                     return _document.MarkerStrategy.GetMarkers(StartOffset, Length).Exists(m => m.IsReadOnly);
 
                 return false;

@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
@@ -184,7 +186,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
             int scrollDistance = mouseWheelHandler.GetScrollAmount(e);
             if (scrollDistance == 0)
                 return;
-            if (control.TextEditorProperties.MouseWheelScrollDown)
+            if (Shared.TEP.MouseWheelScrollDown)
                 scrollDistance = -scrollDistance;
             int newValue = vScrollBar.Value + vScrollBar.SmallChange * scrollDistance;
             vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum - vScrollBar.LargeChange + 1, newValue));

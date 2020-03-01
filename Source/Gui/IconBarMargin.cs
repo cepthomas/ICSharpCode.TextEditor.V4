@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -36,7 +37,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return textArea.TextEditorProperties.IsIconBarVisible;
+                return Shared.TEP.IsIconBarVisible;
             }
         }
 

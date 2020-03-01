@@ -10,8 +10,9 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -59,7 +60,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return textArea.TextEditorProperties.ShowLineNumbers;
+                return Shared.TEP.ShowLineNumbers;
             }
         }
 
@@ -76,7 +77,7 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
-            HighlightColor lineNumberPainterColor = textArea.Document.TextEditorProperties.LineNumbersColor;
+            HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
             int fontHeight = textArea.TextView.FontHeight;
             Brush fillBrush = textArea.Enabled ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder;
             Brush drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
@@ -92,7 +93,7 @@ namespace ICSharpCode.TextEditor
                     if (curLine < textArea.Document.TotalNumberOfLines)
                     {
                         g.DrawString((curLine + 1).ToString(),
-                                     lineNumberPainterColor.GetFont(TextEditorProperties.FontContainer),
+                                     lineNumberPainterColor.GetFont(Shared.TEP.FontContainer),
                                      drawBrush,
                                      backgroundRectangle,
                                      numberStringFormat);

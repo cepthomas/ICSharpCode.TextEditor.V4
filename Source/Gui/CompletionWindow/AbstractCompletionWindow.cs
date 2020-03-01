@@ -8,6 +8,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
@@ -42,7 +44,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
             TextLocation caretPos  = textArea.Caret.Position;
 
             int xpos = textArea.TextView.GetDrawingXPos(caretPos.Y, caretPos.X);
-            int rulerHeight = textArea.TextEditorProperties.ShowHorizontalRuler ? textArea.TextView.FontHeight : 0;
+            int rulerHeight = Shared.TEP.ShowHorizontalRuler ? textArea.TextView.FontHeight : 0;
             Point pos = new Point(textArea.TextView.DrawingPosition.X + xpos,
                                   textArea.TextView.DrawingPosition.Y + (textArea.Document.GetVisibleLine(caretPos.Y)) * textArea.TextView.FontHeight
                                   - textArea.TextView.TextArea.VirtualTop.Y + textArea.TextView.FontHeight + rulerHeight);

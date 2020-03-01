@@ -10,15 +10,17 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
-
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Actions;
-using ICSharpCode.TextEditor.Src.Util;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing.Text;
 using System.IO;
 using System.Diagnostics;
+
+using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Actions;
+using ICSharpCode.TextEditor.Src.Util;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -54,20 +56,20 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public TextEditorProperties TextEditorProperties
-        {
-            get
-            {
-                return document.TextEditorProperties;
-            }
-            set
-            {
-                document.TextEditorProperties = value;
-                OptionsChanged();
-            }
-        }
+        //[Browsable(false)]
+        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        //public TextEditorProperties TextEditorProperties
+        //{
+        //    get
+        //    {
+        //        return Shared.TEP;
+        //    }
+        //    set
+        //    {
+        //        Shared.TEP = value;
+        //        OptionsChanged();
+        //    }
+        //}
 
         Encoding encoding;
 
@@ -81,7 +83,7 @@ namespace ICSharpCode.TextEditor
             get
             {
                 if (encoding == null)
-                    return TextEditorProperties.Encoding;
+                    return Shared.TEP.Encoding;
                 return encoding;
             }
             set
@@ -227,11 +229,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowSpaces;
+                return Shared.TEP.ShowSpaces;
             }
             set
             {
-                document.TextEditorProperties.ShowSpaces = value;
+                Shared.TEP.ShowSpaces = value;
                 OptionsChanged();
             }
         }
@@ -246,11 +248,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.TextRenderingHint;
+                return Shared.TEP.TextRenderingHint;
             }
             set
             {
-                document.TextEditorProperties.TextRenderingHint = value;
+                Shared.TEP.TextRenderingHint = value;
                 OptionsChanged();
             }
         }
@@ -265,11 +267,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowTabs;
+                return Shared.TEP.ShowTabs;
             }
             set
             {
-                document.TextEditorProperties.ShowTabs = value;
+                Shared.TEP.ShowTabs = value;
                 OptionsChanged();
             }
         }
@@ -284,11 +286,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowEOLMarker;
+                return Shared.TEP.ShowEOLMarker;
             }
             set
             {
-                document.TextEditorProperties.ShowEOLMarker = value;
+                Shared.TEP.ShowEOLMarker = value;
                 OptionsChanged();
             }
         }
@@ -303,11 +305,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowHorizontalRuler;
+                return Shared.TEP.ShowHorizontalRuler;
             }
             set
             {
-                document.TextEditorProperties.ShowHorizontalRuler = value;
+                Shared.TEP.ShowHorizontalRuler = value;
                 OptionsChanged();
             }
         }
@@ -322,11 +324,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowVerticalRuler;
+                return Shared.TEP.ShowVerticalRuler;
             }
             set
             {
-                document.TextEditorProperties.ShowVerticalRuler = value;
+                Shared.TEP.ShowVerticalRuler = value;
                 OptionsChanged();
             }
         }
@@ -341,11 +343,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.VerticalRulerRow;
+                return Shared.TEP.VerticalRulerRow;
             }
             set
             {
-                document.TextEditorProperties.VerticalRulerRow = value;
+                Shared.TEP.VerticalRulerRow = value;
                 OptionsChanged();
             }
         }
@@ -360,11 +362,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowLineNumbers;
+                return Shared.TEP.ShowLineNumbers;
             }
             set
             {
-                document.TextEditorProperties.ShowLineNumbers = value;
+                Shared.TEP.ShowLineNumbers = value;
                 OptionsChanged();
             }
         }
@@ -379,11 +381,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowInvalidLines;
+                return Shared.TEP.ShowInvalidLines;
             }
             set
             {
-                document.TextEditorProperties.ShowInvalidLines = value;
+                Shared.TEP.ShowInvalidLines = value;
                 OptionsChanged();
             }
         }
@@ -398,11 +400,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.EnableFolding;
+                return Shared.TEP.EnableFolding;
             }
             set
             {
-                document.TextEditorProperties.EnableFolding = value;
+                Shared.TEP.EnableFolding = value;
                 OptionsChanged();
             }
         }
@@ -414,11 +416,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ShowMatchingBracket;
+                return Shared.TEP.ShowMatchingBracket;
             }
             set
             {
-                document.TextEditorProperties.ShowMatchingBracket = value;
+                Shared.TEP.ShowMatchingBracket = value;
                 OptionsChanged();
             }
         }
@@ -430,11 +432,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.IsIconBarVisible;
+                return Shared.TEP.IsIconBarVisible;
             }
             set
             {
-                document.TextEditorProperties.IsIconBarVisible = value;
+                Shared.TEP.IsIconBarVisible = value;
                 OptionsChanged();
             }
         }
@@ -449,11 +451,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.TabIndent;
+                return Shared.TEP.TabIndent;
             }
             set
             {
-                document.TextEditorProperties.TabIndent = value;
+                Shared.TEP.TabIndent = value;
                 OptionsChanged();
             }
         }
@@ -468,11 +470,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.LineViewerStyle;
+                return Shared.TEP.LineViewerStyle;
             }
             set
             {
-                document.TextEditorProperties.LineViewerStyle = value;
+                Shared.TEP.LineViewerStyle = value;
                 OptionsChanged();
             }
         }
@@ -487,11 +489,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.IndentStyle;
+                return Shared.TEP.IndentStyle;
             }
             set
             {
-                document.TextEditorProperties.IndentStyle = value;
+                Shared.TEP.IndentStyle = value;
                 OptionsChanged();
             }
         }
@@ -506,11 +508,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.ConvertTabsToSpaces;
+                return Shared.TEP.ConvertTabsToSpaces;
             }
             set
             {
-                document.TextEditorProperties.ConvertTabsToSpaces = value;
+                Shared.TEP.ConvertTabsToSpaces = value;
                 OptionsChanged();
             }
         }
@@ -525,11 +527,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.HideMouseCursor;
+                return Shared.TEP.HideMouseCursor;
             }
             set
             {
-                document.TextEditorProperties.HideMouseCursor = value;
+                Shared.TEP.HideMouseCursor = value;
                 OptionsChanged();
             }
         }
@@ -544,11 +546,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.AllowCaretBeyondEOL;
+                return Shared.TEP.AllowCaretBeyondEOL;
             }
             set
             {
-                document.TextEditorProperties.AllowCaretBeyondEOL = value;
+                Shared.TEP.AllowCaretBeyondEOL = value;
                 OptionsChanged();
             }
         }
@@ -562,11 +564,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document.TextEditorProperties.BracketMatchingStyle;
+                return Shared.TEP.BracketMatchingStyle;
             }
             set
             {
-                document.TextEditorProperties.BracketMatchingStyle = value;
+                Shared.TEP.BracketMatchingStyle = value;
                 OptionsChanged();
             }
         }
@@ -829,7 +831,7 @@ namespace ICSharpCode.TextEditor
                     if (charAfterLine != '\n' && charAfterLine != '\r')
                         throw new InvalidOperationException("The document cannot be saved because it is corrupted.");
                     // only save line terminator if the line has one
-                    streamWriter.Write(document.TextEditorProperties.LineTerminator);
+                    streamWriter.Write(Shared.TEP.LineTerminator);
                 }
             }
             streamWriter.Flush();

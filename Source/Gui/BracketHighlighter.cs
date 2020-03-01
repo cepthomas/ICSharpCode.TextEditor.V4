@@ -8,6 +8,8 @@
 using System;
 using System.Drawing;
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor
 {
@@ -69,7 +71,7 @@ namespace ICSharpCode.TextEditor
         public Highlight GetHighlight(Document.Document document, int offset)
         {
             int searchOffset;
-            if (document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After)
+            if (Shared.TEP.BracketMatchingStyle == BracketMatchingStyle.After)
             {
                 searchOffset = offset;
             }

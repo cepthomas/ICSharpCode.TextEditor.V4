@@ -6,11 +6,16 @@
 // </file>
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Text;
+using Newtonsoft.Json;
+using ICSharpCode.TextEditor.Document;
 
-namespace ICSharpCode.TextEditor.Document
+
+namespace ICSharpCode.TextEditor.Common
 {
     public enum BracketMatchingStyle
     {
@@ -21,58 +26,44 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// Properties that apply to all open text editor windows.
     /// </summary>
-    public class TextEditorProperties // TODO0 put some in settings, some in theme/scheme
+    [Serializable]
+    public class TextEditorProperties
     {
-        #region Fields
-        #endregion
-
-        #region Properties
-        #endregion
-
-        #region Events
-        #endregion
-
-        #region Lifecycle
-        #endregion
-
-        #region Public functions
-        #endregion
-
-        #region Private functions
-        #endregion
+        //[Category("\t\tEditor Settings")]
+        //[DisplayName("Editor Font")]
+        //[Description("Font to use.")]
+        //[Category("\tFavorites Settings"), DisplayName("Filter Favorites"), Description("Filter strings or regular expressions.")]
 
 
-
-
-        public bool CaretLine { get; set; }
+        public bool CaretLine { get; set; } = false;
         public bool AutoInsertCurlyBracket { get; set; } = true;
-        public bool HideMouseCursor { get; set; }
-        public bool IsIconBarVisible { get; set; }
-        public bool AllowCaretBeyondEOL { get; set; }
+        public bool HideMouseCursor { get; set; } = false;
+        public bool IsIconBarVisible { get; set; } = false;
+        public bool AllowCaretBeyondEOL { get; set; } = true;
         public bool ShowMatchingBracket { get; set; } = true;
         public TextRenderingHint TextRenderingHint { get; set; } = TextRenderingHint.SystemDefault;
         public bool MouseWheelScrollDown { get; set; } = true;
         public bool MouseWheelTextZoom { get; set; } = true;
         public string LineTerminator { get; set; } = Environment.NewLine;
         public LineViewerStyle LineViewerStyle { get; set; } = LineViewerStyle.None;
-        public bool ShowInvalidLines { get; set; }
+        public bool ShowInvalidLines { get; set; } = false;
         public int VerticalRulerRow { get; set; } = 80;
-        public bool ShowSpaces { get; set; }
-        public bool ShowTabs { get; set; }
-        public bool ShowEOLMarker { get; set; }
-        public bool ConvertTabsToSpaces { get; set; } 
-        public bool ShowHorizontalRuler { get; set; }
-        public bool ShowVerticalRuler { get; set; } = true;
-        public Encoding Encoding { get; set; } = System.Text.Encoding.UTF8;
+        public bool ShowSpaces { get; set; } = false;
+        public bool ShowTabs { get; set; } = false;
+        public bool ShowEOLMarker { get; set; } = false;
+        public bool ConvertTabsToSpaces { get; set; } = true;
+        public bool ShowHorizontalRuler { get; set; } = false;
+        public bool ShowVerticalRuler { get; set; } = false;
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
         public bool EnableFolding { get; set; } = true;
         public bool ShowLineNumbers { get; set; } = true;
         public int TabIndent { get; set; } = 4;
         public int IndentationSize { get; set; } = 4;
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
-        public FontContainer FontContainer { get; private set; } = new FontContainer(new Font("Consolas", 10));
+        public FontContainer FontContainer { get; private set; } = new FontContainer(new Font("Consolas", 9));
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
-        public bool SupportReadOnlySegments { get; set; }
+        public bool SupportReadOnlySegments { get; set; } = false;
 
 
 
@@ -91,6 +82,40 @@ namespace ICSharpCode.TextEditor.Document
         public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor("WindowText", false, false);
         public HighlightColor VRulerColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
 
-        //static Font DefaultFont = new Font("Consolas", 10);
+
+        #region Fields
+        /// <summary>The file name.</summary>
+        string _fn = "";
+        #endregion
+
+        #region Persistence
+        /// <summary>Save object to file.</summary>
+        public void Save()
+        {
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(_fn, json);
+        }
+
+        /// <summary>Create object from file.</summary>
+        public static TextEditorProperties Load(string appDir)
+        {
+            string fn = Path.Combine(appDir, "editor.settings");
+
+            TextEditorProperties settings;
+            if (File.Exists(fn))
+            {
+                string json = File.ReadAllText(fn);
+                settings = JsonConvert.DeserializeObject<TextEditorProperties>(json);
+            }
+            else
+            {
+                settings = new TextEditorProperties(); // default
+            }
+
+            settings._fn = fn;
+
+            return settings;
+        }
+        #endregion
     }
 }

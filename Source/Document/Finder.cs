@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
+using ICSharpCode.TextEditor.Common;
 
 
 namespace ICSharpCode.TextEditor.Document
@@ -183,7 +184,7 @@ namespace ICSharpCode.TextEditor.Document
 
             try
             {
-                Color sel = Editor.Document.TextEditorProperties.CaretMarkerColor.BackgroundColor;
+                Color sel = Shared.TEP.CaretMarkerColor.BackgroundColor;
                 _regex = CreateRegex(ftext, Mode, MatchCase, MatchWholeWord, true);
                 foreach (Match match in _regex.Matches(Editor.Document.TextContent))
                 {

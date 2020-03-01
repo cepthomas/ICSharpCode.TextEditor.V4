@@ -43,6 +43,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Shared.cs" />
+    <Compile Include="Common\TextEditorProperties.cs" />
     <Compile Include="Document\HighlightingStrategy\AdjacentMarker.cs" />
     <Compile Include="Document\TextBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -55,7 +57,6 @@
     <Compile Include="Document\LineManager\DeferredEventList.cs" />
     <Compile Include="Document\LineManager\LineSegmentTree.cs" />
     <Compile Include="Document\TextAnchor.cs" />
-    <Compile Include="Document\TextEditorProperties.cs" />
     <Compile Include="Document\TextLocation.cs" />
     <Compile Include="Document\TextUtilities.cs" />
     <Compile Include="Document\BookmarkManager\BookmarkManager.cs" />

@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Drawing;
 
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Actions
 {
@@ -75,7 +77,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else     // no folding is interesting
             {
-                if (position.X < curLine.Length || textArea.TextEditorProperties.AllowCaretBeyondEOL)
+                if (position.X < curLine.Length || Shared.TEP.AllowCaretBeyondEOL)
                 {
                     ++position.X;
                 }
