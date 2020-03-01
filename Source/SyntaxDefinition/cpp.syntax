@@ -1,6 +1,6 @@
 {
-   "@name": "cpp",
-   "@folding": "Code",
+   "Name": "cpp",
+   "Folding": "Code",
   "Extensions": [
     "c",
     "h",
@@ -10,436 +10,436 @@
   ],
    "Properties": {
       "Property": {
-         "@name": "LineComment",
-         "@value": "//"
+         "Name": "LineComment",
+         "Value": "//"
       }
    },
    "Digits": {
-      "@name": "Digits",
-      "@bold": "false",
-      "@italic": "false",
-      "@color": "DarkBlue"
+      "Name": "Digits",
+      "Bold": false,
+      "Italic": false,
+      "Color": "DarkBlue"
    },
    "RuleSets": {
       "RuleSet": {
-         "@ignorecase": "false",
+         "IgnoreCase": false,
          "Delimiters": "~!%^*()-+=|\\#/{}[]:;\"'<> , .?",
          "Span": [
             {
-               "@name": "PreprocessorDirectives",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Green",
-               "@stopateol": "true",
+               "Name": "PreprocessorDirectives",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Green",
+               "StopAtEol": true,
                "Begin": "#"
             },
             {
-               "@name": "LineComment",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Green",
-               "@stopateol": "true",
+               "Name": "LineComment",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Green",
+               "StopAtEol": true,
                "Begin": "//"
             },
             {
-               "@name": "BlockComment",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Green",
-               "@stopateol": "false",
+               "Name": "BlockComment",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Green",
+               "StopAtEol": false,
                "Begin": "/*",
                "End": "*/"
             },
             {
-               "@name": "String",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Magenta",
-               "@stopateol": "true",
-               "@escapecharacter": "\\",
+               "Name": "String",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Magenta",
+               "StopAtEol": true,
+               "EscapeCharacter": "\\",
                "Begin": "\"",
                "End": "\""
             },
             {
-               "@name": "Char",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Magenta",
-               "@stopateol": "true",
-               "@escapecharacter": "\\",
+               "Name": "Char",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Magenta",
+               "StopAtEol": true,
+               "EscapeCharacter": "\\",
                "Begin": "'",
                "End": "'"
             }
          ],
          "MarkPrevious": {
-            "@bold": "true",
-            "@italic": "false",
-            "@color": "MidnightBlue",
-            "#text": "("
+            "Bold": true,
+            "Italic": false,
+            "Color": "MidnightBlue",
+            "Text": "("
          },
          "KeyWords": [
             {
-               "@name": "Punctuation",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "DarkGreen",
+               "Name": "Punctuation",
+               "Bold": false,
+               "Italic": false,
+               "Color": "DarkGreen",
                "Key": [
                   {
-                     "@word": "?"
+                     "Word": "?"
                   },
                   {
-                     "@word": ","
+                     "Word": ","
                   },
                   {
-                     "@word": "."
+                     "Word": "."
                   },
                   {
-                     "@word": ";"
+                     "Word": ";"
                   },
                   {
-                     "@word": "("
+                     "Word": "("
                   },
                   {
-                     "@word": ")"
+                     "Word": ")"
                   },
                   {
-                     "@word": "["
+                     "Word": "["
                   },
                   {
-                     "@word": "]"
+                     "Word": "]"
                   },
                   {
-                     "@word": "{"
+                     "Word": "{"
                   },
                   {
-                     "@word": "}"
+                     "Word": "}"
                   },
                   {
-                     "@word": "+"
+                     "Word": "+"
                   },
                   {
-                     "@word": "-"
+                     "Word": "-"
                   },
                   {
-                     "@word": "/"
+                     "Word": "/"
                   },
                   {
-                     "@word": "%"
+                     "Word": "%"
                   },
                   {
-                     "@word": "*"
+                     "Word": "*"
                   },
                   {
-                     "@word": "<"
+                     "Word": "<"
                   },
                   {
-                     "@word": ">"
+                     "Word": ">"
                   },
                   {
-                     "@word": "^"
+                     "Word": "^"
                   },
                   {
-                     "@word": "="
+                     "Word": "="
                   },
                   {
-                     "@word": "~"
+                     "Word": "~"
                   },
                   {
-                     "@word": "!"
+                     "Word": "!"
                   },
                   {
-                     "@word": "|"
+                     "Word": "|"
                   },
                   {
-                     "@word": "&"
+                     "Word": "&"
                   }
                ]
             },
             {
-               "@name": "OperatorKeywords",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "DarkCyan",
+               "Name": "OperatorKeywords",
+               "Bold": true,
+               "Italic": false,
+               "Color": "DarkCyan",
                "Key": [
                   {
-                     "@word": "and"
+                     "Word": "and"
                   },
                   {
-                     "@word": "and_eq"
+                     "Word": "and_eq"
                   },
                   {
-                     "@word": "bitand"
+                     "Word": "bitand"
                   },
                   {
-                     "@word": "bitor"
+                     "Word": "bitor"
                   },
                   {
-                     "@word": "new"
+                     "Word": "new"
                   },
                   {
-                     "@word": "not"
+                     "Word": "not"
                   },
                   {
-                     "@word": "not_eq"
+                     "Word": "not_eq"
                   },
                   {
-                     "@word": "or"
+                     "Word": "or"
                   },
                   {
-                     "@word": "or_eq"
+                     "Word": "or_eq"
                   },
                   {
-                     "@word": "xor"
+                     "Word": "xor"
                   },
                   {
-                     "@word": "xor_eq"
+                     "Word": "xor_eq"
                   }
                ]
             },
             {
-               "@name": "Friends",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Brown",
+               "Name": "Friends",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Brown",
                "Key": {
-                  "@word": "friend"
+                  "Word": "friend"
                }
             },
             {
-               "@name": "AccessModifiers",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Blue",
+               "Name": "AccessModifiers",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Blue",
                "Key": [
                   {
-                     "@word": "private"
+                     "Word": "private"
                   },
                   {
-                     "@word": "protected"
+                     "Word": "protected"
                   },
                   {
-                     "@word": "public"
+                     "Word": "public"
                   },
                   {
-                     "@word": "const"
+                     "Word": "const"
                   },
                   {
-                     "@word": "volatile"
+                     "Word": "volatile"
                   },
                   {
-                     "@word": "static"
+                     "Word": "static"
                   }
                ]
             },
             {
-               "@name": "Types",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Red",
+               "Name": "Types",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Red",
                "Key": [
                   {
-                     "@word": "bool"
+                     "Word": "bool"
                   },
                   {
-                     "@word": "char"
+                     "Word": "char"
                   },
                   {
-                     "@word": "unsigned"
+                     "Word": "unsigned"
                   },
                   {
-                     "@word": "union"
+                     "Word": "union"
                   },
                   {
-                     "@word": "virtual"
+                     "Word": "virtual"
                   },
                   {
-                     "@word": "double"
+                     "Word": "double"
                   },
                   {
-                     "@word": "float"
+                     "Word": "float"
                   },
                   {
-                     "@word": "short"
+                     "Word": "short"
                   },
                   {
-                     "@word": "signed"
+                     "Word": "signed"
                   },
                   {
-                     "@word": "void"
+                     "Word": "void"
                   },
                   {
-                     "@word": "class"
+                     "Word": "class"
                   },
                   {
-                     "@word": "enum"
+                     "Word": "enum"
                   },
                   {
-                     "@word": "struct"
+                     "Word": "struct"
                   }
                ]
             },
             {
-               "@name": "Literals",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Black",
+               "Name": "Literals",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Black",
                "Key": [
                   {
-                     "@word": "false"
+                     "Word": false
                   },
                   {
-                     "@word": "true"
+                     "Word": true
                   }
                ]
             },
             {
-               "@name": "IterationStatements",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Blue",
+               "Name": "IterationStatements",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Blue",
                "Key": [
                   {
-                     "@word": "do"
+                     "Word": "do"
                   },
                   {
-                     "@word": "for"
+                     "Word": "for"
                   },
                   {
-                     "@word": "while"
+                     "Word": "while"
                   }
                ]
             },
             {
-               "@name": "JumpStatements",
-               "@bold": "false",
-               "@italic": "false",
-               "@color": "Navy",
+               "Name": "JumpStatements",
+               "Bold": false,
+               "Italic": false,
+               "Color": "Navy",
                "Key": [
                   {
-                     "@word": "break"
+                     "Word": "break"
                   },
                   {
-                     "@word": "continue"
+                     "Word": "continue"
                   },
                   {
-                     "@word": "goto"
+                     "Word": "goto"
                   },
                   {
-                     "@word": "return"
+                     "Word": "return"
                   }
                ]
             },
             {
-               "@name": "ExceptionHandlingStatements",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Teal",
+               "Name": "ExceptionHandlingStatements",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Teal",
                "Key": [
                   {
-                     "@word": "catch"
+                     "Word": "catch"
                   },
                   {
-                     "@word": "throw"
+                     "Word": "throw"
                   },
                   {
-                     "@word": "try"
+                     "Word": "try"
                   }
                ]
             },
             {
-               "@name": "SelectionStatements",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Blue",
+               "Name": "SelectionStatements",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Blue",
                "Key": [
                   {
-                     "@word": "case"
+                     "Word": "case"
                   },
                   {
-                     "@word": "else"
+                     "Word": "else"
                   },
                   {
-                     "@word": "if"
+                     "Word": "if"
                   },
                   {
-                     "@word": "switch"
+                     "Word": "switch"
                   },
                   {
-                     "@word": "default"
+                     "Word": "default"
                   }
                ]
             },
             {
-               "@name": "KEYWORD1",
-               "@bold": "true",
-               "@italic": "false",
-               "@color": "Blue",
+               "Name": "KEYWORD1",
+               "Bold": true,
+               "Italic": false,
+               "Color": "Blue",
                "Key": [
                   {
-                     "@word": "asm"
+                     "Word": "asm"
                   },
                   {
-                     "@word": "auto"
+                     "Word": "auto"
                   },
                   {
-                     "@word": "compl"
+                     "Word": "compl"
                   },
                   {
-                     "@word": "mutable"
+                     "Word": "mutable"
                   },
                   {
-                     "@word": "const_cast"
+                     "Word": "const_cast"
                   },
                   {
-                     "@word": "delete"
+                     "Word": "delete"
                   },
                   {
-                     "@word": "dynamic_cast"
+                     "Word": "dynamic_cast"
                   },
                   {
-                     "@word": "explicit"
+                     "Word": "explicit"
                   },
                   {
-                     "@word": "export"
+                     "Word": "export"
                   },
                   {
-                     "@word": "extern"
+                     "Word": "extern"
                   },
                   {
-                     "@word": "inline"
+                     "Word": "inline"
                   },
                   {
-                     "@word": "int"
+                     "Word": "int"
                   },
                   {
-                     "@word": "long"
+                     "Word": "long"
                   },
                   {
-                     "@word": "operator"
+                     "Word": "operator"
                   },
                   {
-                     "@word": "register"
+                     "Word": "register"
                   },
                   {
-                     "@word": "reinterpret_cast"
+                     "Word": "reinterpret_cast"
                   },
                   {
-                     "@word": "sizeof"
+                     "Word": "sizeof"
                   },
                   {
-                     "@word": "static_cast"
+                     "Word": "static_cast"
                   },
                   {
-                     "@word": "template"
+                     "Word": "template"
                   },
                   {
-                     "@word": "typedef"
+                     "Word": "typedef"
                   },
                   {
-                     "@word": "typeid"
+                     "Word": "typeid"
                   },
                   {
-                     "@word": "typename"
+                     "Word": "typename"
                   }
                ]
             }

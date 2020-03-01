@@ -1,17 +1,17 @@
 {
-   "@name": "bat",
+   "Name": "bat",
   "Extensions": [
     "bat"
   ],
    "Digits": {
-      "@name": "Digits",
-      "@bold": "false",
-      "@italic": "false",
-      "@color": "Yellow"
+      "Name": "Digits",
+      "Bold": false,
+      "Italic": false,
+      "Color": "Yellow"
    },
    "RuleSets": {
       "RuleSet": {
-         "@ignorecase": "false",
+         "Ignorecase": false,
          "Delimiters": []
       }
    }
