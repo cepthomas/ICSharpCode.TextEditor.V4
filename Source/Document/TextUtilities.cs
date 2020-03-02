@@ -338,7 +338,7 @@ namespace ICSharpCode.TextEditor.Document
                 ++endOffset;
             }
 
-            Debug.Assert(endOffset >= startOffset);
+            //Debug.Assert(endOffset >= startOffset);
             return document.GetText(startOffset, endOffset - startOffset + 1);
         }
     }

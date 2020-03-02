@@ -29,12 +29,9 @@ namespace ICSharpCode.TextEditor.Common
     [Serializable]
     public class TextEditorProperties
     {
-        //[Category("\t\tEditor Settings")]
-        //[DisplayName("Editor Font")]
-        //[Description("Font to use.")]
-        //[Category("\tFavorites Settings"), DisplayName("Filter Favorites"), Description("Filter strings or regular expressions.")]
+        //TODO2 Add doc like: [Category("\tFavorites"), DisplayName("Filter Favorites"), Description("Filter strings or regular expressions.")]
 
-
+        #region Properties same for all controls
         public bool CaretLine { get; set; } = false;
         public bool AutoInsertCurlyBracket { get; set; } = true;
         public bool HideMouseCursor { get; set; } = false;
@@ -45,31 +42,40 @@ namespace ICSharpCode.TextEditor.Common
         public bool MouseWheelScrollDown { get; set; } = true;
         public bool MouseWheelTextZoom { get; set; } = true;
         public string LineTerminator { get; set; } = Environment.NewLine;
-        public LineViewerStyle LineViewerStyle { get; set; } = LineViewerStyle.None;
+        public LineViewerStyle LineViewerStyle { get; set; } = LineViewerStyle.FullRow; //TODO1 just gutter opt
         public bool ShowInvalidLines { get; set; } = false;
         public int VerticalRulerRow { get; set; } = 80;
+        public bool ShowHorizontalRuler { get; set; } = false;
+        public bool ShowVerticalRuler { get; set; } = false;
+        public bool EnableFolding { get; set; } = true;
+        public bool ShowLineNumbers { get; set; } = true;
+        public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
+        public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
+        public bool SupportReadOnlySegments { get; set; } = false;
+        #endregion
+
+        #region Stuff json or serialization can't handle TODO1
+        [JsonIgnore]
+        // TODO1   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
+        Font _font = new Font("Consolas", 9);
+        #endregion
+
+
+        #region Properties that can be overriden per control TODO1
         public bool ShowSpaces { get; set; } = false;
         public bool ShowTabs { get; set; } = false;
         public bool ShowEOLMarker { get; set; } = false;
         public bool ConvertTabsToSpaces { get; set; } = true;
-        public bool ShowHorizontalRuler { get; set; } = false;
-        public bool ShowVerticalRuler { get; set; } = false;
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
-        public bool EnableFolding { get; set; } = true;
-        public bool ShowLineNumbers { get; set; } = true;
         public int TabIndent { get; set; } = 4;
         public int IndentationSize { get; set; } = 4;
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
-        public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
-        public FontContainer FontContainer { get; private set; } = new FontContainer(new Font("Consolas", 9));
-        public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
-        public bool SupportReadOnlySegments { get; set; } = false;
+        #endregion
 
-
-
-        /////// Colors relocated from highlighting environment. >>>>> I did this - good? background, text color, 
+        #region Properties for colors TODO0 relocated from highlighting environment, put in a style thing when syntax colors get fixed
         public HighlightColor DefaultColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
-        public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.Yellow, false, false);
+        public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.WhiteSmoke, false, false); // the selection line
         public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
         public HighlightColor EOLMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
         public HighlightColor SpaceMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
@@ -82,6 +88,7 @@ namespace ICSharpCode.TextEditor.Common
         public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor("WindowText", false, false);
         public HighlightColor VRulerColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
 
+        #endregion
 
         #region Fields
         /// <summary>The file name.</summary>
@@ -101,20 +108,20 @@ namespace ICSharpCode.TextEditor.Common
         {
             string fn = Path.Combine(appDir, "editor.settings");
 
-            TextEditorProperties settings;
+            TextEditorProperties tep;
             if (File.Exists(fn))
             {
                 string json = File.ReadAllText(fn);
-                settings = JsonConvert.DeserializeObject<TextEditorProperties>(json);
+                tep = JsonConvert.DeserializeObject<TextEditorProperties>(json);
             }
             else
             {
-                settings = new TextEditorProperties(); // default
+                tep = new TextEditorProperties(); // default
             }
 
-            settings._fn = fn;
+            tep._fn = fn;
 
-            return settings;
+            return tep;
         }
         #endregion
     }

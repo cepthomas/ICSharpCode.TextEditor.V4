@@ -36,10 +36,10 @@ namespace ICSharpCode.TextEditor.Document
         #region Lifecycle
         public HighlightColor(XmlElement el, HighlightColor defaultColor)
         {
-            Debug.Assert(el != null, "ICSharpCode.TextEditor.Document.SyntaxColor(XmlElement el) : el == null");
+            //Debug.Assert(el != null, "ICSharpCode.TextEditor.Document.SyntaxColor(XmlElement el) : el == null");
             if (el.Attributes["bold"] != null)
             {
-                Bold = Boolean.Parse(el.Attributes["bold"].InnerText);
+                Bold = bool.Parse(el.Attributes["bold"].InnerText);
             }
             else
             {

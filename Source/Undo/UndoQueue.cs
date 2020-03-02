@@ -28,7 +28,7 @@ namespace ICSharpCode.TextEditor.Undo
                 throw new ArgumentNullException("stack");
             }
 
-            Debug.Assert(numops > 0 , "ICSharpCode.TextEditor.Undo.UndoQueue : numops should be > 0");
+            //Debug.Assert(numops > 0 , "ICSharpCode.TextEditor.Undo.UndoQueue : numops should be > 0");
             if (numops > stack.Count)
             {
                 numops = stack.Count;

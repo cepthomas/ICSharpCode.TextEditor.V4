@@ -681,7 +681,7 @@ namespace ICSharpCode.TextEditor.Actions
     {
         internal static void DeleteSelection(TextArea textArea)
         {
-            Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
+            //Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
             if (textArea.SelectionManager.SelectionIsReadonly)
                 return;
             textArea.BeginUpdate();

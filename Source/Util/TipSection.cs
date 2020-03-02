@@ -32,8 +32,7 @@ namespace ICSharpCode.TextEditor.Util
 
         public void SetAllocatedSize(SizeF allocatedSize)
         {
-            Debug.Assert(allocatedSize.Width >= tipRequiredSize.Width &&
-                         allocatedSize.Height >= tipRequiredSize.Height);
+            //Debug.Assert(allocatedSize.Width >= tipRequiredSize.Width && allocatedSize.Height >= tipRequiredSize.Height);
 
             tipAllocatedSize = allocatedSize;
             OnAllocatedSizeChanged();

@@ -138,7 +138,7 @@ namespace ICSharpCode.TextEditor.Document
 
         void RemoveInternal(ref DeferredEventList deferredEventList, int offset, int length)
         {
-            Debug.Assert(length >= 0);
+            //Debug.Assert(length >= 0);
             if (length == 0) return;
             LineSegmentTree.Enumerator it = lineCollection.GetEnumeratorForOffset(offset);
             LineSegment startSegment = it.Current;
@@ -153,7 +153,7 @@ namespace ICSharpCode.TextEditor.Document
             // merge startSegment with another line segment because startSegment's delimiter was deleted
             // possibly remove lines in between if multiple delimiters were deleted
             int charactersRemovedInStartLine = startSegmentOffset + startSegment.TotalLength - offset;
-            Debug.Assert(charactersRemovedInStartLine > 0);
+            //Debug.Assert(charactersRemovedInStartLine > 0);
             startSegment.RemovedLinePart(ref deferredEventList, offset - startSegmentOffset, charactersRemovedInStartLine);
 
 
@@ -387,7 +387,7 @@ namespace ICSharpCode.TextEditor.Document
                         }
                     }
 #if DATACONSISTENCYTEST
-                    Debug.Assert(false, "Found lone \\r, data consistency problems?");
+                    //Debug.Assert(false, "Found lone \\r, data consistency problems?");
 #endif
                 goto case '\n';
                 case '\n':

@@ -36,7 +36,7 @@ namespace ICSharpCode.TextEditor.Undo
                 throw new ArgumentOutOfRangeException("offset");
             }
 
-            Debug.Assert(text != null, "text can't be null");
+            //Debug.Assert(text != null, "text can't be null");
 //			oldCaretPos   = document.Caret.Offset;
             this.document = document;
             this.offset   = offset;

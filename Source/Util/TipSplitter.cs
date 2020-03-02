@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor.Util
 
         public TipSplitter(Graphics graphics, bool horizontal, params TipSection[] sections): base(graphics)
         {
-            Debug.Assert(sections != null);
+            //Debug.Assert(sections != null);
 
             isHorizontal = horizontal;
             offsets = new float[sections.Length];

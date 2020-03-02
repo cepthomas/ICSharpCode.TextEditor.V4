@@ -82,9 +82,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                if (encoding == null)
-                    return Shared.TEP.Encoding;
-                return encoding;
+                return encoding == null ? Shared.TEP.Encoding : encoding;
             }
             set
             {
@@ -1023,7 +1021,7 @@ namespace ICSharpCode.TextEditor
         /// </remarks>
         public void EndUpdate()//override
         {
-            Debug.Assert(updateLevel > 0);
+            //Debug.Assert(updateLevel > 0);
             updateLevel = Math.Max(0, updateLevel - 1);
 
             Document.CommitUpdate();

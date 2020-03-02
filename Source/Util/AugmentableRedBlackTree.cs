@@ -100,7 +100,7 @@ namespace ICSharpCode.TextEditor.Util
             {
                 nodeCount++;
             }
-            Debug.Assert(count == nodeCount);
+            //Debug.Assert(count == nodeCount);
         }
 
         /*
@@ -114,11 +114,11 @@ namespace ICSharpCode.TextEditor.Util
         {
             if (node == null) return;
 
-            Debug.Assert(node.parent == parentNode);
+            //Debug.Assert(node.parent == parentNode);
 
             if (parentColor == RED)
             {
-                Debug.Assert(node.color == BLACK);
+                //Debug.Assert(node.color == BLACK);
             }
             if (node.color == BLACK)
             {
@@ -130,7 +130,7 @@ namespace ICSharpCode.TextEditor.Util
                 if (expectedBlackCount == -1)
                     expectedBlackCount = blackCount;
                 else
-                    Debug.Assert(expectedBlackCount == blackCount);
+                    //Debug.Assert(expectedBlackCount == blackCount);
             }
             CheckNodeProperties(node.left, node, node.color, blackCount, ref expectedBlackCount);
             CheckNodeProperties(node.right, node, node.color, blackCount, ref expectedBlackCount);
@@ -178,7 +178,7 @@ namespace ICSharpCode.TextEditor.Util
 
         void AddInternal(RedBlackTreeNode<T> newNode)
         {
-            Debug.Assert(newNode.color == BLACK);
+            //Debug.Assert(newNode.color == BLACK);
             if (root == null)
             {
                 count = 1;
@@ -212,7 +212,7 @@ namespace ICSharpCode.TextEditor.Util
 
         internal void InsertAsLeft(RedBlackTreeNode<T> parentNode, RedBlackTreeNode<T> newNode)
         {
-            Debug.Assert(parentNode.left == null);
+            //Debug.Assert(parentNode.left == null);
             parentNode.left = newNode;
             newNode.parent = parentNode;
             newNode.color = RED;
@@ -223,7 +223,7 @@ namespace ICSharpCode.TextEditor.Util
 
         internal void InsertAsRight(RedBlackTreeNode<T> parentNode, RedBlackTreeNode<T> newNode)
         {
-            Debug.Assert(parentNode.right == null);
+            //Debug.Assert(parentNode.right == null);
             parentNode.right = newNode;
             newNode.parent = parentNode;
             newNode.color = RED;
@@ -234,10 +234,10 @@ namespace ICSharpCode.TextEditor.Util
 
         void FixTreeOnInsert(RedBlackTreeNode<T> node)
         {
-            Debug.Assert(node != null);
-            Debug.Assert(node.color == RED);
-            Debug.Assert(node.left == null || node.left.color == BLACK);
-            Debug.Assert(node.right == null || node.right.color == BLACK);
+            //Debug.Assert(node != null);
+            //Debug.Assert(node.color == RED);
+            //Debug.Assert(node.left == null || node.left.color == BLACK);
+            //Debug.Assert(node.right == null || node.right.color == BLACK);
 
             RedBlackTreeNode<T> parentNode = node.parent;
             if (parentNode == null)
@@ -295,7 +295,7 @@ namespace ICSharpCode.TextEditor.Util
             else
             {
                 // because of the first rotation, this is guaranteed:
-                Debug.Assert(node == parentNode.right && parentNode == grandparentNode.right);
+                //Debug.Assert(node == parentNode.right && parentNode == grandparentNode.right);
                 RotateLeft(grandparentNode);
             }
         }
@@ -304,7 +304,7 @@ namespace ICSharpCode.TextEditor.Util
         {
             if (replacedNode.parent == null)
             {
-                Debug.Assert(replacedNode == root);
+                //Debug.Assert(replacedNode == root);
                 root = newNode;
             }
             else
@@ -325,8 +325,8 @@ namespace ICSharpCode.TextEditor.Util
         {
             // let q be p's right child
             RedBlackTreeNode<T> q = p.right;
-            Debug.Assert(q != null);
-            Debug.Assert(q.parent == p);
+            //Debug.Assert(q != null);
+            //Debug.Assert(q.parent == p);
             // set q to be the new root
             ReplaceNode(p, q);
 
@@ -343,8 +343,8 @@ namespace ICSharpCode.TextEditor.Util
         {
             // let q be p's left child
             RedBlackTreeNode<T> q = p.left;
-            Debug.Assert(q != null);
-            Debug.Assert(q.parent == p);
+            //Debug.Assert(q != null);
+            //Debug.Assert(q.parent == p);
             // set q to be the new root
             ReplaceNode(p, q);
 
@@ -427,7 +427,7 @@ namespace ICSharpCode.TextEditor.Util
 
         static RedBlackTreeNode<T> Sibling(RedBlackTreeNode<T> node, RedBlackTreeNode<T> parentNode)
         {
-            Debug.Assert(node == null || node.parent == parentNode);
+            //Debug.Assert(node == null || node.parent == parentNode);
             if (node == parentNode.left)
                 return parentNode.right;
             else
@@ -444,7 +444,7 @@ namespace ICSharpCode.TextEditor.Util
 
         void FixTreeOnDelete(RedBlackTreeNode<T> node, RedBlackTreeNode<T> parentNode)
         {
-            Debug.Assert(node == null || node.parent == parentNode);
+            //Debug.Assert(node == null || node.parent == parentNode);
             if (parentNode == null)
                 return;
 
@@ -512,7 +512,7 @@ namespace ICSharpCode.TextEditor.Util
             {
                 if (sibling.right != null)
                 {
-                    Debug.Assert(sibling.right.color == RED);
+                    //Debug.Assert(sibling.right.color == RED);
                     sibling.right.color = BLACK;
                 }
                 RotateLeft(parentNode);
@@ -521,7 +521,7 @@ namespace ICSharpCode.TextEditor.Util
             {
                 if (sibling.left != null)
                 {
-                    Debug.Assert(sibling.left.color == RED);
+                    //Debug.Assert(sibling.left.color == RED);
                     sibling.left.color = BLACK;
                 }
                 RotateRight(parentNode);

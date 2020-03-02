@@ -315,11 +315,11 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (tree.root == null)
             {
-                Debug.Assert(this.Count == 0);
+                //Debug.Assert(this.Count == 0);
             }
             else
             {
-                Debug.Assert(tree.root.val.count == this.Count);
+                //Debug.Assert(tree.root.val.count == this.Count);
                 CheckProperties(tree.root);
             }
         }
@@ -340,8 +340,8 @@ namespace ICSharpCode.TextEditor.Document
                 count += node.right.val.count;
                 totalLength += node.right.val.totalLength;
             }
-            Debug.Assert(node.val.count == count);
-            Debug.Assert(node.val.totalLength == totalLength);
+            //Debug.Assert(node.val.count == count);
+            //Debug.Assert(node.val.totalLength == totalLength);
         }
 
         public string GetTreeAsString()

@@ -158,7 +158,7 @@ namespace ICSharpCode.TextEditor.Document
 
         void AddAnchor(TextAnchor anchor)
         {
-            Debug.Assert(anchor.Line == this);
+            //Debug.Assert(anchor.Line == this);
 
             if (anchors == null)
                 anchors = new Util.WeakCollection<TextAnchor>();
@@ -190,7 +190,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (length == 0)
                 return;
-            Debug.Assert(length > 0);
+            //Debug.Assert(length > 0);
 
             //Console.WriteLine("RemovedLinePart " + startColumn + ", " + length);
             if (anchors != null)
@@ -230,7 +230,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (length == 0)
                 return;
-            Debug.Assert(length > 0);
+            //Debug.Assert(length > 0);
 
             //Console.WriteLine("InsertedLinePart " + startColumn + ", " + length);
             if (anchors != null)

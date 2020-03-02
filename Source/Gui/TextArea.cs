@@ -751,7 +751,7 @@ namespace ICSharpCode.TextEditor
                         ReplaceChar(ch);
                         break;
                     default:
-                        Debug.Assert(false, "Unknown caret mode " + Caret.CaretMode);
+                        //Debug.Assert(false, "Unknown caret mode " + Caret.CaretMode);
                         break;
                     }
                 }

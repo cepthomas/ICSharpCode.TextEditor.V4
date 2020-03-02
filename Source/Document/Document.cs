@@ -375,7 +375,7 @@ namespace ICSharpCode.TextEditor.Document
                         segmentEnd = e.Offset;
                 }
 
-                Debug.Assert(segmentStart <= segmentEnd);
+                //Debug.Assert(segmentStart <= segmentEnd);
 
                 if (segmentStart == segmentEnd)
                 {
@@ -389,7 +389,7 @@ namespace ICSharpCode.TextEditor.Document
                 if (e.Offset < segmentEnd)
                     segmentEnd += insertedCharacters;
 
-                Debug.Assert(segmentStart < segmentEnd);
+                //Debug.Assert(segmentStart < segmentEnd);
 
                 s.Offset = segmentStart;
                 s.Length = segmentEnd - segmentStart;

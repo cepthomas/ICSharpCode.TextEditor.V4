@@ -353,7 +353,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
                     {
                         control.Document.Remove(startOffset, endOffset - startOffset);
                     }
-                    Debug.Assert(startOffset <= document.TextLength);
+                    //Debug.Assert(startOffset <= document.TextLength);
                     result = dataProvider.InsertAction(data, control.ActiveTextAreaControl.TextArea, startOffset, ch);
                 }
                 finally
