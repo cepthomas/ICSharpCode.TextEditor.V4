@@ -15,7 +15,7 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Util
 {
-    public class RtfWriter
+    public class RtfWriter //TODO2 useful?
     {
         static Dictionary<string, int> colors;
         static int           colorNum;

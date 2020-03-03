@@ -200,7 +200,7 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Public functions
-        public Font GetFont(FontContainer fontContainer)//TODO2 clean this up.
+        public Font GetFont(FontContainer fontContainer)//TODOsyntax clean this up.
         {
             if (Bold)
             {
@@ -211,7 +211,7 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Private functions
-        Color ParseColorString(string colorName)//TODO2??
+        Color ParseColorString(string colorName)//TODOsyntax??
         {
             string[] cNames = colorName.Split('*');
             PropertyInfo myPropInfo = typeof(SystemColors).GetProperty(cNames[0], BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);

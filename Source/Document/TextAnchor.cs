@@ -28,9 +28,6 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public sealed class TextAnchor
     {
-        #region Fields
-        #endregion
-
         #region Properties
         public LineSegment Line { get; internal set; }
 
@@ -49,12 +46,6 @@ namespace ICSharpCode.TextEditor.Document
 
         #region Events
         public event EventHandler Deleted;
-        #endregion
-
-        #region Lifecycle
-        #endregion
-
-        #region Public functions
         #endregion
 
         #region Private functions

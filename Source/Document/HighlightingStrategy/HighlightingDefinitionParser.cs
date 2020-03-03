@@ -43,7 +43,7 @@ namespace ICSharpCode.TextEditor.Document
 
                 HighlightingStrategy highlighter = new HighlightingStrategy(doc.DocumentElement.Attributes["name"].InnerText);
 
-                //TODO2 this is not used right now:
+                //TODOsyntax this is not used right now:
                 //if (doc.DocumentElement.HasAttribute("extends"))
                 //{
                 //    KeyValuePair<SyntaxMode, ISyntaxModeFileProvider> entry = HighlightingManager.Instance.FindHighlighterEntry(doc.DocumentElement.GetAttribute("extends"));

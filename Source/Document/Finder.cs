@@ -9,7 +9,7 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public class Finder // TODO2 debug all - need unit tests
+    public class Finder // TODOsearch debug all - need unit tests
     {
         #region Enums
         /// <summary>Find modes.</summary>
@@ -86,7 +86,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <returns></returns>
         public static Regex CreateRegex(string regExString, FindMode mode, bool matchCase, bool matchWholeWord, bool next)
         {
-            Regex r = null;
+            Regex r;
 
             switch (mode)
             {

@@ -14,30 +14,16 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class FoldingManager
     {
-        List<FoldMarker>    foldMarker      = new List<FoldMarker>();
-        List<FoldMarker>    foldMarkerByEnd = new List<FoldMarker>();
-        IFoldingStrategy    foldingStrategy = null;
-        Document document;
+        List<FoldMarker> foldMarker = new List<FoldMarker>();
+        List<FoldMarker> foldMarkerByEnd = new List<FoldMarker>();
+        readonly Document document;
 
         public IList<FoldMarker> FoldMarker
         {
-            get
-            {
-                return foldMarker.AsReadOnly();
-            }
+            get { return foldMarker.AsReadOnly(); }
         }
 
-        public IFoldingStrategy FoldingStrategy
-        {
-            get
-            {
-                return foldingStrategy;
-            }
-            set
-            {
-                foldingStrategy = value;
-            }
-        }
+        public IFoldingStrategy FoldingStrategy { get; set; } = null;
 
         internal FoldingManager(Document document, LineManager lineTracker)
         {
@@ -167,9 +153,7 @@ namespace ICSharpCode.TextEditor.Document
 
             if (foldMarker != null)
             {
-                int index =  foldMarkerByEnd.BinarySearch(
-                                 new FoldMarker(document, lineNumber, column, lineNumber, column),
-                                 EndComparer.Instance);
+                int index =  foldMarkerByEnd.BinarySearch(new FoldMarker(document, lineNumber, column, lineNumber, column), EndComparer.Instance);
                 if (index < 0) index = ~index;
 
                 for (; index < foldMarkerByEnd.Count; index++)
@@ -257,7 +241,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public void UpdateFoldings(string fileName, object parseInfo)
         {
-            UpdateFoldings(foldingStrategy.GenerateFoldMarkers(document, fileName, parseInfo));
+            UpdateFoldings(FoldingStrategy.GenerateFoldMarkers(document, fileName, parseInfo));
         }
 
         public void UpdateFoldings(List<FoldMarker> newFoldings)

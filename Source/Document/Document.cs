@@ -228,48 +228,45 @@ namespace ICSharpCode.TextEditor.Document
         #region Public functions
         public void Insert(int offset, string text)
         {
-            if (ReadOnly)
+            if (!ReadOnly)
             {
-                return;
+                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
+
+                TextBuffer.Insert(offset, text);
+                LineManager.Insert(offset, text);
+
+                UndoStack.Push(new UndoableInsert(this, offset, text));
+
+                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text } );
-
-            TextBuffer.Insert(offset, text);
-            LineManager.Insert(offset, text);
-
-            UndoStack.Push(new UndoableInsert(this, offset, text));
-
-            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
         }
 
         public void Remove(int offset, int length)
         {
-            if (ReadOnly)
+            if (!ReadOnly)
             {
-                return;
+                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
+                UndoStack.Push(new UndoableDelete(this, offset, GetText(offset, length)));
+
+                TextBuffer.Remove(offset, length);
+                LineManager.Remove(offset, length);
+
+                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length }); 
-            UndoStack.Push(new UndoableDelete(this, offset, GetText(offset, length)));
-
-            TextBuffer.Remove(offset, length);
-            LineManager.Remove(offset, length);
-
-            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
         }
 
         public void Replace(int offset, int length, string text)
         {
-            if (ReadOnly)
+            if (!ReadOnly)
             {
-                return;
+                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
+                UndoStack.Push(new UndoableReplace(this, offset, GetText(offset, length), text));
+
+                TextBuffer.Replace(offset, length, text);
+                LineManager.Replace(offset, length, text);
+
+                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
             }
-            OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
-            UndoStack.Push(new UndoableReplace(this, offset, GetText(offset, length), text));
-
-            TextBuffer.Replace(offset, length, text);
-            LineManager.Replace(offset, length, text);
-
-            OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
         }
 
         public char GetCharAt(int offset)
@@ -344,12 +341,12 @@ namespace ICSharpCode.TextEditor.Document
 
         public int PositionToOffset(TextLocation p)
         {
-            if (p.Y >= this.TotalNumberOfLines)
+            if (p.Y >= TotalNumberOfLines)
             {
                 return 0;
             }
             LineSegment line = GetLineSegment(p.Y);
-            return Math.Min(this.TextLength, line.Offset + Math.Min(line.Length, p.X));
+            return Math.Min(TextLength, line.Offset + Math.Min(line.Length, p.X));
         }
 
         public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : Segment

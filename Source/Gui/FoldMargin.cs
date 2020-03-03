@@ -151,12 +151,12 @@ namespace ICSharpCode.TextEditor
                 }
 
                 DrawFoldMarker(g, new RectangleF(drawingRectangle.X + (drawingRectangle.Width - foldMarkerSize) / 2,
-                                                 foldMarkerYPos,
-                                                 foldMarkerSize,
-                                                 foldMarkerSize),
-                               isVisible,
-                               isStartSelected
-                              );
+                            foldMarkerYPos,
+                            foldMarkerSize,
+                            foldMarkerSize),
+                            isVisible,
+                            isStartSelected
+                            );
 
                 // draw line above fold marker
                 if (isBetween || isFoldEndFromUpperFold)
@@ -242,6 +242,7 @@ namespace ICSharpCode.TextEditor
             {
                 selectedFoldLine = -1;
             }
+            
             if (oldSelection != selectedFoldLine)
             {
                 textArea.Refresh(this);

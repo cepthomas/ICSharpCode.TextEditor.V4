@@ -59,7 +59,6 @@ namespace ICSharpCode.TextEditor.Common
         // TODO1   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
-        Font _font = new Font("Consolas", 9);
         #endregion
 
 
@@ -73,7 +72,7 @@ namespace ICSharpCode.TextEditor.Common
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         #endregion
 
-        #region Properties for colors TODO0 relocated from highlighting environment, put in a style thing when syntax colors get fixed
+        #region Properties for colors TODOsyntax relocated from highlighting environment, put in a style thing when syntax colors get fixed.
         public HighlightColor DefaultColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.WhiteSmoke, false, false); // the selection line
         public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
@@ -93,6 +92,9 @@ namespace ICSharpCode.TextEditor.Common
         #region Fields
         /// <summary>The file name.</summary>
         string _fn = "";
+
+        /// <summary>The font.</summary>
+        Font _font = new Font("Consolas", 9);
         #endregion
 
         #region Persistence

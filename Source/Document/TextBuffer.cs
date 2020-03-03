@@ -39,9 +39,6 @@ namespace ICSharpCode.TextEditor.Document
         public int Length { get { return _buffer.Length - _gapLength; } }
         #endregion
 
-        #region Events
-        #endregion
-
         #region Lifecycle
         #endregion
 
