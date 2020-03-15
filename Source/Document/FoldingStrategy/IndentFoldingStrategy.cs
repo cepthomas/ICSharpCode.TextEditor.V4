@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class IndentFoldingStrategy : IFoldingStrategy
     {
-        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document/*, string fileName, object parseInformation*/)
         {
             List<FoldMarker> l = new List<FoldMarker>();
             Stack<int> offsetStack = new Stack<int>();

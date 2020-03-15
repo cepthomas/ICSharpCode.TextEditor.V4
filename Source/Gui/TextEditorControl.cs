@@ -753,6 +753,29 @@ namespace ICSharpCode.TextEditor
                 try
                 {
                     document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
+
+                    // TODO1 this doesn't belong here.
+                    IFoldingStrategy fs = null;
+
+                    if(document.HighlightingStrategy != null)
+                    {
+                        switch (document.HighlightingStrategy.Folding)
+                        {
+                            case "Code":
+                                fs = new CodeFoldingStrategy();
+                                break;
+                            case "CSharp":
+                                fs = new CSharpFoldingStrategy();
+                                break;
+                            case "Markdown":
+                                fs = new MarkdownFoldingStrategy();
+                                break;
+                            case "Xml":
+                                fs = new XmlFoldingStrategy();
+                                break;
+                        }
+                    }
+                    document.FoldingManager.FoldingStrategy = fs;
                 }
                 catch (Exception ex)
                 {

@@ -9,14 +9,14 @@ namespace ICSharpCode.TextEditor.Document
     public class CSharpFoldingStrategy : IFoldingStrategy
     {
         /// Interface implementation.
-        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document/*, string fileName, object parseInformation*/)
         {
             // The main part is the standard braces parsing.
             CodeFoldingStrategy braces = new CodeFoldingStrategy();
-            List<FoldMarker> foldMarkers = braces.GenerateFoldMarkers(document, fileName, parseInformation);
+            List<FoldMarker> foldMarkers = braces.GenerateFoldMarkers(document/*, fileName, parseInformation*/);
 
             // Add regions.
-            foldMarkers.AddRange(GenerateFoldMarkersRegion(document, fileName, parseInformation));
+            foldMarkers.AddRange(GenerateFoldMarkersRegion(document/*, fileName, parseInformation*/));
 
             foldMarkers.Sort((a, b) => a.Offset.CompareTo(b.Offset));
 
@@ -28,7 +28,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <param name="fileName">The filename of the document.</param>
         /// <param name="parseInformation">Extra parse information, not used in this sample.</param>
         /// <returns>A list of FoldMarkers.</returns>
-        public List<FoldMarker> GenerateFoldMarkersRegion(Document document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkersRegion(Document document/*, string fileName, object parseInformation*/)
         {
             List<FoldMarker> foldMarkers = new List<FoldMarker>();
 

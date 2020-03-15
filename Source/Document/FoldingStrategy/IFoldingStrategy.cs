@@ -19,6 +19,6 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>
         /// Calculates the fold level of a specific line.
         /// </remarks>
-        List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation);
+        List<FoldMarker> GenerateFoldMarkers(Document document/*, string fileName, object parseInformation*/);
     }
 }

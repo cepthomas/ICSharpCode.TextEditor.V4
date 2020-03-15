@@ -78,13 +78,13 @@ namespace ICSharpCode.TextEditor.Document
 
         public HighlightingStrategy FindHighlighter(string name) // by name
         {
-            return HighlightingDefinitions.ContainsKey(name) ? HighlightingDefinitions[name] : new HighlightingStrategy("default");
+            return HighlightingDefinitions.ContainsKey(name) ? HighlightingDefinitions[name] : new HighlightingStrategy("Default");
         }
 
         public HighlightingStrategy FindHighlighterForFile(string fileName)
         {
             string ext = Path.GetExtension(fileName).ToLower();
-            var hdef = HighlightingDefinitions.ContainsKey(ext) ? HighlightingDefinitions[ext] : new HighlightingStrategy("default");
+            var hdef = HighlightingDefinitions.ContainsKey(ext) ? HighlightingDefinitions[ext] : new HighlightingStrategy("Default");
             return hdef;
         }
     }

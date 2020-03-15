@@ -95,7 +95,7 @@ namespace ICSharpCode.TextEditor.Document
         /// from 1 and the SharpDevelop text editor line information starts
         /// from 0.</para>
         /// </remarks>
-        public List<FoldMarker> GenerateFoldMarkers(Document document, string fileName, object parseInformation)
+        public List<FoldMarker> GenerateFoldMarkers(Document document/*, string fileName, object parseInformation*/)
         {
             //showAttributesWhenFolded = XmlEditorAddInOptions.ShowAttributesWhenFolded;
 

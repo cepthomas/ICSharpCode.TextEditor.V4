@@ -179,6 +179,8 @@ namespace ICSharpCode.TextEditor.Document
                 UndoStack.ClearAll();
                 OnDocumentChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 OnTextContentChanged(EventArgs.Empty);
+
+                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings...
             }
         }
         #endregion
@@ -216,10 +218,7 @@ namespace ICSharpCode.TextEditor.Document
             TextBuffer = new TextBuffer();
             FormattingStrategy = new DefaultFormattingStrategy();
             LineManager = new LineManager(this, null);
-            FoldingManager = new FoldingManager(this, LineManager)
-            {
-                FoldingStrategy = null //new ParserFoldingStrategy();
-            };
+            FoldingManager = new FoldingManager(this, LineManager);
             MarkerStrategy = new MarkerStrategy(this);
             BookmarkManager = new BookmarkManager(this, LineManager);
         }

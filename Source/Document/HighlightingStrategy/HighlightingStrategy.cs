@@ -87,6 +87,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             // Resolve references from Span definitions to RuleSets
             ResolveRuleSetReferences();
+
             // Resolve references from RuleSet defintitions to Highlighters defined in an external mode file
             ResolveExternalReferences();
         }

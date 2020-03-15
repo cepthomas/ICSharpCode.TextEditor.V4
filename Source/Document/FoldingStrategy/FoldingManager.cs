@@ -239,9 +239,13 @@ namespace ICSharpCode.TextEditor.Document
             return foldings;
         }
 
-        public void UpdateFoldings(string fileName, object parseInfo)
+        public void UpdateFoldings(/*string fileName, object parseInfo*/)
         {
-            UpdateFoldings(FoldingStrategy.GenerateFoldMarkers(document, fileName, parseInfo));
+            if(FoldingStrategy != null)
+            {
+                var ff = FoldingStrategy.GenerateFoldMarkers(document/*, fileName, parseInfo*/);
+                UpdateFoldings(ff);
+            }
         }
 
         public void UpdateFoldings(List<FoldMarker> newFoldings)

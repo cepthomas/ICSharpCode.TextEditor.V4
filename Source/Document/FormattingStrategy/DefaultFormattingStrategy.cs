@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Document
     /// This class handles the auto and smart indenting in the textbuffer while
     /// you type.
     /// </summary>
-    public class DefaultFormattingStrategy : IFormattingStrategy
+    public class DefaultFormattingStrategy : IFormattingStrategy //TODO1 not needed
     {
         /// <summary>
         /// Creates a new instance off <see cref="DefaultFormattingStrategy"/>
