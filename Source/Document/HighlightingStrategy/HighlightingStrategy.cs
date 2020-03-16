@@ -83,16 +83,16 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public void ResolveReferences()
-        {
-            // Resolve references from Span definitions to RuleSets
-            ResolveRuleSetReferences();
+        //public void ResolveReferences()
+        //{
+        //    // Resolve references from Span definitions to RuleSets
+        //    ResolveRuleSetReferences();
 
-            // Resolve references from RuleSet defintitions to Highlighters defined in an external mode file
-            ResolveExternalReferences();
-        }
+        //    // Resolve references from RuleSet defintitions to Highlighters defined in an external mode file
+        //    ResolveExternalReferences();
+        //}
 
-        void ResolveRuleSetReferences()
+        public void ResolveRuleSetReferences()
         {
             foreach (HighlightRuleSet ruleSet in Rules)
             {
@@ -134,26 +134,26 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        void ResolveExternalReferences()
-        {
-            foreach (HighlightRuleSet ruleSet in Rules)
-            {
-                ruleSet.Highlighter = this;
-                if (ruleSet.Reference != null)
-                {
-                    HighlightingStrategy highlighter = HighlightingManager.Instance.FindHighlighter(ruleSet.Reference);
+        //void ResolveExternalReferences()
+        //{
+        //    foreach (HighlightRuleSet ruleSet in Rules)
+        //    {
+        //        ruleSet.Highlighter = this;
+        //        if (ruleSet.Reference != null)
+        //        {
+        //            HighlightingStrategy highlighter = HighlightingManager.Instance.FindHighlighter(ruleSet.Reference);
 
-                    if (highlighter == null)
-                    {
-                        throw new Exception("The mode defintion " + ruleSet.Reference + " which is refered from the " + Name + " mode definition could not be found");
-                    }
-                    else
-                    {
-                        ruleSet.Highlighter = highlighter;
-                    }
-                }
-            }
-        }
+        //            if (highlighter == null)
+        //            {
+        //                throw new Exception("The mode defintion " + ruleSet.Reference + " which is refered from the " + Name + " mode definition could not be found");
+        //            }
+        //            else
+        //            {
+        //                ruleSet.Highlighter = highlighter;
+        //            }
+        //        }
+        //    }
+        //}
 
         //protected void ImportSettingsFrom(HighlightingStrategy source)
         //{

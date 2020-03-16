@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<!-- syntaxdefinition for general text -->
+<SyntaxDefinition name = "Text" extensions = "">
+
+    <Digits name = "Digits"   bold = "false" italic = "false" color = "Blue"/>
+  
+    <RuleSets>
+        <RuleSet ignorecase = "false">
+            <Delimiters> </Delimiters>
+        </RuleSet>
+    </RuleSets>
+
+</SyntaxDefinition>

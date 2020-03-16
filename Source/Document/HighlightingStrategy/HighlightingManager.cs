@@ -60,9 +60,16 @@ namespace ICSharpCode.TextEditor.Document
                         HighlightingStrategy highlightingStrategy = HighlightingDefinitionParser.Parse(reader);
                         if (highlightingStrategy != null)
                         {
-                            foreach (string ext in highlightingStrategy.Extensions)
+                            if(highlightingStrategy.Name == "Text")
                             {
-                                HighlightingDefinitions[ext.ToLower()] = highlightingStrategy;
+                                HighlightingDefinitions[".txt"] = highlightingStrategy;
+                            }
+                            else
+                            {
+                                foreach (string ext in highlightingStrategy.Extensions)
+                                {
+                                    HighlightingDefinitions[ext.ToLower()] = highlightingStrategy;
+                                }
                             }
                         }
                     }
@@ -72,19 +79,21 @@ namespace ICSharpCode.TextEditor.Document
             // Resolve references.
             foreach (var val in HighlightingDefinitions.Values)
             {
-                val.ResolveReferences();
+//                val.ResolveReferences();
+                // Resolve references from Span definitions to RuleSets
+                val.ResolveRuleSetReferences();
             }
         }
 
-        public HighlightingStrategy FindHighlighter(string name) // by name
-        {
-            return HighlightingDefinitions.ContainsKey(name) ? HighlightingDefinitions[name] : new HighlightingStrategy("Default");
-        }
+        //public HighlightingStrategy FindHighlighter(string name) // by name
+        //{
+        //    return HighlightingDefinitions.ContainsKey(name) ? HighlightingDefinitions[name] : new HighlightingStrategy("Default");
+        //}
 
         public HighlightingStrategy FindHighlighterForFile(string fileName)
         {
             string ext = Path.GetExtension(fileName).ToLower();
-            var hdef = HighlightingDefinitions.ContainsKey(ext) ? HighlightingDefinitions[ext] : new HighlightingStrategy("Default");
+            var hdef = HighlightingDefinitions.ContainsKey(ext) ? HighlightingDefinitions[ext] : HighlightingDefinitions[".txt"];
             return hdef;
         }
     }
