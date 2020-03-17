@@ -28,31 +28,16 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class TextAreaUpdate
     {
-        TextLocation position;
-        TextAreaUpdateType type;
+        public TextAreaUpdateType TextAreaUpdateType { get; }
 
-        public TextAreaUpdateType TextAreaUpdateType
-        {
-            get
-            {
-                return type;
-            }
-        }
-
-        public TextLocation Position
-        {
-            get
-            {
-                return position;
-            }
-        }
+        public TextLocation Position { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="TextAreaUpdate"/>
         /// </summary>
         public TextAreaUpdate(TextAreaUpdateType type)
         {
-            this.type = type;
+            TextAreaUpdateType = type;
         }
 
         /// <summary>
@@ -60,8 +45,8 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public TextAreaUpdate(TextAreaUpdateType type, TextLocation position)
         {
-            this.type     = type;
-            this.position = position;
+            TextAreaUpdateType = type;
+            Position = position;
         }
 
         /// <summary>
@@ -69,8 +54,8 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public TextAreaUpdate(TextAreaUpdateType type, int startLine, int endLine)
         {
-            this.type     = type;
-            this.position = new TextLocation(startLine, endLine);
+            TextAreaUpdateType = type;
+            Position = new TextLocation(startLine, endLine);
         }
 
         /// <summary>
@@ -78,13 +63,13 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public TextAreaUpdate(TextAreaUpdateType type, int singleLine)
         {
-            this.type     = type;
-            this.position = new TextLocation(0, singleLine);
+            TextAreaUpdateType = type;
+            Position = new TextLocation(0, singleLine);
         }
 
         public override string ToString()
         {
-            return String.Format("[TextAreaUpdate: Type={0}, Position={1}]", type, position);
+            return string.Format("[TextAreaUpdate: Type={0}, Position={1}]", TextAreaUpdateType, Position);
         }
     }
 }

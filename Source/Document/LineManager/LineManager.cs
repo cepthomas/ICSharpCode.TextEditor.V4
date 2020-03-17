@@ -18,8 +18,7 @@ namespace ICSharpCode.TextEditor.Document
     public class LineManager
     {
         LineSegmentTree lineCollection = new LineSegmentTree();
-
-        Document document;
+        readonly Document document;
         HighlightingStrategy highlightingStrategy;
 
         public IList<LineSegment> LineSegmentCollection

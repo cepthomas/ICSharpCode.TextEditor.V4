@@ -93,7 +93,6 @@
     <Compile Include="Actions\SelectionActions.cs" />
     <Compile Include="Document\FoldingStrategy\IFoldingStrategy.cs" />
     <Compile Include="Document\FoldingStrategy\IndentFoldingStrategy.cs" />
-    <Compile Include="Gui\Ime.cs" />
     <Compile Include="Gui\TextAreaUpdate.cs" />
     <Compile Include="Document\Selection\SelectionManager.cs" />
     <Compile Include="Document\FoldingStrategy\FoldingManager.cs" />

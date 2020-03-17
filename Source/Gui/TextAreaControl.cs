@@ -16,33 +16,22 @@ using ICSharpCode.TextEditor.Common;
 namespace ICSharpCode.TextEditor
 {
     /// <summary>
-    /// This class paints the textarea.
+    /// This class paints the textarea. plus scrollbars etc.
     /// </summary>
     [ToolboxItem(false)]
     public class TextAreaControl : Panel
     {
-        TextEditorControl motherTextEditorControl;
-        HRuler hRuler = null;
+        TextEditorControl _motherTextEditorControl;
+        HRuler _hRuler = null;
+        bool _disposed;
 
-        VScrollBar vScrollBar = new VScrollBar();
-        HScrollBar hScrollBar = new HScrollBar();
-        TextArea textArea;
-        bool doHandleMousewheel = true;
-        bool disposed;
-
-        public TextArea TextArea
-        {
-            get
-            {
-                return textArea;
-            }
-        }
+        public TextArea TextArea { get; }
 
         public SelectionManager SelectionManager
         {
             get
             {
-                return textArea.SelectionManager;
+                return TextArea.SelectionManager;
             }
         }
 
@@ -50,7 +39,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return textArea.Caret;
+                return TextArea.Caret;
             }
         }
 
@@ -59,8 +48,8 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                if (motherTextEditorControl != null)
-                    return motherTextEditorControl.Document;
+                if (_motherTextEditorControl != null)
+                    return _motherTextEditorControl.Document;
                 return null;
             }
         }
@@ -75,78 +64,56 @@ namespace ICSharpCode.TextEditor
         //    }
         //}
 
-        public VScrollBar VScrollBar
-        {
-            get
-            {
-                return vScrollBar;
-            }
-        }
+        public VScrollBar VScrollBar { get; private set; } = new VScrollBar();
 
-        public HScrollBar HScrollBar
-        {
-            get
-            {
-                return hScrollBar;
-            }
-        }
+        public HScrollBar HScrollBar { get; private set; } = new HScrollBar();
 
-        public bool DoHandleMousewheel
-        {
-            get
-            {
-                return doHandleMousewheel;
-            }
-            set
-            {
-                doHandleMousewheel = value;
-            }
-        }
+        public bool DoHandleMousewheel { get; set; } = true;
 
         public TextAreaControl(TextEditorControl motherTextEditorControl)
         {
-            this.motherTextEditorControl = motherTextEditorControl;
+            _motherTextEditorControl = motherTextEditorControl;
 
-            this.textArea                = new TextArea(motherTextEditorControl, this);
-            Controls.Add(textArea);
+            TextArea = new TextArea(motherTextEditorControl, this);
+            Controls.Add(TextArea);
 
-            vScrollBar.ValueChanged += new EventHandler(VScrollBarValueChanged);
-            Controls.Add(this.vScrollBar);
+            VScrollBar.ValueChanged += new EventHandler(VScrollBarValueChanged);
+            Controls.Add(VScrollBar);
 
-            hScrollBar.ValueChanged += new EventHandler(HScrollBarValueChanged);
-            Controls.Add(this.hScrollBar);
+            HScrollBar.ValueChanged += new EventHandler(HScrollBarValueChanged);
+            Controls.Add(HScrollBar);
             ResizeRedraw = true;
 
             Document.TextContentChanged += DocumentTextContentChanged;
             Document.DocumentChanged += AdjustScrollBarsOnDocumentChange;
-            Document.UpdateCommited  += DocumentUpdateCommitted;
+            Document.UpdateCommited += DocumentUpdateCommitted;
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (!disposed)
+                if (!_disposed)
                 {
-                    disposed = true;
+                    _disposed = true;
                     Document.TextContentChanged -= DocumentTextContentChanged;
                     Document.DocumentChanged -= AdjustScrollBarsOnDocumentChange;
-                    Document.UpdateCommited  -= DocumentUpdateCommitted;
-                    motherTextEditorControl = null;
-                    if (vScrollBar != null)
+                    Document.UpdateCommited -= DocumentUpdateCommitted;
+                    _motherTextEditorControl = null;
+                    if (VScrollBar != null)
                     {
-                        vScrollBar.Dispose();
-                        vScrollBar = null;
+                        VScrollBar.Dispose();
+                        VScrollBar = null;
                     }
-                    if (hScrollBar != null)
+                    if (HScrollBar != null)
                     {
-                        hScrollBar.Dispose();
-                        hScrollBar = null;
+                        HScrollBar.Dispose();
+                        HScrollBar = null;
                     }
-                    if (hRuler != null)
+                    if (_hRuler != null)
                     {
-                        hRuler.Dispose();
-                        hRuler = null;
+                        _hRuler.Dispose();
+                        _hRuler = null;
                     }
                 }
             }
@@ -171,30 +138,22 @@ namespace ICSharpCode.TextEditor
         {
             int y = 0;
             int h = 0;
-            if (hRuler != null)
+            if (_hRuler != null)
             {
-                hRuler.Bounds = new Rectangle(0,
-                                              0,
-                                              Width - SystemInformation.HorizontalScrollBarArrowWidth,
-                                              textArea.TextView.FontHeight);
+                _hRuler.Bounds = new Rectangle(0, 0, Width - SystemInformation.HorizontalScrollBarArrowWidth, TextArea.TextView.FontHeight);
 
-                y = hRuler.Bounds.Bottom;
-                h = hRuler.Bounds.Height;
+                y = _hRuler.Bounds.Bottom;
+                h = _hRuler.Bounds.Height;
             }
 
-            textArea.Bounds = new Rectangle(0, y,
-                                            Width - SystemInformation.HorizontalScrollBarArrowWidth,
-                                            Height - SystemInformation.VerticalScrollBarArrowHeight - h);
+            TextArea.Bounds = new Rectangle(0, y, Width - SystemInformation.HorizontalScrollBarArrowWidth, Height - SystemInformation.VerticalScrollBarArrowHeight - h);
             SetScrollBarBounds();
         }
 
         public void SetScrollBarBounds()
         {
-            vScrollBar.Bounds = new Rectangle(textArea.Bounds.Right, 0, SystemInformation.HorizontalScrollBarArrowWidth, Height - SystemInformation.VerticalScrollBarArrowHeight);
-            hScrollBar.Bounds = new Rectangle(0,
-                                              textArea.Bounds.Bottom,
-                                              Width - SystemInformation.HorizontalScrollBarArrowWidth,
-                                              SystemInformation.VerticalScrollBarArrowHeight);
+            VScrollBar.Bounds = new Rectangle(TextArea.Bounds.Right, 0, SystemInformation.HorizontalScrollBarArrowWidth, Height - SystemInformation.VerticalScrollBarArrowHeight);
+            HScrollBar.Bounds = new Rectangle(0, TextArea.Bounds.Bottom, Width - SystemInformation.HorizontalScrollBarArrowWidth, SystemInformation.VerticalScrollBarArrowHeight);
         }
 
         bool adjustScrollBarsOnNextUpdate;
@@ -202,7 +161,7 @@ namespace ICSharpCode.TextEditor
 
         void AdjustScrollBarsOnDocumentChange(object sender, DocumentEventArgs e)
         {
-            if (motherTextEditorControl.IsInUpdate == false)
+            if (_motherTextEditorControl.IsInUpdate == false)
             {
                 AdjustScrollBarsClearCache();
                 AdjustScrollBars();
@@ -215,7 +174,7 @@ namespace ICSharpCode.TextEditor
 
         void DocumentUpdateCommitted(object sender, EventArgs e)
         {
-            if (motherTextEditorControl.IsInUpdate == false)
+            if (_motherTextEditorControl.IsInUpdate == false)
             {
                 Caret.ValidateCaretPos();
 
@@ -224,6 +183,7 @@ namespace ICSharpCode.TextEditor
                 {
                     ScrollTo(scrollToPosOnNextUpdate.Y, scrollToPosOnNextUpdate.X);
                 }
+
                 if (adjustScrollBarsOnNextUpdate)
                 {
                     AdjustScrollBarsClearCache();
@@ -253,15 +213,15 @@ namespace ICSharpCode.TextEditor
         public void AdjustScrollBars()
         {
             adjustScrollBarsOnNextUpdate = false;
-            vScrollBar.Minimum = 0;
+            VScrollBar.Minimum = 0;
             // number of visible lines in document (folding!)
-            vScrollBar.Maximum = textArea.MaxVScrollValue;
+            VScrollBar.Maximum = TextArea.MaxVScrollValue;
             int max = 0;
 
-            int firstLine = textArea.TextView.FirstVisibleLine;
-            int lastLine = this.Document.GetFirstLogicalLine(textArea.TextView.FirstPhysicalLine + textArea.TextView.VisibleLineCount);
-            if (lastLine >= this.Document.TotalNumberOfLines)
-                lastLine = this.Document.TotalNumberOfLines - 1;
+            int firstLine = TextArea.TextView.FirstVisibleLine;
+            int lastLine = Document.GetFirstLogicalLine(TextArea.TextView.FirstPhysicalLine + TextArea.TextView.VisibleLineCount);
+            if (lastLine >= Document.TotalNumberOfLines)
+                lastLine = Document.TotalNumberOfLines - 1;
 
             if (lineLengthCache == null || lineLengthCache.Length <= lastLine)
             {
@@ -270,7 +230,7 @@ namespace ICSharpCode.TextEditor
 
             for (int lineNumber = firstLine; lineNumber <= lastLine; lineNumber++)
             {
-                LineSegment lineSegment = this.Document.GetLineSegment(lineNumber);
+                LineSegment lineSegment = Document.GetLineSegment(lineNumber);
                 if (Document.FoldingManager.IsLineVisible(lineNumber))
                 {
                     if (lineLengthCache[lineNumber] > 0)
@@ -279,46 +239,46 @@ namespace ICSharpCode.TextEditor
                     }
                     else
                     {
-                        int visualLength = textArea.TextView.GetVisualColumnFast(lineSegment, lineSegment.Length);
+                        int visualLength = TextArea.TextView.GetVisualColumnFast(lineSegment, lineSegment.Length);
                         lineLengthCache[lineNumber] = Math.Max(1, visualLength);
                         max = Math.Max(max, visualLength);
                     }
                 }
             }
-            hScrollBar.Minimum = 0;
-            hScrollBar.Maximum = (Math.Max(max + 20, textArea.TextView.VisibleColumnCount - 1));
+            HScrollBar.Minimum = 0;
+            HScrollBar.Maximum = (Math.Max(max + 20, TextArea.TextView.VisibleColumnCount - 1));
 
-            vScrollBar.LargeChange = Math.Max(0, textArea.TextView.DrawingPosition.Height);
-            vScrollBar.SmallChange = Math.Max(0, textArea.TextView.FontHeight);
+            VScrollBar.LargeChange = Math.Max(0, TextArea.TextView.DrawingPosition.Height);
+            VScrollBar.SmallChange = Math.Max(0, TextArea.TextView.FontHeight);
 
-            hScrollBar.LargeChange = Math.Max(0, textArea.TextView.VisibleColumnCount - 1);
-            hScrollBar.SmallChange = Math.Max(0, (int)textArea.TextView.SpaceWidth);
+            HScrollBar.LargeChange = Math.Max(0, TextArea.TextView.VisibleColumnCount - 1);
+            HScrollBar.SmallChange = Math.Max(0, TextArea.TextView.SpaceWidth);
         }
 
         public void OptionsChanged()
         {
-            textArea.OptionsChanged();
+            TextArea.OptionsChanged();
 
             if (Shared.TEP.ShowHorizontalRuler)
             {
-                if (hRuler == null)
+                if (_hRuler == null)
                 {
-                    hRuler = new HRuler(textArea);
-                    Controls.Add(hRuler);
+                    _hRuler = new HRuler(TextArea);
+                    Controls.Add(_hRuler);
                     ResizeTextArea();
                 }
                 else
                 {
-                    hRuler.Invalidate();
+                    _hRuler.Invalidate();
                 }
             }
             else
             {
-                if (hRuler != null)
+                if (_hRuler != null)
                 {
-                    Controls.Remove(hRuler);
-                    hRuler.Dispose();
-                    hRuler = null;
+                    Controls.Remove(_hRuler);
+                    _hRuler.Dispose();
+                    _hRuler = null;
                     ResizeTextArea();
                 }
             }
@@ -328,15 +288,15 @@ namespace ICSharpCode.TextEditor
 
         void VScrollBarValueChanged(object sender, EventArgs e)
         {
-            textArea.VirtualTop = new Point(textArea.VirtualTop.X, vScrollBar.Value);
-            textArea.Invalidate();
+            TextArea.VirtualTop = new Point(TextArea.VirtualTop.X, VScrollBar.Value);
+            TextArea.Invalidate();
             AdjustScrollBars();
         }
 
         void HScrollBarValueChanged(object sender, EventArgs e)
         {
-            textArea.VirtualTop = new Point(hScrollBar.Value * textArea.TextView.WideSpaceWidth, textArea.VirtualTop.Y);
-            textArea.Invalidate();
+            TextArea.VirtualTop = new Point(HScrollBar.Value * TextArea.TextView.WideSpaceWidth, TextArea.VirtualTop.Y);
+            TextArea.Invalidate();
         }
 
         Util.MouseWheelHandler mouseWheelHandler = new Util.MouseWheelHandler();
@@ -346,25 +306,25 @@ namespace ICSharpCode.TextEditor
             int scrollDistance = mouseWheelHandler.GetScrollAmount(e);
             if (scrollDistance == 0)
                 return;
-            if ((Control.ModifierKeys & Keys.Control) != 0 && Shared.TEP.MouseWheelTextZoom)
+
+            if ((ModifierKeys & Keys.Control) != 0 && Shared.TEP.MouseWheelTextZoom)
             {
                 if (scrollDistance > 0)
                 {
-                    motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
-                                                            motherTextEditorControl.Font.Size + 1);
+                    _motherTextEditorControl.Font = new Font(_motherTextEditorControl.Font.Name, _motherTextEditorControl.Font.Size + 1);
                 }
                 else
                 {
-                    motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
-                                                            Math.Max(6, motherTextEditorControl.Font.Size - 1));
+                    _motherTextEditorControl.Font = new Font(_motherTextEditorControl.Font.Name, Math.Max(6, _motherTextEditorControl.Font.Size - 1));
                 }
             }
             else
             {
                 if (Shared.TEP.MouseWheelScrollDown)
                     scrollDistance = -scrollDistance;
-                int newValue = vScrollBar.Value + vScrollBar.SmallChange * scrollDistance;
-                vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum - vScrollBar.LargeChange + 1, newValue));
+
+                int newValue = VScrollBar.Value + VScrollBar.SmallChange * scrollDistance;
+                VScrollBar.Value = Math.Max(VScrollBar.Minimum, Math.Min(VScrollBar.Maximum - VScrollBar.LargeChange + 1, newValue));
             }
         }
 
@@ -379,12 +339,12 @@ namespace ICSharpCode.TextEditor
 
         public void ScrollToCaret()
         {
-            ScrollTo(textArea.Caret.Line, textArea.Caret.Column);
+            ScrollTo(TextArea.Caret.Line, TextArea.Caret.Column);
         }
 
         public void ScrollTo(int line, int column)
         {
-            if (motherTextEditorControl.IsInUpdate)
+            if (_motherTextEditorControl.IsInUpdate)
             {
                 scrollToPosOnNextUpdate = new Point(column, line);
                 return;
@@ -396,32 +356,32 @@ namespace ICSharpCode.TextEditor
 
             ScrollTo(line);
 
-            int curCharMin  = (int)(this.hScrollBar.Value - this.hScrollBar.Minimum);
-            int curCharMax  = curCharMin + textArea.TextView.VisibleColumnCount;
+            int curCharMin = HScrollBar.Value - HScrollBar.Minimum;
+            int curCharMax = curCharMin + TextArea.TextView.VisibleColumnCount;
 
-            int pos = textArea.TextView.GetVisualColumn(line, column);
+            int pos = TextArea.TextView.GetVisualColumn(line, column);
 
-            if (textArea.TextView.VisibleColumnCount < 0)
+            if (TextArea.TextView.VisibleColumnCount < 0)
             {
-                hScrollBar.Value = 0;
+                HScrollBar.Value = 0;
             }
             else
             {
                 if (pos < curCharMin)
                 {
-                    hScrollBar.Value = (int)(Math.Max(0, pos - scrollMarginHeight));
+                    HScrollBar.Value = Math.Max(0, pos - scrollMarginHeight);
                 }
                 else
                 {
                     if (pos > curCharMax)
                     {
-                        hScrollBar.Value = (int)Math.Max(0, Math.Min(hScrollBar.Maximum, (pos - textArea.TextView.VisibleColumnCount + scrollMarginHeight)));
+                        HScrollBar.Value = Math.Max(0, Math.Min(HScrollBar.Maximum, (pos - TextArea.TextView.VisibleColumnCount + scrollMarginHeight)));
                     }
                 }
             }
         }
 
-        int scrollMarginHeight  = 3;
+        int scrollMarginHeight = 3;
 
         /// <summary>
         /// Ensure that <paramref name="line"/> is visible.
@@ -430,30 +390,30 @@ namespace ICSharpCode.TextEditor
         {
             line = Math.Max(0, Math.Min(Document.TotalNumberOfLines - 1, line));
             line = Document.GetVisibleLine(line);
-            int curLineMin = textArea.TextView.FirstPhysicalLine;
-            if (textArea.TextView.LineHeightRemainder > 0)
+            int curLineMin = TextArea.TextView.FirstPhysicalLine;
+            if (TextArea.TextView.LineHeightRemainder > 0)
             {
-                curLineMin ++;
+                curLineMin++;
             }
 
             if (line - scrollMarginHeight + 3 < curLineMin)
             {
-                this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight + 3) * textArea.TextView.FontHeight)) ;
+                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - scrollMarginHeight + 3) * TextArea.TextView.FontHeight));
                 VScrollBarValueChanged(this, EventArgs.Empty);
             }
             else
             {
-                int curLineMax = curLineMin + this.textArea.TextView.VisibleLineCount;
+                int curLineMax = curLineMin + this.TextArea.TextView.VisibleLineCount;
                 if (line + scrollMarginHeight - 1 > curLineMax)
                 {
-                    if (this.textArea.TextView.VisibleLineCount == 1)
+                    if (this.TextArea.TextView.VisibleLineCount == 1)
                     {
-                        this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight - 1) * textArea.TextView.FontHeight)) ;
+                        this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - scrollMarginHeight - 1) * TextArea.TextView.FontHeight));
                     }
                     else
                     {
-                        this.vScrollBar.Value = Math.Min(this.vScrollBar.Maximum,
-                                                         (line - this.textArea.TextView.VisibleLineCount + scrollMarginHeight - 1)* textArea.TextView.FontHeight) ;
+                        this.VScrollBar.Value = Math.Min(this.VScrollBar.Maximum,
+                                                         (line - this.TextArea.TextView.VisibleLineCount + scrollMarginHeight - 1) * TextArea.TextView.FontHeight);
                     }
                     VScrollBarValueChanged(this, EventArgs.Empty);
                 }
@@ -473,17 +433,17 @@ namespace ICSharpCode.TextEditor
             // convert line to visible line:
             line = Document.GetVisibleLine(line);
             // subtract half the visible line count
-            line -= textArea.TextView.VisibleLineCount / 2;
+            line -= TextArea.TextView.VisibleLineCount / 2;
 
-            int curLineMin = textArea.TextView.FirstPhysicalLine;
-            if (textArea.TextView.LineHeightRemainder > 0)
+            int curLineMin = TextArea.TextView.FirstPhysicalLine;
+            if (TextArea.TextView.LineHeightRemainder > 0)
             {
-                curLineMin ++;
+                curLineMin++;
             }
             if (Math.Abs(curLineMin - line) > treshold)
             {
                 // scroll:
-                this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight + 3) * textArea.TextView.FontHeight)) ;
+                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - scrollMarginHeight + 3) * TextArea.TextView.FontHeight));
                 VScrollBarValueChanged(this, EventArgs.Empty);
             }
         }
@@ -497,10 +457,10 @@ namespace ICSharpCode.TextEditor
 
         public void JumpTo(int line, int column)
         {
-            textArea.Focus();
-            textArea.SelectionManager.ClearSelection();
-            textArea.Caret.Position = new TextLocation(column, line);
-            textArea.SetDesiredColumn();
+            TextArea.Focus();
+            TextArea.SelectionManager.ClearSelection();
+            TextArea.Caret.Position = new TextLocation(column, line);
+            TextArea.SetDesiredColumn();
             ScrollToCaret();
         }
 
@@ -518,7 +478,7 @@ namespace ICSharpCode.TextEditor
                     if (x == -1 && y == -1)
                     {
                         Point pos = Caret.ScreenPosition;
-                        ShowContextMenu(this, new MouseEventArgs(MouseButtons.None, 0, pos.X, pos.Y + textArea.TextView.FontHeight, 0));
+                        ShowContextMenu(this, new MouseEventArgs(MouseButtons.None, 0, pos.X, pos.Y + TextArea.TextView.FontHeight, 0));
                     }
                     else
                     {

@@ -16,15 +16,11 @@ namespace ICSharpCode.TextEditor.Document
     public class LineSegment : Segment
     {
         internal LineSegmentTree.Enumerator treeEntry;
-        int totalLength, delimiterLength;
-
-        List<TextWord> words;
-        SpanStack highlightSpanStack;
 
         public TextWord GetWord(int column)
         {
             int curColumn = 0;
-            foreach (TextWord word in words)
+            foreach (TextWord word in Words)
             {
                 if (column < curColumn + word.Length)
                 {
@@ -63,46 +59,16 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return totalLength - delimiterLength;
+                return TotalLength - DelimiterLength;
             }
         }
 
-        public int TotalLength
-        {
-            get
-            {
-                return totalLength;
-            }
-            internal set
-            {
-                totalLength = value;
-            }
-        }
+        public int TotalLength { get; internal set; }
 
-        public int DelimiterLength
-        {
-            get
-            {
-                return delimiterLength;
-            }
-            internal set
-            {
-                delimiterLength = value;
-            }
-        }
+        public int DelimiterLength { get; internal set; }
 
         // highlighting information
-        public List<TextWord> Words
-        {
-            get
-            {
-                return words;
-            }
-            set
-            {
-                words = value;
-            }
-        }
+        public List<TextWord> Words { get; set; }
 
         public HighlightColor GetColorForPosition(int x)
         {
@@ -121,17 +87,7 @@ namespace ICSharpCode.TextEditor.Document
             return new HighlightColor(Color.Black, false, false);
         }
 
-        public SpanStack HighlightSpanStack
-        {
-            get
-            {
-                return highlightSpanStack;
-            }
-            set
-            {
-                highlightSpanStack = value;
-            }
-        }
+        public SpanStack HighlightSpanStack { get; set; }
 
         /// <summary>
         /// Converts a <see cref="LineSegment"/> instance to string (for debug purposes)
@@ -139,9 +95,9 @@ namespace ICSharpCode.TextEditor.Document
         public override string ToString()
         {
             if (IsDeleted)
-                return "[LineSegment: (deleted) Length = " + Length + ", TotalLength = " + TotalLength + ", DelimiterLength = " + delimiterLength + "]";
+                return "[LineSegment: (deleted) Length = " + Length + ", TotalLength = " + TotalLength + ", DelimiterLength = " + DelimiterLength + "]";
             else
-                return "[LineSegment: LineNumber=" + LineNumber + ", Offset = "+ Offset +", Length = " + Length + ", TotalLength = " + TotalLength + ", DelimiterLength = " + delimiterLength + "]";
+                return "[LineSegment: LineNumber=" + LineNumber + ", Offset = "+ Offset +", Length = " + Length + ", TotalLength = " + TotalLength + ", DelimiterLength = " + DelimiterLength + "]";
         }
 
         #region Anchor management

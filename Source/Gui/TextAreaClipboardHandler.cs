@@ -16,9 +16,9 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor
 {
-    public class TextAreaClipboardHandler
+    public class TextAreaClipboardHandler //TODO2 What is all this?
     {
-        TextArea textArea;
+        readonly TextArea textArea;
 
         public bool EnableCut
         {

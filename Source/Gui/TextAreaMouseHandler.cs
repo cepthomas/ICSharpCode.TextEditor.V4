@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class handles all mouse stuff for a textArea.</summary>
     public class TextAreaMouseHandler
     {
-        TextArea  _textArea;
+        TextArea _textArea;
         TextLocation _minSelection;
         TextLocation _maxSelection;
         bool _doubleclick = false;
@@ -240,7 +240,7 @@ namespace ICSharpCode.TextEditor
 
             if (_textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
-                FoldMarker marker = _textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - _textArea.TextView.DrawingPosition.X,mousepos.Y - _textArea.TextView.DrawingPosition.Y);
+                FoldMarker marker = _textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
                 if (marker != null && marker.IsFolded)
                 {
                     marker.IsFolded = false;
@@ -311,7 +311,7 @@ namespace ICSharpCode.TextEditor
                 {
                     int deltaX = Math.Abs(_lastmousedownpos.X - e.X);
                     int deltaY = Math.Abs(_lastmousedownpos.Y - e.Y);
-                    
+
                     if (deltaX <= SystemInformation.DoubleClickSize.Width && deltaY <= SystemInformation.DoubleClickSize.Height)
                     {
                         DoubleClickSelectionExtend();
@@ -325,7 +325,7 @@ namespace ICSharpCode.TextEditor
                                 _textArea.SelectionManager.EndPosition = _maxSelection;
 
                                 _minSelection = new TextLocation();
-                                _maxSelection = new TextLocation(); 
+                                _maxSelection = new TextLocation();
                             }
                         }
                         return;
@@ -378,7 +378,7 @@ namespace ICSharpCode.TextEditor
                             if (mousepos.Y > 0 && mousepos.Y < _textArea.TextView.DrawingPosition.Height)
                             {
                                 TextLocation pos = new TextLocation();
-                                pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
+                                pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1, realmousepos.Y);
                                 pos.X = realmousepos.X;
                                 _textArea.Caret.Position = pos;
                                 _textArea.SelectionManager.SetSelection(pos, pos, isRect);
@@ -398,7 +398,7 @@ namespace ICSharpCode.TextEditor
                         if (mousepos.Y > 0 && mousepos.Y < _textArea.TextView.DrawingPosition.Height)
                         {
                             TextLocation pos = new TextLocation();
-                            pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1,  realmousepos.Y);
+                            pos.Y = Math.Min(_textArea.Document.TotalNumberOfLines - 1, realmousepos.Y);
                             pos.X = realmousepos.X;
                             _textArea.Caret.Position = pos;
                             _textArea.SetDesiredColumn();
@@ -423,7 +423,7 @@ namespace ICSharpCode.TextEditor
 
         bool IsSelectableChar(char ch)
         {
-            return Char.IsLetterOrDigit(ch) || ch=='_';
+            return char.IsLetterOrDigit(ch) || ch == '_';
         }
 
         int FindWordStart(Document.Document document, int offset)
@@ -437,7 +437,7 @@ namespace ICSharpCode.TextEditor
                     --offset;
                 }
             }
-            else  if (IsSelectableChar(document.GetCharAt(offset)) || (offset > 0 && Char.IsWhiteSpace(document.GetCharAt(offset)) && IsSelectableChar(document.GetCharAt(offset - 1))))
+            else if (IsSelectableChar(document.GetCharAt(offset)) || (offset > 0 && Char.IsWhiteSpace(document.GetCharAt(offset)) && IsSelectableChar(document.GetCharAt(offset - 1))))
             {
                 while (offset > line.Offset && IsSelectableChar(document.GetCharAt(offset - 1)))
                 {
@@ -446,7 +446,7 @@ namespace ICSharpCode.TextEditor
             }
             else
             {
-                if (offset > 0 && !Char.IsWhiteSpace(document.GetCharAt(offset - 1)) && !IsSelectableChar(document.GetCharAt(offset - 1)) )
+                if (offset > 0 && !Char.IsWhiteSpace(document.GetCharAt(offset - 1)) && !IsSelectableChar(document.GetCharAt(offset - 1)))
                 {
                     return Math.Max(0, offset - 1);
                 }
@@ -456,10 +456,10 @@ namespace ICSharpCode.TextEditor
 
         int FindWordEnd(Document.Document document, int offset)
         {
-            LineSegment line   = document.GetLineSegmentForOffset(offset);
+            LineSegment line = document.GetLineSegmentForOffset(offset);
             if (line.Length == 0)
                 return offset;
-            int         endPos = line.Offset + line.Length;
+            int endPos = line.Offset + line.Length;
             offset = Math.Min(offset, endPos - 1);
 
             if (IsSelectableChar(document.GetCharAt(offset)))
@@ -486,7 +486,7 @@ namespace ICSharpCode.TextEditor
 
             return offset;
         }
-        
+
         void OnDoubleClick(object sender, System.EventArgs e)
         {
             if (_dodragdrop)

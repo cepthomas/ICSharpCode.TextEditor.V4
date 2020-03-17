@@ -14,8 +14,7 @@ using System.Drawing.Drawing2D;
 namespace ICSharpCode.TextEditor
 {
     /// <summary>
-    /// Contains brushes/pens for the text editor to speed up drawing. Re-Creation of brushes and pens
-    /// seems too costly.
+    /// Contains brushes/pens for the text editor to speed up drawing. Re-Creation of brushes and pens seems too costly.
     /// </summary>
     public class BrushRegistry
     {
@@ -41,8 +40,7 @@ namespace ICSharpCode.TextEditor
         {
             lock (pens)
             {
-                Pen pen;
-                if (!pens.TryGetValue(color, out pen))
+                if (!pens.TryGetValue(color, out Pen pen))
                 {
                     pen = new Pen(color);
                     pens.Add(color, pen);
@@ -57,8 +55,7 @@ namespace ICSharpCode.TextEditor
         {
             lock (dotPens)
             {
-                Pen pen;
-                if (!dotPens.TryGetValue(color, out pen))
+                if (!dotPens.TryGetValue(color, out Pen pen))
                 {
                     pen = new Pen(color);
                     pen.DashPattern = dotPattern;

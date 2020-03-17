@@ -16,17 +16,18 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class HRuler : Control
     {
-        TextArea textArea;
+        readonly TextArea textArea;
 
         public HRuler(TextArea textArea)
         {
             this.textArea = textArea;
         }
 
-        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             int num = 0;
+
             for (float x = textArea.TextView.DrawingPosition.Left; x < textArea.TextView.DrawingPosition.Right; x += textArea.TextView.WideSpaceWidth)
             {
                 int offset = (Height * 2) / 3;
@@ -40,18 +41,13 @@ namespace ICSharpCode.TextEditor
                     offset = 1;
                 }
                 ++num;
-                g.DrawLine(Pens.Black,
-                           (int)x, offset, (int)x, Height - offset);
+                g.DrawLine(Pens.Black, (int)x, offset, (int)x, Height - offset);
             }
         }
 
-        protected override void OnPaintBackground(System.Windows.Forms.PaintEventArgs e)
+        protected override void OnPaintBackground(PaintEventArgs e)
         {
-            e.Graphics.FillRectangle(Brushes.White,
-                                     new Rectangle(0,
-                                                   0,
-                                                   Width,
-                                                   Height));
+            e.Graphics.FillRectangle(Brushes.White, new Rectangle(0, 0, Width, Height));
         }
     }
 }

@@ -23,13 +23,13 @@ namespace ICSharpCode.TextEditor
     {
         const int iconBarWidth = 18;
 
-        static readonly Size iconBarSize = new Size(iconBarWidth, -1);
+        static readonly Size _iconBarSize = new Size(iconBarWidth, -1);
 
         public override Size Size
         {
             get
             {
-                return iconBarSize;
+                return _iconBarSize;
             }
         }
 
@@ -128,9 +128,9 @@ namespace ICSharpCode.TextEditor
                 path.AddEllipse(rect);
                 using (PathGradientBrush pthGrBrush = new PathGradientBrush(path))
                 {
-                    pthGrBrush.CenterPoint = new PointF(rect.Left + rect.Width / 3 , rect.Top + rect.Height / 3);
+                    pthGrBrush.CenterPoint = new PointF(rect.Left + rect.Width / 3, rect.Top + rect.Height / 3);
                     pthGrBrush.CenterColor = Color.MistyRose;
-                    Color[] colors = {isHealthy ? Color.Firebrick : Color.Olive};
+                    Color[] colors = { isHealthy ? Color.Firebrick : Color.Olive };
                     pthGrBrush.SurroundColors = colors;
 
                     if (isEnabled)
@@ -208,14 +208,14 @@ namespace ICSharpCode.TextEditor
         {
             GraphicsPath gp = new GraphicsPath();
             int halfX = r.Width / 2;
-            int halfY = r.Height/ 2;
-            gp.AddLine(r.X, r.Y + halfY/2, r.X + halfX, r.Y + halfY/2);
-            gp.AddLine(r.X + halfX, r.Y + halfY/2, r.X + halfX, r.Y);
+            int halfY = r.Height / 2;
+            gp.AddLine(r.X, r.Y + halfY / 2, r.X + halfX, r.Y + halfY / 2);
+            gp.AddLine(r.X + halfX, r.Y + halfY / 2, r.X + halfX, r.Y);
             gp.AddLine(r.X + halfX, r.Y, r.Right, r.Y + halfY);
             gp.AddLine(r.Right, r.Y + halfY, r.X + halfX, r.Bottom);
-            gp.AddLine(r.X + halfX, r.Bottom, r.X + halfX, r.Bottom - halfY/2);
-            gp.AddLine(r.X + halfX, r.Bottom - halfY/2, r.X, r.Bottom - halfY/2);
-            gp.AddLine(r.X, r.Bottom - halfY/2, r.X, r.Y + halfY/2);
+            gp.AddLine(r.X + halfX, r.Bottom, r.X + halfX, r.Bottom - halfY / 2);
+            gp.AddLine(r.X + halfX, r.Bottom - halfY / 2, r.X, r.Bottom - halfY / 2);
+            gp.AddLine(r.X, r.Bottom - halfY / 2, r.X, r.Y + halfY / 2);
             gp.CloseFigure();
             return gp;
         }
@@ -240,7 +240,7 @@ namespace ICSharpCode.TextEditor
             return gp;
         }
 
-        void DrawRoundRect(Graphics g, Pen p , Rectangle r)
+        void DrawRoundRect(Graphics g, Pen p, Rectangle r)
         {
             using (GraphicsPath gp = CreateRoundRectGraphicsPath(r))
             {
@@ -248,7 +248,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void FillRoundRect(Graphics g, Brush b , Rectangle r)
+        void FillRoundRect(Graphics g, Brush b, Rectangle r)
         {
             using (GraphicsPath gp = CreateRoundRectGraphicsPath(r))
             {
@@ -256,7 +256,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void DrawArrow(Graphics g, Pen p , Rectangle r)
+        void DrawArrow(Graphics g, Pen p, Rectangle r)
         {
             using (GraphicsPath gp = CreateArrowGraphicsPath(r))
             {
@@ -264,7 +264,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void FillArrow(Graphics g, Brush b , Rectangle r)
+        void FillArrow(Graphics g, Brush b, Rectangle r)
         {
             using (GraphicsPath gp = CreateArrowGraphicsPath(r))
             {
@@ -281,7 +281,7 @@ namespace ICSharpCode.TextEditor
                 // Region overlaps the line's top edge.
                 return true;
             }
-            else if(regionTop > top && regionTop < bottom)
+            else if (regionTop > top && regionTop < bottom)
             {
                 // Region's top edge inside line.
                 return true;

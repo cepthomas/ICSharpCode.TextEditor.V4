@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor
     /// <summary>
     /// This class views the line numbers and folding markers.
     /// </summary>
-    public abstract class AbstractMargin
+    public abstract class AbstractMargin //TODO1 refactor?
     {
         Cursor cursor = Cursors.Default;
 

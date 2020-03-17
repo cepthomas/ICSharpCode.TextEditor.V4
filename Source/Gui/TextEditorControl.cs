@@ -27,12 +27,10 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class is used for a basic text area control</summary>
     public class TextEditorControl : UserControl
     {
-        protected Panel textAreaPanel     = new Panel();
-        TextAreaControl primaryTextArea  = null;
-        Splitter textAreaSplitter  = null;
+        protected Panel textAreaPanel = new Panel();
+        TextAreaControl primaryTextArea = null;
+        Splitter textAreaSplitter = null;
         TextAreaControl secondaryTextArea = null;
-        TextAreaControl activeTextAreaControl = null;
-
         string currentFileName = null;
         int updateLevel = 0;
         Document.Document document;
@@ -82,7 +80,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return encoding == null ? Shared.TEP.Encoding : encoding;
+                return encoding ?? Shared.TEP.Encoding;
             }
             set
             {
@@ -580,16 +578,13 @@ namespace ICSharpCode.TextEditor
             return _dirty;
         }
 
-        public TextAreaControl ActiveTextAreaControl
-        {
-            get { return activeTextAreaControl; }
-        }
+        public TextAreaControl ActiveTextAreaControl { get; private set; } = null;
 
         protected void SetActiveTextAreaControl(TextAreaControl value)
         {
-            if (activeTextAreaControl != value)
+            if (ActiveTextAreaControl != value)
             {
-                activeTextAreaControl = value;
+                ActiveTextAreaControl = value;
 
                 ActiveTextAreaControlChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -612,7 +607,7 @@ namespace ICSharpCode.TextEditor
             Document = new Document.Document();
 
             primaryTextArea = new TextAreaControl(this);
-            activeTextAreaControl = primaryTextArea;
+            ActiveTextAreaControl = primaryTextArea;
 
             primaryTextArea.TextArea.GotFocus += delegate
             {
@@ -757,7 +752,7 @@ namespace ICSharpCode.TextEditor
                     // TODO1 this doesn't belong here.
                     IFoldingStrategy fs = null;
 
-                    if(document.HighlightingStrategy != null)
+                    if (document.HighlightingStrategy != null)
                     {
                         switch (document.HighlightingStrategy.Folding)
                         {
@@ -951,8 +946,8 @@ namespace ICSharpCode.TextEditor
                     SetActiveTextAreaControl(secondaryTextArea);
                 };
 
-                textAreaSplitter =  new Splitter();
-                textAreaSplitter.BorderStyle = BorderStyle.FixedSingle ;
+                textAreaSplitter = new Splitter();
+                textAreaSplitter.BorderStyle = BorderStyle.FixedSingle;
                 textAreaSplitter.Height = 8;
                 textAreaSplitter.Dock = DockStyle.Bottom;
                 textAreaPanel.Controls.Add(textAreaSplitter);
@@ -970,7 +965,7 @@ namespace ICSharpCode.TextEditor
                 secondaryTextArea.Dispose();
                 textAreaSplitter.Dispose();
                 secondaryTextArea = null;
-                textAreaSplitter  = null;
+                textAreaSplitter = null;
             }
         }
 

@@ -25,8 +25,6 @@ namespace ICSharpCode.TextEditor.Document
 
         public virtual int Length { get; set; } = -1;
 
-
-
         public TextMarkerType TextMarkerType { get; private set; }
 
         public Color Color { get; private set; }

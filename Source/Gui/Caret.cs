@@ -37,33 +37,22 @@ namespace ICSharpCode.TextEditor
 
     public class Caret : System.IDisposable
     {
-        int       line          = 0;
-        int       column        = 0;
-        int       desiredXPos   = 0;
+        int line = 0;
+        int column = 0;
         CaretMode caretMode;
 
-        static bool     caretCreated = false;
-        bool     hidden       = true;
+        static bool caretCreated = false;
+        bool hidden = true;
         TextArea textArea;
-        Point    currentPos   = new Point(-1, -1);
-        Ime      ime          = null;
+        Point currentPos = new Point(-1, -1);
+   //     Ime ime = null;
         CaretImplementation caretImplementation;
 
         /// <value>
         /// The 'prefered' xPos in which the caret moves, when it is moved
         /// up/down. Measured in pixels, not in characters!
         /// </value>
-        public int DesiredColumn
-        {
-            get
-            {
-                return desiredXPos;
-            }
-            set
-            {
-                desiredXPos = value;
-            }
-        }
+        public int DesiredColumn { get; set; } = 0;
 
         /// <value>
         /// The current caret mode.
@@ -119,7 +108,7 @@ namespace ICSharpCode.TextEditor
             }
             set
             {
-                line   = value.Y;
+                line = value.Y;
                 column = value.X;
                 ValidateCaretPos();
                 UpdateCaretPosition();
@@ -138,7 +127,7 @@ namespace ICSharpCode.TextEditor
         public Caret(TextArea textArea)
         {
             this.textArea = textArea;
-            textArea.GotFocus  += new EventHandler(GotFocus);
+            textArea.GotFocus += new EventHandler(GotFocus);
             textArea.LostFocus += new EventHandler(LostFocus);
             if (Environment.OSVersion.Platform == PlatformID.Unix)
                 caretImplementation = new ManagedCaret(this);
@@ -148,7 +137,7 @@ namespace ICSharpCode.TextEditor
 
         public void Dispose()
         {
-            textArea.GotFocus  -= new EventHandler(GotFocus);
+            textArea.GotFocus -= new EventHandler(GotFocus);
             textArea.LostFocus -= new EventHandler(LostFocus);
             textArea = null;
             caretImplementation.Dispose();
@@ -156,7 +145,7 @@ namespace ICSharpCode.TextEditor
 
         public TextLocation ValidatePosition(TextLocation pos)
         {
-            int line   = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 1, pos.Y));
+            int line = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 1, pos.Y));
             int column = Math.Max(0, pos.X);
 
             if (column == int.MaxValue || !Shared.TEP.AllowCaretBeyondEOL)
@@ -189,15 +178,15 @@ namespace ICSharpCode.TextEditor
             {
                 switch (caretMode)
                 {
-                case CaretMode.InsertMode:
-                    caretCreated = caretImplementation.Create(2, textArea.TextView.FontHeight);
-                    break;
-                case CaretMode.OverwriteMode:
-                    caretCreated = caretImplementation.Create((int)textArea.TextView.SpaceWidth, textArea.TextView.FontHeight);
-                    break;
+                    case CaretMode.InsertMode:
+                        caretCreated = caretImplementation.Create(2, textArea.TextView.FontHeight);
+                        break;
+                    case CaretMode.OverwriteMode:
+                        caretCreated = caretImplementation.Create((int)textArea.TextView.SpaceWidth, textArea.TextView.FontHeight);
+                        break;
                 }
             }
-            if (currentPos.X  < 0)
+            if (currentPos.X < 0)
             {
                 ValidateCaretPos();
                 currentPos = ScreenPosition;
@@ -208,7 +197,6 @@ namespace ICSharpCode.TextEditor
 
         public void RecreateCaret()
         {
-            Log("RecreateCaret");
             DisposeCaret();
             if (!hidden)
             {
@@ -228,7 +216,6 @@ namespace ICSharpCode.TextEditor
 
         void GotFocus(object sender, EventArgs e)
         {
-            Log("GotFocus, IsInUpdate=" + textArea.MotherTextEditorControl.IsInUpdate);
             hidden = false;
             if (!textArea.MotherTextEditorControl.IsInUpdate)
             {
@@ -239,7 +226,6 @@ namespace ICSharpCode.TextEditor
 
         void LostFocus(object sender, EventArgs e)
         {
-            Log("LostFocus");
             hidden = true;
             DisposeCaret();
         }
@@ -280,8 +266,6 @@ namespace ICSharpCode.TextEditor
 
         public void UpdateCaretPosition()
         {
-            Log("UpdateCaretPosition");
-
             if (Shared.TEP.CaretLine)
             {
                 textArea.Invalidate();
@@ -305,7 +289,6 @@ namespace ICSharpCode.TextEditor
             }
             oldLine = line;
 
-
             if (hidden || textArea.MotherTextEditorControl.IsInUpdate)
             {
                 outstandingUpdate = true;
@@ -315,11 +298,13 @@ namespace ICSharpCode.TextEditor
             {
                 outstandingUpdate = false;
             }
+
             ValidateCaretPos();
             int lineNr = this.line;
             int xpos = textArea.TextView.GetDrawingXPos(lineNr, this.column);
             //LineSegment lineSegment = textArea.Document.GetLineSegment(lineNr);
             Point pos = ScreenPosition;
+
             if (xpos >= 0)
             {
                 CreateCaret();
@@ -336,25 +321,19 @@ namespace ICSharpCode.TextEditor
                 caretImplementation.Destroy();
             }
 
-            // set the input method editor location
-            if (ime == null)
-            {
-                ime = new Ime(textArea.Handle, Shared.FontContainer.DefaultFont);
-            }
-            else
-            {
-                ime.HWnd = textArea.Handle;
-                ime.Font = Shared.FontContainer.DefaultFont;
-            }
-            ime.SetIMEWindowLocation(pos.X, pos.Y);
+            //// set the input method editor location
+            //if (ime == null)
+            //{
+            //    ime = new Ime(textArea.Handle, Shared.FontContainer.DefaultFont);
+            //}
+            //else
+            //{
+            //    ime.HWnd = textArea.Handle;
+            //    ime.Font = Shared.FontContainer.DefaultFont;
+            //}
+            //ime.SetIMEWindowLocation(pos.X, pos.Y);
 
             currentPos = pos;
-        }
-
-        [Conditional("DEBUG_EX")]
-        static void Log(string text)
-        {
-            //Console.WriteLine(text);
         }
 
         #region Caret implementation
@@ -519,7 +498,7 @@ namespace ICSharpCode.TextEditor
             }
 
             List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(line, column);
-            bool  shouldUpdate = false;
+            bool shouldUpdate = false;
             foreach (FoldMarker foldMarker in foldings)
             {
                 shouldUpdate |= foldMarker.IsFolded;

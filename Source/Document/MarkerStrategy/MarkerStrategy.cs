@@ -16,16 +16,9 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public sealed class MarkerStrategy
     {
-        List<TextMarker> textMarker = new List<TextMarker>();
-        Document document;
+        readonly List<TextMarker> textMarker = new List<TextMarker>();
 
-        public Document Document
-        {
-            get
-            {
-                return document;
-            }
-        }
+        public Document Document { get; }
 
         public IEnumerable<TextMarker> TextMarker
         {
@@ -61,7 +54,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public MarkerStrategy(Document document)
         {
-            this.document = document;
+            Document = document;
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
         }
 
@@ -110,11 +103,11 @@ namespace ICSharpCode.TextEditor.Document
 
         public List<TextMarker> GetMarkers(TextLocation position)
         {
-            if (position.Y >= document.TotalNumberOfLines || position.Y < 0)
+            if (position.Y >= Document.TotalNumberOfLines || position.Y < 0)
             {
                 return new List<TextMarker>();
             }
-            LineSegment segment = document.GetLineSegment(position.Y);
+            LineSegment segment = Document.GetLineSegment(position.Y);
             return GetMarkers(segment.Offset + position.X);
         }
 
@@ -122,7 +115,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             // reset markers table
             markersTable.Clear();
-            document.UpdateSegmentListOnDocumentChange(textMarker, e);
+            Document.UpdateSegmentListOnDocumentChange(textMarker, e);
         }
     }
 }

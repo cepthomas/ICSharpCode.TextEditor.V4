@@ -15,7 +15,6 @@ using System.Text;
 using System.Windows.Forms;
 using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
 using ICSharpCode.TextEditor.Common;
 
 
@@ -39,22 +38,8 @@ namespace ICSharpCode.TextEditor
         Point _mouseCursorHidePosition;
 
         Point _virtualTop = new Point(0, 0);
-        TextAreaControl _motherTextAreaControl;
-        TextEditorControl _motherTextEditorControl;
-
-        List<BracketHighlightingSheme> _bracketshemes = new List<BracketHighlightingSheme>();
-        TextAreaClipboardHandler _textAreaClipboardHandler;
-        bool _autoClearSelection = false;
-
+        readonly List<BracketHighlightingSheme> _bracketshemes = new List<BracketHighlightingSheme>();
         List<AbstractMargin> _leftMargins = new List<AbstractMargin>();
-
-        TextView _textView;
-        GutterMargin _gutterMargin;
-        FoldMargin _foldMargin;
-        IconBarMargin _iconBarMargin;
-
-        SelectionManager _selectionManager;
-        Caret _caret;
         bool _disposed;
 
         public Point MousePos { get; set; }
@@ -71,75 +56,27 @@ namespace ICSharpCode.TextEditor
             Refresh();
         }
 
-        public TextEditorControl MotherTextEditorControl
-        {
-            get
-            {
-                return _motherTextEditorControl;
-            }
-        }
+        public TextEditorControl MotherTextEditorControl { get; private set; }
 
-        public TextAreaControl MotherTextAreaControl
-        {
-            get
-            {
-                return _motherTextAreaControl;
-            }
-        }
+        public TextAreaControl MotherTextAreaControl { get; private set; }
 
-        public SelectionManager SelectionManager
-        {
-            get
-            {
-                return _selectionManager;
-            }
-        }
+        public SelectionManager SelectionManager { get; }
 
-        public Caret Caret
-        {
-            get
-            {
-                return _caret;
-            }
-        }
+        public Caret Caret { get; }
 
-        public TextView TextView
-        {
-            get
-            {
-                return _textView;
-            }
-        }
+        public TextView TextView { get; }
 
-        public GutterMargin GutterMargin
-        {
-            get
-            {
-                return _gutterMargin;
-            }
-        }
+        public GutterMargin GutterMargin { get; }
 
-        public FoldMargin FoldMargin
-        {
-            get
-            {
-                return _foldMargin;
-            }
-        }
+        public FoldMargin FoldMargin { get; }
 
-        public IconBarMargin IconBarMargin
-        {
-            get
-            {
-                return _iconBarMargin;
-            }
-        }
+        public IconBarMargin IconBarMargin { get; }
 
         public Encoding Encoding
         {
             get
             {
-                return _motherTextEditorControl.Encoding;
+                return MotherTextEditorControl.Encoding;
             }
         }
         public int MaxVScrollValue
@@ -162,41 +99,25 @@ namespace ICSharpCode.TextEditor
                 if (_virtualTop != newVirtualTop)
                 {
                     _virtualTop = newVirtualTop;
-                    _motherTextAreaControl.VScrollBar.Value = _virtualTop.Y;
+                    MotherTextAreaControl.VScrollBar.Value = _virtualTop.Y;
                     Invalidate();
                 }
-                _caret.UpdateCaretPosition();
+                Caret.UpdateCaretPosition();
             }
         }
 
-        public bool AutoClearSelection
-        {
-            get
-            {
-                return _autoClearSelection;
-            }
-            set
-            {
-                _autoClearSelection = value;
-            }
-        }
+        public bool AutoClearSelection { get; set; } = false;
 
         [Browsable(false)]
         public Document.Document Document
         {
             get
             {
-                return _motherTextEditorControl.Document;
+                return MotherTextEditorControl.Document;
             }
         }
 
-        public TextAreaClipboardHandler ClipboardHandler
-        {
-            get
-            {
-                return _textAreaClipboardHandler;
-            }
-        }
+        public TextAreaClipboardHandler ClipboardHandler { get; }
 
 
         //public TextEditorProperties TextEditorProperties
@@ -209,14 +130,14 @@ namespace ICSharpCode.TextEditor
 
         public TextArea(TextEditorControl motherTextEditorControl, TextAreaControl motherTextAreaControl)
         {
-            this._motherTextAreaControl = motherTextAreaControl;
-            this._motherTextEditorControl = motherTextEditorControl;
+            this.MotherTextAreaControl = motherTextAreaControl;
+            this.MotherTextEditorControl = motherTextEditorControl;
 
-            _caret = new Caret(this);
-            _selectionManager = new SelectionManager(Document, this);
+            Caret = new Caret(this);
+            SelectionManager = new SelectionManager(Document, this);
             MousePos = new Point(0, 0);
 
-            _textAreaClipboardHandler = new TextAreaClipboardHandler(this);
+            ClipboardHandler = new TextAreaClipboardHandler(this);
 
             ResizeRedraw = true;
 
@@ -227,12 +148,12 @@ namespace ICSharpCode.TextEditor
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.Selectable, true);
 
-            _textView = new TextView(this);
+            TextView = new TextView(this);
 
-            _gutterMargin = new GutterMargin(this);
-            _foldMargin = new FoldMargin(this);
-            _iconBarMargin = new IconBarMargin(this);
-            _leftMargins.AddRange(new AbstractMargin[] { _iconBarMargin, _gutterMargin, _foldMargin });
+            GutterMargin = new GutterMargin(this);
+            FoldMargin = new FoldMargin(this);
+            IconBarMargin = new IconBarMargin(this);
+            _leftMargins.AddRange(new AbstractMargin[] { IconBarMargin, GutterMargin, FoldMargin });
             OptionsChanged();
 
 
@@ -243,7 +164,7 @@ namespace ICSharpCode.TextEditor
             _bracketshemes.Add(new BracketHighlightingSheme('(', ')'));
             _bracketshemes.Add(new BracketHighlightingSheme('[', ']'));
 
-            _caret.PositionChanged += new EventHandler(SearchMatchingBracket);
+            Caret.PositionChanged += new EventHandler(SearchMatchingBracket);
             Document.TextContentChanged += new EventHandler(TextContentChanged);
             Document.FoldingManager.FoldingsChanged += new EventHandler(DocumentFoldingsChanged);
         }
@@ -263,22 +184,22 @@ namespace ICSharpCode.TextEditor
         {
             if (!Shared.TEP.ShowMatchingBracket)
             {
-                _textView.Highlight = null;
+                TextView.Highlight = null;
                 return;
             }
 
             int oldLine1 = -1, oldLine2 = -1;
-            if (_textView.Highlight != null && _textView.Highlight.OpenBrace.Y >=0 && _textView.Highlight.OpenBrace.Y < Document.TotalNumberOfLines)
+            if (TextView.Highlight != null && TextView.Highlight.OpenBrace.Y >=0 && TextView.Highlight.OpenBrace.Y < Document.TotalNumberOfLines)
             {
-                oldLine1 = _textView.Highlight.OpenBrace.Y;
+                oldLine1 = TextView.Highlight.OpenBrace.Y;
             }
 
-            if (_textView.Highlight != null && _textView.Highlight.CloseBrace.Y >=0 && _textView.Highlight.CloseBrace.Y < Document.TotalNumberOfLines)
+            if (TextView.Highlight != null && TextView.Highlight.CloseBrace.Y >=0 && TextView.Highlight.CloseBrace.Y < Document.TotalNumberOfLines)
             {
-                oldLine2 = _textView.Highlight.CloseBrace.Y;
+                oldLine2 = TextView.Highlight.CloseBrace.Y;
             }
 
-            _textView.Highlight = FindMatchingBracketHighlight();
+            TextView.Highlight = FindMatchingBracketHighlight();
 
             if (oldLine1 >= 0)
                 UpdateLine(oldLine1);
@@ -286,10 +207,10 @@ namespace ICSharpCode.TextEditor
             if (oldLine2 >= 0 && oldLine2 != oldLine1)
                 UpdateLine(oldLine2);
 
-            if (_textView.Highlight != null)
+            if (TextView.Highlight != null)
             {
-                int newLine1 = _textView.Highlight.OpenBrace.Y;
-                int newLine2 = _textView.Highlight.CloseBrace.Y;
+                int newLine1 = TextView.Highlight.OpenBrace.Y;
+                int newLine2 = TextView.Highlight.CloseBrace.Y;
                 if (newLine1 != oldLine1 && newLine1 != oldLine2)
                     UpdateLine(newLine1);
                 if (newLine2 != oldLine1 && newLine2 != oldLine2 && newLine2 != newLine1)
@@ -320,15 +241,15 @@ namespace ICSharpCode.TextEditor
         public void SetCaretToDesiredColumn()
         {
             FoldMarker dummy;
-            Caret.Position = _textView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
+            Caret.Position = TextView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
         }
 
         public void OptionsChanged()
         {
             UpdateMatchingBracket();
-            _textView.OptionsChanged();
-            _caret.RecreateCaret();
-            _caret.UpdateCaretPosition();
+            TextView.OptionsChanged();
+            Caret.RecreateCaret();
+            Caret.UpdateCaretPosition();
             Refresh();
         }
 
@@ -385,46 +306,43 @@ namespace ICSharpCode.TextEditor
 
         // static because the mouse can only be in one text area and we don't want to have
         // tooltips of text areas from inactive tabs floating around.
-        static DeclarationViewWindow toolTip;
+        //static DeclarationViewWindow toolTip;
         static string oldToolTip;
 
         void SetToolTip(string text, int lineNumber)
         {
-            if (toolTip == null || toolTip.IsDisposed)
-                toolTip = new DeclarationViewWindow(this.FindForm());
-            if (oldToolTip == text)
-                return;
-            if (text == null)
-            {
-                toolTip.Hide();
-            }
-            else
-            {
-                Point p = Control.MousePosition;
-                Point cp = PointToClient(p);
-                if (lineNumber >= 0)
-                {
-                    lineNumber = this.Document.GetVisibleLine(lineNumber);
-                    p.Y = (p.Y - cp.Y) + (lineNumber * this.TextView.FontHeight) - this._virtualTop.Y;
-                }
-                p.Offset(3, 3);
-                toolTip.Owner = this.FindForm();
-                toolTip.Location = p;
-                toolTip.Description = text;
-                toolTip.HideOnClick = true;
-                toolTip.Show();
-            }
-            oldToolTip = text;
+            //if (toolTip == null || toolTip.IsDisposed)
+            //    toolTip = new DeclarationViewWindow(this.FindForm());
+            //if (oldToolTip == text)
+            //    return;
+            //if (text == null)
+            //{
+            //    toolTip.Hide();
+            //}
+            //else
+            //{
+            //    Point p = Control.MousePosition;
+            //    Point cp = PointToClient(p);
+            //    if (lineNumber >= 0)
+            //    {
+            //        lineNumber = this.Document.GetVisibleLine(lineNumber);
+            //        p.Y = (p.Y - cp.Y) + (lineNumber * this.TextView.FontHeight) - this._virtualTop.Y;
+            //    }
+            //    p.Offset(3, 3);
+            //    toolTip.Owner = this.FindForm();
+            //    toolTip.Location = p;
+            //    toolTip.Description = text;
+            //    toolTip.HideOnClick = true;
+            //    toolTip.Show();
+            //}
+            //oldToolTip = text;
         }
 
         public event ToolTipRequestEventHandler ToolTipRequest;
 
         protected virtual void OnToolTipRequest(ToolTipRequestEventArgs e)
         {
-            if (ToolTipRequest != null)
-            {
-                ToolTipRequest(this, e);
-            }
+            ToolTipRequest?.Invoke(this, e);
         }
 
         bool toolTipActive;
@@ -473,9 +391,9 @@ namespace ICSharpCode.TextEditor
 
             toolTipRectangle = new Rectangle(mousePos.X - 4, mousePos.Y - 4, 8, 8);
 
-            TextLocation logicPos = _textView.GetLogicalPosition(mousePos.X - _textView.DrawingPosition.Left,
-                                    mousePos.Y - _textView.DrawingPosition.Top);
-            bool inDocument = _textView.DrawingPosition.Contains(mousePos)
+            TextLocation logicPos = TextView.GetLogicalPosition(mousePos.X - TextView.DrawingPosition.Left,
+                                    mousePos.Y - TextView.DrawingPosition.Top);
+            bool inDocument = TextView.DrawingPosition.Contains(mousePos)
                               && logicPos.Y >= 0 && logicPos.Y < Document.TotalNumberOfLines;
             ToolTipRequestEventArgs args = new ToolTipRequestEventArgs(mousePos, logicPos, inDocument);
             OnToolTipRequest(args);
@@ -532,7 +450,7 @@ namespace ICSharpCode.TextEditor
                 lastMouseInMargin = null;
             }
 
-            if (_textView.DrawingPosition.Contains(e.X, e.Y))
+            if (TextView.DrawingPosition.Contains(e.X, e.Y))
             {
                 TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
                 if(SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None)
@@ -543,7 +461,7 @@ namespace ICSharpCode.TextEditor
                 else
                 {
                     // mouse is hovering over text area, not a selection, so show the textView cursor
-                    this.Cursor = _textView.Cursor;
+                    this.Cursor = TextView.Cursor;
                 }
                 return;
             }
@@ -617,12 +535,12 @@ namespace ICSharpCode.TextEditor
             }
 
             Rectangle textViewArea = new Rectangle(currentXPos, currentYPos, Width - currentXPos, Height - currentYPos);
-            if (textViewArea != _textView.DrawingPosition)
+            if (textViewArea != TextView.DrawingPosition)
             {
                 adjustScrollBars = true;
-                _textView.DrawingPosition = textViewArea;
+                TextView.DrawingPosition = textViewArea;
                 // update caret position (but outside of WM_PAINT!)
-                BeginInvoke((MethodInvoker)_caret.UpdateCaretPosition);
+                BeginInvoke((MethodInvoker)Caret.UpdateCaretPosition);
             }
 
             if (clipRectangle.IntersectsWith(textViewArea))
@@ -630,13 +548,13 @@ namespace ICSharpCode.TextEditor
                 textViewArea.Intersect(clipRectangle);
                 if (!textViewArea.IsEmpty)
                 {
-                    _textView.Paint(g, textViewArea);
+                    TextView.Paint(g, textViewArea);
                 }
             }
 
             if (adjustScrollBars)
             {
-                this._motherTextAreaControl.AdjustScrollBars();
+                this.MotherTextAreaControl.AdjustScrollBars();
             }
 
             // we cannot update the caret position here, it's not allowed to call the caret API inside WM_PAINT
@@ -649,7 +567,7 @@ namespace ICSharpCode.TextEditor
         {
             Caret.UpdateCaretPosition();
             Invalidate();
-            this._motherTextAreaControl.AdjustScrollBars();
+            this.MotherTextAreaControl.AdjustScrollBars();
         }
 
         #region keyboard handling methods
@@ -786,7 +704,7 @@ namespace ICSharpCode.TextEditor
             }
 
             // if not (or the process was 'silent', use the standard edit actions
-            IEditAction action =  _motherTextEditorControl.GetEditAction(keyData);
+            IEditAction action =  MotherTextEditorControl.GetEditAction(keyData);
             AutoClearSelection = true;
             if (action != null)
             {
@@ -823,29 +741,29 @@ namespace ICSharpCode.TextEditor
 
         public void ScrollToCaret()
         {
-            _motherTextAreaControl.ScrollToCaret();
+            MotherTextAreaControl.ScrollToCaret();
         }
 
         public void ScrollTo(int line)
         {
-            _motherTextAreaControl.ScrollTo(line);
+            MotherTextAreaControl.ScrollTo(line);
         }
 
         public void BeginUpdate()
         {
-            _motherTextEditorControl.BeginUpdate();
+            MotherTextEditorControl.BeginUpdate();
         }
 
         public void EndUpdate()
         {
-            _motherTextEditorControl.EndUpdate();
+            MotherTextEditorControl.EndUpdate();
         }
 
         public bool EnableCutOrPaste
         {
             get
             {
-                if (_motherTextAreaControl == null)
+                if (MotherTextAreaControl == null)
                     return false;
                 if (SelectionManager.HasSomethingSelected)
                     return !SelectionManager.SelectionIsReadonly;
@@ -864,7 +782,7 @@ namespace ICSharpCode.TextEditor
         /// </remarks>
         public void InsertChar(char ch)
         {
-            bool updating = _motherTextEditorControl.IsInUpdate;
+            bool updating = MotherTextEditorControl.IsInUpdate;
             if (!updating)
             {
                 BeginUpdate();
@@ -915,7 +833,7 @@ namespace ICSharpCode.TextEditor
         /// </remarks>
         public void InsertString(string str)
         {
-            bool updating = _motherTextEditorControl.IsInUpdate;
+            bool updating = MotherTextEditorControl.IsInUpdate;
             if (!updating)
             {
                 BeginUpdate();
@@ -970,7 +888,7 @@ namespace ICSharpCode.TextEditor
         /// </remarks>
         public void ReplaceChar(char ch)
         {
-            bool updating = _motherTextEditorControl.IsInUpdate;
+            bool updating = MotherTextEditorControl.IsInUpdate;
             if (!updating)
             {
                 BeginUpdate();
@@ -1012,21 +930,21 @@ namespace ICSharpCode.TextEditor
                 if (!_disposed)
                 {
                     _disposed = true;
-                    if (_caret != null)
+                    if (Caret != null)
                     {
-                        _caret.PositionChanged -= new EventHandler(SearchMatchingBracket);
-                        _caret.Dispose();
+                        Caret.PositionChanged -= new EventHandler(SearchMatchingBracket);
+                        Caret.Dispose();
                     }
 
-                    if (_selectionManager != null)
+                    if (SelectionManager != null)
                     {
-                        _selectionManager.Dispose();
+                        SelectionManager.Dispose();
                     }
 
                     Document.TextContentChanged -= new EventHandler(TextContentChanged);
                     Document.FoldingManager.FoldingsChanged -= new EventHandler(DocumentFoldingsChanged);
-                    _motherTextAreaControl = null;
-                    _motherTextEditorControl = null;
+                    MotherTextAreaControl = null;
+                    MotherTextEditorControl = null;
 
                     foreach (AbstractMargin margin in _leftMargins)
                     {
@@ -1034,7 +952,7 @@ namespace ICSharpCode.TextEditor
                             (margin as IDisposable).Dispose();
                     }
 
-                    _textView.Dispose();
+                    TextView.Dispose();
                 }
             }
         }
@@ -1057,7 +975,7 @@ namespace ICSharpCode.TextEditor
 //			}
 
             lineBegin = Document.GetVisibleLine(lineBegin);
-            int y = Math.Max(0, (int)(lineBegin * _textView.FontHeight));
+            int y = Math.Max(0, (int)(lineBegin * TextView.FontHeight));
             y = Math.Max(0, y - this._virtualTop.Y);
             Rectangle r = new Rectangle(0, y, Width, Height - y);
             Invalidate(r);
@@ -1077,7 +995,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return VirtualTop.Y / _textView.FontHeight;
+                return VirtualTop.Y / TextView.FontHeight;
             }
         }
 
@@ -1093,9 +1011,9 @@ namespace ICSharpCode.TextEditor
         void InvalidateLines(int xPos, int lineBegin, int lineEnd)
         {
             lineBegin = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
-            lineEnd = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + _textView.VisibleLineCount);
-            int y = Math.Max(    0, (int)(lineBegin  * _textView.FontHeight));
-            int height = Math.Min(_textView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (_textView.FontHeight + 1)));
+            lineEnd = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + TextView.VisibleLineCount);
+            int y = Math.Max(    0, (int)(lineBegin  * TextView.FontHeight));
+            int height = Math.Min(TextView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (TextView.FontHeight + 1)));
 
             Rectangle r = new Rectangle(0, y - 1 - this._virtualTop.Y, Width, height + 3);
             Invalidate(r);
