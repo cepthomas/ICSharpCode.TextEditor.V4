@@ -1,4 +1,5 @@
 // This file has been added to the base project by me.
+// From https://github.com/StefH/ICSharpCode.TextEditorEx.
 
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -18,7 +18,7 @@ using System.Diagnostics;
 
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Actions;
-using ICSharpCode.TextEditor.Src.Util;
+//using ICSharpCode.TextEditor.Src.Util;
 using ICSharpCode.TextEditor.Common;
 
 

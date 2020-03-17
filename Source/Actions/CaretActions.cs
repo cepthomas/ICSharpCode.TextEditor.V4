@@ -22,6 +22,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation position = textArea.Caret.Position;
             List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldedFoldingsWithEnd(position.Y);
             FoldMarker justBeforeCaret = null;
+
             foreach (FoldMarker fm in foldings)
             {
                 if (fm.EndColumn == position.X)
@@ -62,6 +63,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation position = textArea.Caret.Position;
             List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldedFoldingsWithStart(position.Y);
             FoldMarker justBehindCaret = null;
+
             foreach (FoldMarker fm in foldings)
             {
                 if (fm.StartColumn == position.X)
@@ -70,6 +72,7 @@ namespace ICSharpCode.TextEditor.Actions
                     break;
                 }
             }
+
             if (justBehindCaret != null)
             {
                 position.Y = justBehindCaret.EndLine;
@@ -87,6 +90,7 @@ namespace ICSharpCode.TextEditor.Actions
                     position.X = 0;
                 }
             }
+
             textArea.Caret.Position = position;
             textArea.SetDesiredColumn();
         }
@@ -119,6 +123,7 @@ namespace ICSharpCode.TextEditor.Actions
             TextLocation position = textArea.Caret.Position;
             int lineNr = position.Y;
             int visualLine = textArea.Document.GetVisibleLine(lineNr);
+
             if (visualLine < textArea.Document.GetVisibleLine(textArea.Document.TotalNumberOfLines))
             {
                 Point pos = new Point(textArea.TextView.GetDrawingXPos(lineNr, position.X),
@@ -185,7 +190,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else
             {
-                LineSegment line   = textArea.Document.GetLineSegment(textArea.Caret.Position.Y);
+                LineSegment line  = textArea.Document.GetLineSegment(textArea.Caret.Position.Y);
 
                 int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document, textArea.Caret.Offset);
 
@@ -211,8 +216,6 @@ namespace ICSharpCode.TextEditor.Actions
                 textArea.Caret.Position = newPos;
                 textArea.SetDesiredColumn();
             }
-
-
         }
     }
 

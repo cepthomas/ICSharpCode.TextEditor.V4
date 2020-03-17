@@ -27,14 +27,15 @@ namespace ICSharpCode.TextEditor.Actions
                 if (foldMarkers.Count != 0)
                 {
                     FoldMarker innerMost = foldMarkers[0];
+
                     for (int i = 1; i < foldMarkers.Count; i++)
                     {
-                        if (new TextLocation(foldMarkers[i].StartColumn, foldMarkers[i].StartLine) >
-                                new TextLocation(innerMost.StartColumn, innerMost.StartLine))
+                        if (new TextLocation(foldMarkers[i].StartColumn, foldMarkers[i].StartLine) > new TextLocation(innerMost.StartColumn, innerMost.StartLine))
                         {
                             innerMost = foldMarkers[i];
                         }
                     }
+
                     innerMost.IsFolded = !innerMost.IsFolded;
                 }
             }
@@ -47,6 +48,7 @@ namespace ICSharpCode.TextEditor.Actions
         public override void Execute(TextArea textArea)
         {
             bool doFold = true;
+
             foreach (FoldMarker fm in  textArea.Document.FoldingManager.FoldMarker)
             {
                 if (fm.IsFolded)
@@ -55,10 +57,12 @@ namespace ICSharpCode.TextEditor.Actions
                     break;
                 }
             }
+
             foreach (FoldMarker fm in  textArea.Document.FoldingManager.FoldMarker)
             {
                 fm.IsFolded = doFold;
             }
+
             textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
         }
     }
@@ -71,6 +75,7 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 fm.IsFolded = fm.FoldType == FoldType.MemberBody || fm.FoldType == FoldType.Region;
             }
+
             textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
         }
     }

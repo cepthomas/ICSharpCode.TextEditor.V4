@@ -16,22 +16,10 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class BookmarkManagerMemento
     {
-        List<int> bookmarks = new List<int>();
-
         /// <value>
         /// Contains all bookmarks as int values
         /// </value>
-        public List<int> Bookmarks
-        {
-            get
-            {
-                return bookmarks;
-            }
-            set
-            {
-                bookmarks = value;
-            }
-        }
+        public List<int> Bookmarks { get; set; } = new List<int>();
 
         /// <summary>
         /// Validates all bookmarks if they're in range of the document.
@@ -39,12 +27,12 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public void CheckMemento(Document document)
         {
-            for (int i = 0; i < bookmarks.Count; ++i)
+            for (int i = 0; i < Bookmarks.Count; ++i)
             {
-                int mark = (int)bookmarks[i];
+                int mark = Bookmarks[i];
                 if (mark < 0 || mark >= document.TotalNumberOfLines)
                 {
-                    bookmarks.RemoveAt(i);
+                    Bookmarks.RemoveAt(i);
                     --i;
                 }
             }
@@ -64,7 +52,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             foreach (XmlElement el in element.ChildNodes)
             {
-                bookmarks.Add(Int32.Parse(el.Attributes["line"].InnerText));
+                Bookmarks.Add(int.Parse(el.Attributes["line"].InnerText));
             }
         }
 
@@ -73,7 +61,7 @@ namespace ICSharpCode.TextEditor.Document
         /// </summary>
         public BookmarkManagerMemento(List<int> bookmarks)
         {
-            this.bookmarks = bookmarks;
+            this.Bookmarks = bookmarks;
         }
 
         /// <summary>
@@ -91,7 +79,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             XmlElement bookmarknode  = doc.CreateElement("Bookmarks");
 
-            foreach (int line in bookmarks)
+            foreach (int line in Bookmarks)
             {
                 XmlElement markNode = doc.CreateElement("Mark");
 

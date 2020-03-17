@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Util
     /// Since items may disappear at any time when they are garbage collected, this class
     /// cannot provide a useful implementation for Count and thus cannot implement the ICollection interface.
     /// </summary>
-    public class WeakCollection<T> : IEnumerable<T> where T : class
+    public class WeakCollection<T> : IEnumerable<T> where T : class //TOD2??
     {
         readonly List<WeakReference> innerList = new List<WeakReference>();
 

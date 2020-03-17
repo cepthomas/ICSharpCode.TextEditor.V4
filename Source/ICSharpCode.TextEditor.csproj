@@ -74,13 +74,14 @@
     <Compile Include="Document\LineManager\LineManager.cs" />
     <Compile Include="Document\LineManager\LineSegment.cs" />
     <Compile Include="Document\LineManager\LineManagerEventArgs.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Util\AugmentableRedBlackTree.cs" />
-    <Compile Include="Util\CheckedList.cs" />
     <Compile Include="Util\LookupTable.cs" />
-    <Compile Include="Util\MiscUtil.cs" />
     <Compile Include="Util\MouseWheelHandler.cs" />
-    <Compile Include="Util\RedBlackTreeIterator.cs" />
-    <Compile Include="Util\TextUtility.cs" />
     <Compile Include="Undo\UndoableDelete.cs" />
     <Compile Include="Undo\UndoableInsert.cs" />
     <Compile Include="Undo\UndoableReplace.cs" />
@@ -107,16 +108,9 @@
     <Compile Include="Gui\InsightWindow\InsightWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Util\RtfWriter.cs" />
     <Compile Include="Document\FoldingStrategy\FoldingManager.cs" />
     <Compile Include="Document\Segment.cs" />
     <Compile Include="Document\FoldingStrategy\FoldMarker.cs" />
-    <Compile Include="Util\TipPainter.cs" />
-    <Compile Include="Util\TipSection.cs" />
-    <Compile Include="Util\TipText.cs" />
-    <Compile Include="Util\TipSplitter.cs" />
-    <Compile Include="Util\TipSpacer.cs" />
-    <Compile Include="Util\TipPainterTools.cs" />
     <Compile Include="Gui\Caret.cs" />
     <Compile Include="Gui\TextArea.cs">
       <SubType>Component</SubType>
@@ -157,6 +151,10 @@
     </Compile>
     <Compile Include="Document\BookmarkManager\Bookmark.cs" />
     <Compile Include="Document\BookmarkManager\BookmarkEventHandler.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\RightArrow.cur" />
     <Compile Include="Util\FileReader.cs" />
     <Compile Include="Gui\DrawableLine.cs" />

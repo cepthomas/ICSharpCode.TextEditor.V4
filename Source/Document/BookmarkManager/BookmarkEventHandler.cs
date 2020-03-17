@@ -16,19 +16,11 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class BookmarkEventArgs : EventArgs
     {
-        Bookmark bookmark;
-
-        public Bookmark Bookmark
-        {
-            get
-            {
-                return bookmark;
-            }
-        }
+        public Bookmark Bookmark { get; }
 
         public BookmarkEventArgs(Bookmark bookmark)
         {
-            this.bookmark = bookmark;
+            Bookmark = bookmark;
         }
     }
 }

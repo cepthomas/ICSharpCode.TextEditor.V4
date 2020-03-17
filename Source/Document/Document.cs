@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using ICSharpCode.TextEditor.Src.Util;
+//using ICSharpCode.TextEditor.Src.Util;
 using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document

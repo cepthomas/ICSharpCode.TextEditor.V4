@@ -13,7 +13,6 @@ namespace ICSharpCode.TextEditor.Util
 {
     public class TextUtility
     {
-
         public static bool RegionMatches(Document.Document document, int offset, int length, string word)
         {
             if (length != word.Length || document.TextLength < offset + length)

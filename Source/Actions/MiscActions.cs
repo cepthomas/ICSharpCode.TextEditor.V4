@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Common;
 
@@ -33,35 +32,37 @@ namespace ICSharpCode.TextEditor.Actions
                 if (textArea != null)
                 {
                     int column = textArea.TextView.GetVisualColumn(textArea.Caret.Line, textArea.Caret.Column);
-                    indent.Append(new String(' ', tabIndent - column % tabIndent));
+                    indent.Append(new string(' ', tabIndent - column % tabIndent));
                 }
                 else
                 {
-                    indent.Append(new String(' ', tabIndent));
+                    indent.Append(new string(' ', tabIndent));
                 }
             }
             else
             {
                 indent.Append('\t');
             }
+
             return indent.ToString();
         }
 
         void InsertTabs(Document.Document document, SelectionManager selmgr, int y1, int y2)
         {
             string indentationString = GetIndentationString(document);
+
             for (int i = y2; i >= y1; --i)
             {
                 LineSegment line = document.GetLineSegment(i);
-                if (i == y2 && i == selmgr.EndPosition.Y && selmgr.EndPosition.X  == 0)
+                if (i == y2 && i == selmgr.EndPosition.Y && selmgr.EndPosition.X == 0)
                 {
                     continue;
                 }
 
                 // this bit is optional - but useful if you are using block tabbing to sort out
                 // a source file with a mixture of tabs and spaces
-				// string newLine = document.GetText(line.Offset,line.Length);
-				// document.Replace(line.Offset,line.Length,newLine);
+                // string newLine = document.GetText(line.Offset,line.Length);
+                // document.Replace(line.Offset,line.Length,newLine);
 
                 document.Insert(line.Offset, indentationString);
             }
@@ -161,16 +162,16 @@ namespace ICSharpCode.TextEditor.Actions
                     /// there were no leading tabs or spaces on this line so do nothing
                     /// MS Visual Studio 6 strategy:
                      ****/
-//					string temp = document.GetText(line.Offset,line.Length);
+                    //					string temp = document.GetText(line.Offset,line.Length);
 
                     if (line.Length > 0)
                     {
                         int charactersToRemove = 0;
-                        if(document.GetCharAt(line.Offset) == '\t')   // first character is a tab - just remove it
+                        if (document.GetCharAt(line.Offset) == '\t')   // first character is a tab - just remove it
                         {
                             charactersToRemove = 1;
                         }
-                        else if(document.GetCharAt(line.Offset) == ' ')
+                        else if (document.GetCharAt(line.Offset) == ' ')
                         {
                             int leadingSpaces = 1;
                             int tabIndent = Shared.TEP.IndentationSize;
@@ -178,16 +179,16 @@ namespace ICSharpCode.TextEditor.Actions
                             {
                                 // deliberately empty
                             }
-                            if(leadingSpaces >= tabIndent)
+                            if (leadingSpaces >= tabIndent)
                             {
                                 // just remove tabIndent
                                 charactersToRemove = tabIndent;
                             }
-                            else if(line.Length > leadingSpaces && document.GetCharAt(line.Offset + leadingSpaces) == '\t')
+                            else if (line.Length > leadingSpaces && document.GetCharAt(line.Offset + leadingSpaces) == '\t')
                             {
                                 // remove the leading spaces and the following tab as they add up
                                 // to just one tab stop
-                                charactersToRemove = leadingSpaces+1;
+                                charactersToRemove = leadingSpaces + 1;
                             }
                             else
                             {
@@ -198,7 +199,7 @@ namespace ICSharpCode.TextEditor.Actions
 
                         if (charactersToRemove > 0)
                         {
-                            document.Remove(line.Offset,charactersToRemove);
+                            document.Remove(line.Offset, charactersToRemove);
                         }
                     }
                 }
@@ -229,7 +230,7 @@ namespace ICSharpCode.TextEditor.Actions
                 // previous tab stop. It will stop at the beginning of the line. Also, the desired
                 // column is updated to that column.
                 LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
-                string startOfLine = textArea.Document.GetText(line.Offset,textArea.Caret.Offset - line.Offset);
+                string startOfLine = textArea.Document.GetText(line.Offset, textArea.Caret.Offset - line.Offset);
                 int tabIndent = Shared.TEP.IndentationSize;
                 int currentColumn = textArea.Caret.Column;
                 int remainder = currentColumn % tabIndent;
@@ -263,8 +264,7 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 new ToggleLineComment().Execute(textArea);
             }
-            else if (textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentBegin") &&
-                     textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentBegin"))
+            else if (textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentBegin") && textArea.Document.HighlightingStrategy.Properties.ContainsKey("BlockCommentBegin"))
             {
                 new ToggleBlockComment().Execute(textArea);
             }
@@ -279,7 +279,7 @@ namespace ICSharpCode.TextEditor.Actions
         void RemoveCommentAt(Document.Document document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
-            lastLine  = y2;
+            lastLine = y2;
 
             for (int i = y2; i >= y1; --i)
             {
@@ -301,7 +301,7 @@ namespace ICSharpCode.TextEditor.Actions
         void SetCommentAt(Document.Document document, string comment, SelectionManager selmgr, int y1, int y2)
         {
             firstLine = y1;
-            lastLine  = y2;
+            lastLine = y2;
 
             for (int i = y2; i >= y1; --i)
             {
@@ -564,53 +564,24 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class BlockCommentRegion
     {
-        string commentStart = String.Empty;
-        string commentEnd = String.Empty;
-        int startOffset = -1;
-        int endOffset = -1;
-
         /// <summary>
         /// The end offset is the offset where the comment end string starts from.
         /// </summary>
         public BlockCommentRegion(string commentStart, string commentEnd, int startOffset, int endOffset)
         {
-            this.commentStart = commentStart;
-            this.commentEnd = commentEnd;
-            this.startOffset = startOffset;
-            this.endOffset = endOffset;
+            CommentStart = commentStart;
+            CommentEnd = commentEnd;
+            StartOffset = startOffset;
+            EndOffset = endOffset;
         }
 
-        public string CommentStart
-        {
-            get
-            {
-                return commentStart;
-            }
-        }
+        public string CommentStart { get; } = string.Empty;
 
-        public string CommentEnd
-        {
-            get
-            {
-                return commentEnd;
-            }
-        }
+        public string CommentEnd { get; } = string.Empty;
 
-        public int StartOffset
-        {
-            get
-            {
-                return startOffset;
-            }
-        }
+        public int StartOffset { get; } = -1;
 
-        public int EndOffset
-        {
-            get
-            {
-                return endOffset;
-            }
-        }
+        public int EndOffset { get; } = -1;
 
         //public override int GetHashCode()
         //{
@@ -629,7 +600,8 @@ namespace ICSharpCode.TextEditor.Actions
         {
             BlockCommentRegion other = obj as BlockCommentRegion;
             if (other == null) return false;
-            return this.commentStart == other.commentStart && this.commentEnd == other.commentEnd && this.startOffset == other.startOffset && this.endOffset == other.endOffset;
+            return CommentStart == other.CommentStart && CommentEnd == other.CommentEnd &&
+                StartOffset == other.StartOffset && EndOffset == other.EndOffset;
         }
     }
 
@@ -650,7 +622,7 @@ namespace ICSharpCode.TextEditor.Actions
                 if (textArea.Caret.Offset > 0 && !textArea.IsReadOnly(textArea.Caret.Offset - 1))
                 {
                     textArea.BeginUpdate();
-                    int curLineNr     = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
+                    int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
                     int curLineOffset = textArea.Document.GetLineSegment(curLineNr).Offset;
 
                     if (curLineOffset == textArea.Caret.Offset)
@@ -682,13 +654,14 @@ namespace ICSharpCode.TextEditor.Actions
         internal static void DeleteSelection(TextArea textArea)
         {
             //Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
-            if (textArea.SelectionManager.SelectionIsReadonly)
-                return;
-            textArea.BeginUpdate();
-            textArea.Caret.Position = textArea.SelectionManager.StartPosition;
-            textArea.SelectionManager.RemoveSelectedText();
-            textArea.ScrollToCaret();
-            textArea.EndUpdate();
+            if (!textArea.SelectionManager.SelectionIsReadonly)
+            {
+                textArea.BeginUpdate();
+                textArea.Caret.Position = textArea.SelectionManager.StartPosition;
+                textArea.SelectionManager.RemoveSelectedText();
+                textArea.ScrollToCaret();
+                textArea.EndUpdate();
+            }
         }
 
         /// <remarks>
@@ -703,32 +676,32 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else
             {
-                if (textArea.IsReadOnly(textArea.Caret.Offset))
-                    return;
-
-                if (textArea.Caret.Offset < textArea.Document.TextLength)
+                if (!textArea.IsReadOnly(textArea.Caret.Offset))
                 {
-                    textArea.BeginUpdate();
-                    int curLineNr   = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
-                    LineSegment curLine = textArea.Document.GetLineSegment(curLineNr);
-
-                    if (curLine.Offset + curLine.Length == textArea.Caret.Offset)
+                    if (textArea.Caret.Offset < textArea.Document.TextLength)
                     {
-                        if (curLineNr + 1 < textArea.Document.TotalNumberOfLines)
+                        textArea.BeginUpdate();
+                        int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
+                        LineSegment curLine = textArea.Document.GetLineSegment(curLineNr);
+
+                        if (curLine.Offset + curLine.Length == textArea.Caret.Offset)
                         {
-                            LineSegment nextLine = textArea.Document.GetLineSegment(curLineNr + 1);
+                            if (curLineNr + 1 < textArea.Document.TotalNumberOfLines)
+                            {
+                                LineSegment nextLine = textArea.Document.GetLineSegment(curLineNr + 1);
 
-                            textArea.Document.Remove(textArea.Caret.Offset, nextLine.Offset - textArea.Caret.Offset);
-                            textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr)));
+                                textArea.Document.Remove(textArea.Caret.Offset, nextLine.Offset - textArea.Caret.Offset);
+                                textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr)));
+                            }
                         }
+                        else
+                        {
+                            textArea.Document.Remove(textArea.Caret.Offset, 1);
+                            //						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new TextLocation(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
+                        }
+                        textArea.UpdateMatchingBracket();
+                        textArea.EndUpdate();
                     }
-                    else
-                    {
-                        textArea.Document.Remove(textArea.Caret.Offset, 1);
-//						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new TextLocation(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
-                    }
-                    textArea.UpdateMatchingBracket();
-                    textArea.EndUpdate();
                 }
             }
         }
@@ -742,7 +715,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            int curLineNr           = textArea.Caret.Line;
+            int curLineNr = textArea.Caret.Line;
             int requestedLineNumber = Math.Min(textArea.Document.GetNextVisibleLineAbove(curLineNr, textArea.TextView.VisibleLineCount), textArea.Document.TotalNumberOfLines - 1);
 
             if (curLineNr != requestedLineNumber)
@@ -761,7 +734,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            int curLineNr           = textArea.Caret.Line;
+            int curLineNr = textArea.Caret.Line;
             int requestedLineNumber = Math.Max(textArea.Document.GetNextVisibleLineBelow(curLineNr, textArea.TextView.VisibleLineCount), 0);
 
             if (curLineNr != requestedLineNumber)
@@ -779,30 +752,29 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="TextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.Document.ReadOnly)
+            if (!textArea.Document.ReadOnly)
             {
-                return;
-            }
-            textArea.BeginUpdate();
-            textArea.Document.UndoStack.StartUndoGroup();
-            try
-            {
-                if (textArea.HandleKeyPress('\n'))
-                    return;
+                textArea.BeginUpdate();
+                textArea.Document.UndoStack.StartUndoGroup();
+                try
+                {
+                    if (textArea.HandleKeyPress('\n'))
+                        return;
 
-                textArea.InsertString(Environment.NewLine);
+                    textArea.InsertString(Environment.NewLine);
 
-                int curLineNr = textArea.Caret.Line;
-                textArea.Document.FormattingStrategy.FormatLine(textArea, curLineNr, textArea.Caret.Offset, '\n');
-                textArea.SetDesiredColumn();
+                    int curLineNr = textArea.Caret.Line;
+                    textArea.Document.FormattingStrategy.FormatLine(textArea, curLineNr, textArea.Caret.Offset, '\n');
+                    textArea.SetDesiredColumn();
 
-                textArea.Document.UpdateQueue.Clear();
-                textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr - 1)));
-            }
-            finally
-            {
-                textArea.Document.UndoStack.EndUndoGroup();
-                textArea.EndUpdate();
+                    textArea.Document.UpdateQueue.Clear();
+                    textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr - 1)));
+                }
+                finally
+                {
+                    textArea.Document.UndoStack.EndUndoGroup();
+                    textArea.EndUpdate();
+                }
             }
         }
     }
@@ -815,20 +787,18 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.Document.ReadOnly)
+            if (!textArea.Document.ReadOnly)
             {
-                return;
-            }
+                switch (textArea.Caret.CaretMode)
+                {
+                    case CaretMode.InsertMode:
+                        textArea.Caret.CaretMode = CaretMode.OverwriteMode;
+                        break;
 
-            switch (textArea.Caret.CaretMode)
-            {
-                case CaretMode.InsertMode:
-                    textArea.Caret.CaretMode = CaretMode.OverwriteMode;
-                    break;
-
-                case CaretMode.OverwriteMode:
-                    textArea.Caret.CaretMode = CaretMode.InsertMode;
-                    break;
+                    case CaretMode.OverwriteMode:
+                        textArea.Caret.CaretMode = CaretMode.InsertMode;
+                        break;
+                }
             }
         }
     }
@@ -945,7 +915,7 @@ namespace ICSharpCode.TextEditor.Actions
             textArea.BeginUpdate();
             // now delete from the caret to the beginning of the word
             LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
-            if(textArea.Caret.Offset == line.Offset + line.Length)
+            if (textArea.Caret.Offset == line.Offset + line.Length)
             {
                 // if we are at the end of a line
                 base.Execute(textArea);
@@ -953,7 +923,7 @@ namespace ICSharpCode.TextEditor.Actions
             else
             {
                 int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document, textArea.Caret.Offset);
-                if(nextWordStart > textArea.Caret.Offset)
+                if (nextWordStart > textArea.Caret.Offset)
                 {
                     if (!textArea.IsReadOnly(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset))
                     {

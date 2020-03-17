@@ -16,27 +16,26 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class Bookmark
     {
-        Document document;
-        TextAnchor anchor;
-        TextLocation location;
-        bool isEnabled = true;
+        Document _document;
+        TextLocation _location;
+        bool _isEnabled = true;
 
         public Document Document
         {
             get
             {
-                return document;
+                return _document;
             }
             set
             {
-                if (document != value)
+                if (_document != value)
                 {
-                    if (anchor != null)
+                    if (Anchor != null)
                     {
-                        location = anchor.Location;
-                        anchor = null;
+                        _location = Anchor.Location;
+                        Anchor = null;
                     }
-                    document = value;
+                    _document = value;
                     CreateAnchor();
                     OnDocumentChanged(EventArgs.Empty);
                 }
@@ -45,45 +44,36 @@ namespace ICSharpCode.TextEditor.Document
 
         void CreateAnchor()
         {
-            if (document != null)
+            if (_document != null)
             {
-                LineSegment line = document.GetLineSegment(Math.Max(0, Math.Min(location.Line, document.TotalNumberOfLines-1)));
-                anchor = line.CreateAnchor(Math.Max(0, Math.Min(location.Column, line.Length)));
+                LineSegment line = _document.GetLineSegment(Math.Max(0, Math.Min(_location.Line, _document.TotalNumberOfLines-1)));
+                Anchor = line.CreateAnchor(Math.Max(0, Math.Min(_location.Column, line.Length)));
                 // after insertion: keep bookmarks after the initial whitespace (see DefaultFormattingStrategy.SmartReplaceLine)
-                anchor.MovementType = AnchorMovementType.AfterInsertion;
-                anchor.Deleted += AnchorDeleted;
+                Anchor.MovementType = AnchorMovementType.AfterInsertion;
+                Anchor.Deleted += AnchorDeleted;
             }
         }
 
         void AnchorDeleted(object sender, EventArgs e)
         {
-            document.BookmarkManager.RemoveMark(this);
+            _document.BookmarkManager.RemoveMark(this);
         }
 
         /// <summary>
         /// Gets the TextAnchor used for this bookmark.
         /// Is null if the bookmark is not connected to a document.
         /// </summary>
-        public TextAnchor Anchor
-        {
-            get
-            {
-                return anchor;
-            }
-        }
+        public TextAnchor Anchor { get; private set; }
 
         public TextLocation Location
         {
             get
             {
-                if (anchor != null)
-                    return anchor.Location;
-                else
-                    return location;
+                return Anchor != null ? Anchor.Location : _location;
             }
             set
             {
-                location = value;
+                _location = value;
                 CreateAnchor();
             }
         }
@@ -92,27 +82,24 @@ namespace ICSharpCode.TextEditor.Document
 
         protected virtual void OnDocumentChanged(EventArgs e)
         {
-            if (DocumentChanged != null)
-            {
-                DocumentChanged(this, e);
-            }
+            DocumentChanged?.Invoke(this, e);
         }
 
         public bool IsEnabled
         {
             get
             {
-                return isEnabled;
+                return _isEnabled;
             }
             set
             {
-                if (isEnabled != value)
+                if (_isEnabled != value)
                 {
-                    isEnabled = value;
-                    if (document != null)
+                    _isEnabled = value;
+                    if (_document != null)
                     {
-                        document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, LineNumber));
-                        document.CommitUpdate();
+                        _document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, LineNumber));
+                        _document.CommitUpdate();
                     }
                     OnIsEnabledChanged(EventArgs.Empty);
                 }
@@ -123,20 +110,14 @@ namespace ICSharpCode.TextEditor.Document
 
         protected virtual void OnIsEnabledChanged(EventArgs e)
         {
-            if (IsEnabledChanged != null)
-            {
-                IsEnabledChanged(this, e);
-            }
+            IsEnabledChanged?.Invoke(this, e);
         }
 
         public int LineNumber
         {
             get
             {
-                if (anchor != null)
-                    return anchor.LineNumber;
-                else
-                    return location.Line;
+                return Anchor != null ? Anchor.LineNumber : _location.Line;
             }
         }
 
@@ -144,10 +125,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                if (anchor != null)
-                    return anchor.ColumnNumber;
-                else
-                    return location.Column;
+                return Anchor != null ? Anchor.ColumnNumber : _location.Column;
             }
         }
 
@@ -168,16 +146,16 @@ namespace ICSharpCode.TextEditor.Document
 
         public Bookmark(Document document, TextLocation location, bool isEnabled)
         {
-            this.document = document;
-            this.isEnabled = isEnabled;
-            this.Location = location;
+            _document = document;
+            _isEnabled = isEnabled;
+            Location = location;
         }
 
         public virtual bool Click(SWF.Control parent, SWF.MouseEventArgs e)
         {
             if (e.Button == SWF.MouseButtons.Left && CanToggle)
             {
-                document.BookmarkManager.RemoveMark(this);
+                _document.BookmarkManager.RemoveMark(this);
                 return true;
             }
             return false;
@@ -185,7 +163,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public virtual void Draw(IconBarMargin margin, Graphics g, Point p)
         {
-            margin.DrawBookmark(g, p.Y, isEnabled);
+            margin.DrawBookmark(g, p.Y, _isEnabled);
         }
     }
 }

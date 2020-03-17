@@ -18,8 +18,8 @@ namespace ICSharpCode.TextEditor.Actions
         public override void Execute(TextArea textArea)
         {
             LineSegment curLine;
-            TextLocation       newPos = textArea.Caret.Position;
-            bool        jumpedIntoFolding = false;
+            TextLocation newPos = textArea.Caret.Position;
+            bool jumpedIntoFolding;
             do
             {
                 curLine = textArea.Document.GetLineSegment(newPos.Y);
@@ -49,6 +49,7 @@ namespace ICSharpCode.TextEditor.Actions
                         newPos.X = firstCharColumn;
                     }
                 }
+
                 List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
                 jumpedIntoFolding = false;
                 foreach (FoldMarker foldMarker in foldings)
@@ -78,10 +79,11 @@ namespace ICSharpCode.TextEditor.Actions
         {
             LineSegment curLine;
             TextLocation newPos = textArea.Caret.Position;
-            bool jumpedIntoFolding = false;
+            bool jumpedIntoFolding;
+
             do
             {
-                curLine  = textArea.Document.GetLineSegment(newPos.Y);
+                curLine = textArea.Document.GetLineSegment(newPos.Y);
                 newPos.X = curLine.Length;
 
                 List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
@@ -105,7 +107,6 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
     }
-
 
     public class MoveToStart : AbstractEditAction
     {

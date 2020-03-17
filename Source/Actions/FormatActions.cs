@@ -10,11 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
-
 using ICSharpCode.TextEditor.Document;
-//using ICSharpCode.TextEditor;
-//using ICSharpCode.TextEditor.Document;
-//using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Common;
 
 
@@ -22,63 +18,59 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public abstract class AbstractLineFormatAction : AbstractEditAction
     {
-        protected TextArea textArea;
+        protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int startLine, int endLine);
 
         public override void Execute(TextArea textArea)
         {
-            if (textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.SelectionManager.SelectionIsReadonly)
             {
-                return;
-            }
+                _textArea = textArea;
+                textArea.BeginUpdate();
+                textArea.Document.UndoStack.StartUndoGroup();
 
-            this.textArea = textArea;
-            textArea.BeginUpdate();
-            textArea.Document.UndoStack.StartUndoGroup();
+                if (textArea.SelectionManager.HasSomethingSelected)
+                {
+                    Convert(textArea.Document, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
+                }
+                else
+                {
+                    Convert(textArea.Document, 0, textArea.Document.TotalNumberOfLines - 1);
+                }
 
-            if (textArea.SelectionManager.HasSomethingSelected)
-            {
-                Convert(textArea.Document, textArea.SelectionManager.StartPosition.Y, textArea.SelectionManager.EndPosition.Y);
+                textArea.Document.UndoStack.EndUndoGroup();
+                textArea.Caret.ValidateCaretPos();
+                textArea.EndUpdate();
+                textArea.Refresh();
             }
-            else
-            {
-                Convert(textArea.Document, 0, textArea.Document.TotalNumberOfLines - 1);
-            }
-
-            textArea.Document.UndoStack.EndUndoGroup();
-            textArea.Caret.ValidateCaretPos();
-            textArea.EndUpdate();
-            textArea.Refresh();
         }
     }
 
     public abstract class AbstractSelectionFormatAction : AbstractEditAction
     {
-        protected TextArea textArea;
+        protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int offset, int length);
 
         public override void Execute(TextArea textArea)
         {
-            if (textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.SelectionManager.SelectionIsReadonly)
             {
-                return;
-            }
+                _textArea = textArea;
+                textArea.BeginUpdate();
 
-            this.textArea = textArea;
-            textArea.BeginUpdate();
+                if (textArea.SelectionManager.HasSomethingSelected)
+                {
+                    Convert(textArea.Document, textArea.SelectionManager.StartOffset, textArea.SelectionManager.Length);
+                }
+                else
+                {
+                    Convert(textArea.Document, 0, textArea.Document.TextLength);
+                }
 
-            if (textArea.SelectionManager.HasSomethingSelected)
-            {
-                Convert(textArea.Document, textArea.SelectionManager.StartOffset, textArea.SelectionManager.Length);
+                textArea.Caret.ValidateCaretPos();
+                textArea.EndUpdate();
+                textArea.Refresh();
             }
-            else
-            {
-                Convert(textArea.Document, 0, textArea.Document.TextLength);
-            }
-
-            textArea.Caret.ValidateCaretPos();
-            textArea.EndUpdate();
-            textArea.Refresh();
         }
     }
 
@@ -90,10 +82,12 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 LineSegment line = document.GetLineSegment(i);
                 int removeNumber = 0;
+
                 for (int x = line.Offset; x < line.Offset + line.Length && Char.IsWhiteSpace(document.GetCharAt(x)); ++x)
                 {
                     ++removeNumber;
                 }
+
                 if (removeNumber > 0)
                 {
                     document.Remove(line.Offset, removeNumber);
@@ -110,10 +104,12 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 LineSegment line = document.GetLineSegment(i);
                 int removeNumber = 0;
+
                 for (int x = line.Offset + line.Length - 1; x >= line.Offset && Char.IsWhiteSpace(document.GetCharAt(x)); --x)
                 {
                     ++removeNumber;
                 }
+
                 if (removeNumber > 0)
                 {
                     document.Remove(line.Offset + line.Length - removeNumber, removeNumber);
@@ -148,7 +144,7 @@ namespace ICSharpCode.TextEditor.Actions
 
             for (int i = 0; i < what.Length; ++i)
             {
-                what[i] = Char.IsUpper(what[i]) ? Char.ToLower(what[i]) : Char.ToUpper(what[i]);
+                what[i] = char.IsUpper(what[i]) ? Char.ToLower(what[i]) : Char.ToUpper(what[i]);
             }
 
             document.Replace(startOffset, length, what.ToString());
@@ -163,9 +159,9 @@ namespace ICSharpCode.TextEditor.Actions
 
             for (int i = 0; i < what.Length; ++i)
             {
-                if (!Char.IsLetter(what[i]) && i < what.Length - 1)
+                if (!char.IsLetter(what[i]) && i < what.Length - 1)
                 {
-                    what[i + 1] = Char.ToUpper(what[i + 1]);
+                    what[i + 1] = char.ToUpper(what[i + 1]);
                 }
             }
             document.Replace(startOffset, length, what.ToString());
@@ -204,11 +200,13 @@ namespace ICSharpCode.TextEditor.Actions
                 if(line.Length > 0)
                 {
                     // count how many whitespace characters there are at the start
-                    int whiteSpace = 0;
-                    for(whiteSpace = 0; whiteSpace < line.Length && Char.IsWhiteSpace(document.GetCharAt(line.Offset + whiteSpace)); whiteSpace++)
+                    int whiteSpace;
+
+                    for (whiteSpace = 0; whiteSpace < line.Length && char.IsWhiteSpace(document.GetCharAt(line.Offset + whiteSpace)); whiteSpace++)
                     {
                         // deliberately empty
                     }
+
                     if(whiteSpace > 0)
                     {
                         string newLine = document.GetText(line.Offset,whiteSpace);
@@ -246,7 +244,7 @@ namespace ICSharpCode.TextEditor.Actions
     {
         protected override void Convert(Document.Document document, int startLine, int endLine)
         {
-            document.FormattingStrategy.IndentLines(textArea, startLine, endLine);
+            document.FormattingStrategy.IndentLines(_textArea, startLine, endLine);
         }
     }
 
@@ -256,7 +254,7 @@ namespace ICSharpCode.TextEditor.Actions
         protected override void Convert(Document.Document document, int startOffset, int length)
         {
             string sin = document.GetText(startOffset, length);
-            string sout = "";
+            string sout;
 
             try
             {
@@ -288,6 +286,7 @@ namespace ICSharpCode.TextEditor.Actions
             {
                 return -1;
             }
+
             string str1;
             string str2;
 
@@ -407,7 +406,7 @@ namespace ICSharpCode.TextEditor.Actions
 
             foreach (char c in sin)
             {
-                if (Char.IsUpper(c) && Char.IsLower(lastChar))
+                if (char.IsUpper(c) && char.IsLower(lastChar))
                 {
                     sb.Append(' ');
                     sb.Append(c);
@@ -459,5 +458,4 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
     }
-
 }

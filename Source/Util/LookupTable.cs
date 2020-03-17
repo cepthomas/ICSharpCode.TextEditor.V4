@@ -11,25 +11,17 @@ using ICSharpCode.TextEditor.Document;
 namespace ICSharpCode.TextEditor.Util
 {
     /// <summary>
-    /// This class implements a keyword map. It implements a digital search trees (tries) to find
-    /// a word.
+    /// This class implements a keyword map. It implements a digital search trees (tries) to find a word.
     /// </summary>
-    public class LookupTable
+    public class LookupTable //TODO2 used only by HighlightRuleSet
     {
         Node root = new Node(null, null);
         bool casesensitive;
-        int  length;
 
         /// <value>
         /// The number of elements in the table
         /// </value>
-        public int Count
-        {
-            get
-            {
-                return length;
-            }
-        }
+        public int Count { get; private set; }
 
         /// <summary>
         /// Get the object, which was inserted under the keyword (line, at offset, with length length),
@@ -58,7 +50,7 @@ namespace ICSharpCode.TextEditor.Util
                             return null;
                         }
 
-                        if (next.color != null && TextUtility.RegionMatches(document, wordOffset, length, next.word))
+                        if (next.color != null && RegionMatches(document, wordOffset, length, next.word))
                         {
                             return next.color;
                         }
@@ -77,7 +69,7 @@ namespace ICSharpCode.TextEditor.Util
                             return null;
                         }
 
-                        if (next.color != null && TextUtility.RegionMatches(document, casesensitive, wordOffset, length, next.word))
+                        if (next.color != null && RegionMatches(document, casesensitive, wordOffset, length, next.word))
                         {
                             return next.color;
                         }
@@ -100,7 +92,7 @@ namespace ICSharpCode.TextEditor.Util
                 {
                     keyword = keyword.ToUpper();
                 }
-                ++length;
+                ++Count;
 
                 // insert word into the tree
                 for (int i = 0; i < keyword.Length; ++i)
@@ -175,6 +167,85 @@ namespace ICSharpCode.TextEditor.Util
             }
 
             private Node[] children;
+        }
+
+
+        public static bool RegionMatches(Document.Document document, int offset, int length, string word)
+        {
+            if (length != word.Length || document.TextLength < offset + length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; ++i)
+            {
+                if (document.GetCharAt(offset + i) != word[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool RegionMatches(Document.Document document, bool casesensitive, int offset, int length, string word)
+        {
+            if (casesensitive)
+            {
+                return RegionMatches(document, offset, length, word);
+            }
+
+            if (length != word.Length || document.TextLength < offset + length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; ++i)
+            {
+                if (Char.ToUpper(document.GetCharAt(offset + i)) != Char.ToUpper(word[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool RegionMatches(Document.Document document, int offset, int length, char[] word)
+        {
+            if (length != word.Length || document.TextLength < offset + length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; ++i)
+            {
+                if (document.GetCharAt(offset + i) != word[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool RegionMatches(Document.Document document, bool casesensitive, int offset, int length, char[] word)
+        {
+            if (casesensitive)
+            {
+                return RegionMatches(document, offset, length, word);
+            }
+
+            if (length != word.Length || document.TextLength < offset + length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; ++i)
+            {
+                if (Char.ToUpper(document.GetCharAt(offset + i)) != Char.ToUpper(word[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

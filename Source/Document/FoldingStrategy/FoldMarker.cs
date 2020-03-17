@@ -19,7 +19,6 @@ namespace ICSharpCode.TextEditor.Document
 
     public class FoldMarker : Segment, IComparable //, AbstractSegment
     {
-
         bool      isFolded = false;
         string    foldText = "...";
         FoldType  foldType = FoldType.Unspecified;

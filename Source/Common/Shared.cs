@@ -15,8 +15,7 @@ namespace ICSharpCode.TextEditor.Common
     public class Shared
     {
         public static TextEditorProperties TEP { get; set; } = new TextEditorProperties();
-
-
+        
         public static FontContainer FontContainer { get; set; }
 
         public static void SetContainerFont(Font font)

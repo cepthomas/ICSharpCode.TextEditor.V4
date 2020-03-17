@@ -103,7 +103,8 @@ namespace ICSharpCode.TextEditor
                 // Default has no highlighting, therefore we don't need RTF output
                 if (textArea.Document.HighlightingStrategy.Name != "Default")
                 {
-                    dataObject.SetData(DataFormats.Rtf, RtfWriter.GenerateRtf(textArea));
+                    dataObject.SetData(DataFormats.Rtf, textArea.Text);
+                    //was: dataObject.SetData(DataFormats.Rtf, RtfWriter.GenerateRtf(textArea));
                 }
 
                 OnCopyText(new CopyTextEventArgs(stringToCopy));

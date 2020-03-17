@@ -5,7 +5,7 @@
 //     <version>$Revision$</version>
 // </file>
 
-using ICSharpCode.TextEditor.Src.Util;
+//using ICSharpCode.TextEditor.Src.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
