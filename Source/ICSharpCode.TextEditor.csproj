@@ -96,18 +96,6 @@
     <Compile Include="Gui\Ime.cs" />
     <Compile Include="Gui\TextAreaUpdate.cs" />
     <Compile Include="Document\Selection\SelectionManager.cs" />
-    <Compile Include="Gui\CompletionWindow\ICompletionData.cs" />
-    <Compile Include="Gui\CompletionWindow\ICompletionDataProvider.cs" />
-    <Compile Include="Gui\CompletionWindow\CodeCompletionWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\CompletionWindow\DeclarationViewWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\InsightWindow\IInsightDataProvider.cs" />
-    <Compile Include="Gui\InsightWindow\InsightWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Document\FoldingStrategy\FoldingManager.cs" />
     <Compile Include="Document\Segment.cs" />
     <Compile Include="Document\FoldingStrategy\FoldMarker.cs" />
@@ -139,12 +127,6 @@
     <Compile Include="Actions\FormatActions.cs" />
     <Compile Include="Document\MarkerStrategy\MarkerStrategy.cs" />
     <Compile Include="Document\MarkerStrategy\TextMarker.cs" />
-    <Compile Include="Gui\CompletionWindow\AbstractCompletionWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\CompletionWindow\CodeCompletionListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Gui\BrushRegistry.cs" />
     <Compile Include="Gui\HRuler.cs">
       <SubType>Component</SubType>
