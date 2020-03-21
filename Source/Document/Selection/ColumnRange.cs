@@ -35,13 +35,15 @@ namespace ICSharpCode.TextEditor.Document
             {
                 return ((ColumnRange)obj).StartColumn == StartColumn && ((ColumnRange)obj).EndColumn == EndColumn;
             }
-            
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         public override string ToString()
         {
-            return String.Format("[ColumnRange: StartColumn={0}, EndColumn={1}]", StartColumn, EndColumn);
+            return string.Format("[ColumnRange: StartColumn={0}, EndColumn={1}]", StartColumn, EndColumn);
         }
     }
 }

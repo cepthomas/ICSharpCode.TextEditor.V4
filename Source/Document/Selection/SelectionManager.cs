@@ -22,7 +22,9 @@ namespace ICSharpCode.TextEditor.Document
     public class SelectionManager : IDisposable
     {
         Document _document;
+
         TextArea _textArea; // TODO0 which has a SelMgr <--> Actually the whole class structure is tightly coupled.
+
         bool _isRect;
 
         public event EventHandler SelectionChanged;
@@ -49,14 +51,12 @@ namespace ICSharpCode.TextEditor.Document
             {
                 if (_document != null)
                 {
-                    if (Length < 0)
-                    {
-                        return null;
-                    }
-
-                    return _document.GetText(StartOffset, Length);
+                    return Length < 0 ? null : _document.GetText(StartOffset, Length);
                 }
-                return null;
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -80,7 +80,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <summary>Converts a <see cref="Selection"/> instance to string (for debug purposes)</summary>
         public override string ToString()
         {
-            return String.Format("[Selection : StartPosition={0}, EndPosition={1}, IsRect={2}]", StartPosition, EndPosition, _isRect);
+            return string.Format("[Selection : StartPosition={0}, EndPosition={1}, IsRect={2}]", StartPosition, EndPosition, _isRect);
         }
 
         /// <summary>Creates a new instance of <see cref="SelectionManager"/></summary>
