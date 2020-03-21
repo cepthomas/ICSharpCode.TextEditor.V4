@@ -125,7 +125,6 @@
     <Compile Include="Actions\FoldActions.cs" />
     <Compile Include="Actions\FormatActions.cs" />
     <Compile Include="Document\MarkerStrategy\MarkerStrategy.cs" />
-    <Compile Include="Document\MarkerStrategy\TextMarker.cs" />
     <Compile Include="Gui\BrushRegistry.cs" />
     <Compile Include="Gui\HRuler.cs">
       <SubType>Component</SubType>

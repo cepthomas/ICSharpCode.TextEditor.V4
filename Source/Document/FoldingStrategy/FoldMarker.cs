@@ -19,11 +19,12 @@ namespace ICSharpCode.TextEditor.Document
 
     public class FoldMarker : Segment, IComparable //, AbstractSegment
     {
-        bool      isFolded = false;
-        string    foldText = "...";
-        FoldType  foldType = FoldType.Unspecified;
-        Document document = null;
-        int startLine = -1, startColumn, endLine = -1, endColumn;
+        readonly Document document = null;
+
+        int startLine = -1;
+        int startColumn;
+        int endLine = -1;
+        int endColumn;
 
         //public virtual int offset { get; set; } = -1;
         int offset = -1;
@@ -50,17 +51,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public FoldType FoldType
-        {
-            get
-            {
-                return foldType;
-            }
-            set
-            {
-                foldType = value;
-            }
-        }
+        public FoldType FoldType { get; set; } = FoldType.Unspecified;
 
         public int StartLine
         {
@@ -136,25 +127,9 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public bool IsFolded
-        {
-            get
-            {
-                return isFolded;
-            }
-            set
-            {
-                isFolded = value;
-            }
-        }
+        public bool IsFolded { get; set; } = false;
 
-        public string FoldText
-        {
-            get
-            {
-                return foldText;
-            }
-        }
+        public string FoldText { get; } = "...";
 
         public string InnerText
         {
@@ -169,8 +144,8 @@ namespace ICSharpCode.TextEditor.Document
             this.document = document;
             this.offset   = offset;
             this.length   = length;
-            this.foldText = foldText;
-            this.isFolded = isFolded;
+            this.FoldText = foldText;
+            this.IsFolded = isFolded;
         }
 
         public FoldMarker(Document document, int startLine, int startColumn, int endLine, int endColumn) : this(document, startLine, startColumn, endLine, endColumn, FoldType.Unspecified)
@@ -202,10 +177,10 @@ namespace ICSharpCode.TextEditor.Document
             }
 
             this.FoldType = foldType;
-            this.foldText = foldText;
+            this.FoldText = foldText;
             this.offset = startLineSegment.Offset + Math.Min(startColumn, startLineSegment.Length);
             this.length = (endLineSegment.Offset + Math.Min(endColumn, endLineSegment.Length)) - this.offset;
-            this.isFolded = isFolded;
+            this.IsFolded = isFolded;
         }
 
         public int CompareTo(object o)

@@ -11,46 +11,93 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Document
 {
+    public enum TextMarkerType
+    {
+        Invisible,
+        SolidBlock,
+        Underlined,
+        WaveLine
+    }
+
+    /// <summary>Marks a part of a document.</summary>
+    public class TextMarker : Segment
+    {
+        //public virtual int Offset { get; set; } = -1;
+
+        //public virtual int Length { get; set; } = -1;
+
+        public TextMarkerType TextMarkerType { get; private set; }
+
+        public Color Color { get; private set; }
+
+        public Color ForeColor { get; private set; }
+
+        public bool OverrideForeColor { get; private set; }
+
+        /// <summary>Marks the text segment as read-only.</summary>
+        public bool IsReadOnly { get; set; }
+
+        public string ToolTip { get; set; }
+
+        /// <summary>Gets the last offset that is inside the marker region.</summary>
+        public int EndOffset { get { return Offset + Length - 1; } }
+
+        public TextMarker(int offset, int length, TextMarkerType textMarkerType, Color color)
+        {
+            if (length < 1) length = 1;
+            Offset = offset;
+            Length = length;
+            TextMarkerType = textMarkerType;
+            Color = color;
+        }
+
+        //public TextMarker(int offset, int length, TextMarkerType textMarkerType, Color color, Color foreColor)
+        //{
+        //    if (length < 1) length = 1;
+        //    Offset = offset;
+        //    Length = length;
+        //    TextMarkerType = textMarkerType;
+        //    Color = color;
+        //    ForeColor = foreColor;
+        //    OverrideForeColor = true;
+        //}
+    }
+
     /// <summary>
     /// Manages the list of markers and provides ways to retrieve markers for specific positions.
     /// </summary>
     public sealed class MarkerStrategy
     {
-        readonly List<TextMarker> textMarker = new List<TextMarker>();
+        readonly List<TextMarker> _textMarker = new List<TextMarker>();
+        readonly Dictionary<int, List<TextMarker>> _markersTable = new Dictionary<int, List<TextMarker>>();
 
         public Document Document { get; }
 
-        public IEnumerable<TextMarker> TextMarker
-        {
-            get
-            {
-                return textMarker.AsReadOnly();
-            }
-        }
+        //public IEnumerable<TextMarker> TextMarker { get { return _textMarker.AsReadOnly(); } }
 
         public void AddMarker(TextMarker item)
         {
-            markersTable.Clear();
-            textMarker.Add(item);
+            _markersTable.Clear();
+            _textMarker.Add(item);
         }
 
-        public void InsertMarker(int index, TextMarker item)
-        {
-            markersTable.Clear();
-            textMarker.Insert(index, item);
-        }
+        //public void InsertMarker(int index, TextMarker item)
+        //{
+        //    _markersTable.Clear();
+        //    _textMarker.Insert(index, item);
+        //}
 
-        public void RemoveMarker(TextMarker item)
-        {
-            markersTable.Clear();
-            textMarker.Remove(item);
-        }
+        //public void RemoveMarker(TextMarker item)
+        //{
+        //    _markersTable.Clear();
+        //    _textMarker.Remove(item);
+        //}
 
-        public void RemoveAll(Predicate<TextMarker> match)
-        {
-            markersTable.Clear();
-            textMarker.RemoveAll(match);
-        }
+        //public void RemoveAll(Predicate<TextMarker> match)
+        //{
+        //    _markersTable.Clear();
+        //    _textMarker.RemoveAll(match);
+        //}
 
         public MarkerStrategy(Document document)
         {
@@ -58,34 +105,34 @@ namespace ICSharpCode.TextEditor.Document
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
         }
 
-        Dictionary<int, List<TextMarker>> markersTable = new Dictionary<int, List<TextMarker>>();
-
         public List<TextMarker> GetMarkers(int offset)
         {
-            if (!markersTable.ContainsKey(offset))
+            if (!_markersTable.ContainsKey(offset))
             {
                 List<TextMarker> markers = new List<TextMarker>();
-                for (int i = 0; i < textMarker.Count; ++i)
+                for (int i = 0; i < _textMarker.Count; ++i)
                 {
-                    TextMarker marker = (TextMarker)textMarker[i];
+                    TextMarker marker = _textMarker[i];
                     if (marker.Offset <= offset && offset <= marker.EndOffset)
                     {
                         markers.Add(marker);
                     }
                 }
-                markersTable[offset] = markers;
+                _markersTable[offset] = markers;
             }
-            return markersTable[offset];
+            return _markersTable[offset];
         }
 
         public List<TextMarker> GetMarkers(int offset, int length)
         {
             int endOffset = offset + length - 1;
             List<TextMarker> markers = new List<TextMarker>();
-            for (int i = 0; i < textMarker.Count; ++i)
+            for (int i = 0; i < _textMarker.Count; ++i)
             {
-                TextMarker marker = (TextMarker)textMarker[i];
-                if (// start in marker region
+                TextMarker marker = _textMarker[i];
+                if
+                (
+                    // start in marker region
                     marker.Offset <= offset && offset <= marker.EndOffset ||
                     // end in marker region
                     marker.Offset <= endOffset && endOffset <= marker.EndOffset ||
@@ -114,8 +161,8 @@ namespace ICSharpCode.TextEditor.Document
         void DocumentChanged(object sender, DocumentEventArgs e)
         {
             // reset markers table
-            markersTable.Clear();
-            Document.UpdateSegmentListOnDocumentChange(textMarker, e);
+            _markersTable.Clear();
+            Document.UpdateSegmentListOnDocumentChange(_textMarker, e);
         }
     }
 }
