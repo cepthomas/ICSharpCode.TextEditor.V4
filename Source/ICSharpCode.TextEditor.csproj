@@ -96,7 +96,7 @@
     <Compile Include="Gui\TextAreaUpdate.cs" />
     <Compile Include="Document\Selection\SelectionManager.cs" />
     <Compile Include="Document\FoldingStrategy\FoldingManager.cs" />
-    <Compile Include="Document\Segment.cs" />
+    <Compile Include="Document\ISegment.cs" />
     <Compile Include="Document\FoldingStrategy\FoldMarker.cs" />
     <Compile Include="Gui\Caret.cs" />
     <Compile Include="Gui\TextArea.cs">

@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
         TypeBody
     }
 
-    public class FoldMarker : Segment, IComparable //, AbstractSegment
+    public class FoldMarker : ISegment, IComparable //, AbstractSegment
     {
         readonly Document document = null;
 

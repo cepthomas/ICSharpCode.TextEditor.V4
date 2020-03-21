@@ -20,11 +20,14 @@ namespace ICSharpCode.TextEditor.Document
     }
 
     /// <summary>Marks a part of a document.</summary>
-    public class TextMarker : Segment
+    public class TextMarker : ISegment
     {
         //public virtual int Offset { get; set; } = -1;
 
         //public virtual int Length { get; set; } = -1;
+        public int Offset { get; set; } = -1;
+
+        public int Length { get; set; } = -1;
 
         public TextMarkerType TextMarkerType { get; private set; }
 

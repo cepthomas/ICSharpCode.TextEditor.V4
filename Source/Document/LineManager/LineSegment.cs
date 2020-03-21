@@ -13,7 +13,7 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public class LineSegment : Segment
+    public class LineSegment : ISegment
     {
         internal LineSegmentTree.Enumerator treeEntry;
 
@@ -47,20 +47,23 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public override int Offset
+        public int Offset
         {
             get
             {
                 return treeEntry.CurrentOffset;
             }
+
+            set { }
         }
 
-        public override int Length
+        public int Length
         {
             get
             {
                 return TotalLength - DelimiterLength;
             }
+            set { }
         }
 
         public int TotalLength { get; internal set; }

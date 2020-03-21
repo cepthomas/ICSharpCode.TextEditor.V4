@@ -12,11 +12,11 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// This interface is used to describe a span inside a text sequence.
     /// </summary>
-    public class Segment
+    public interface ISegment
     {
-        public virtual int Offset { get; set; } = -1;
+        int Offset { get; set; }
 
-        public virtual int Length { get; set; } = -1;
+        int Length { get; set; }
 
         //[CLSCompliant(false)]
         //protected int offset = -1;

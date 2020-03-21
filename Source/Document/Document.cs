@@ -348,13 +348,13 @@ namespace ICSharpCode.TextEditor.Document
             return Math.Min(TextLength, line.Offset + Math.Min(line.Length, p.X));
         }
 
-        public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : Segment
+        public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : ISegment
         {
             int removedCharacters = e.Length > 0 ? e.Length : 0;
             int insertedCharacters = e.Text != null ? e.Text.Length : 0;
             for (int i = 0; i < list.Count; ++i)
             {
-                Segment s = list[i];
+                ISegment s = list[i];
                 int segmentStart = s.Offset;
                 int segmentEnd = s.Offset + s.Length;
 
