@@ -19,41 +19,30 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class paints the textarea.</summary>
     public class TextView : IMargin, IDisposable
     {
-        int _physicalColumn = 0; // used for calculating physical column during paint
         const int ADDITIONAL_FOLD_TEXT_SIZE = 1;
-        Font _lastFont;
 
+        int _physicalColumn = 0; // used for calculating physical column during paint
 
-        /////////////// added:
-        public Rectangle DrawingPosition { get; set; }
-        public TextArea TextArea { get; }
-        public Cursor Cursor { get; set; } = Cursors.Default;
-        
-        public Size Size { get { return new Size(-1, -1); } }
-        public bool IsVisible { get { return true; } }
+        Font _lastFont; //TODO1 only monospace fonts
 
+        Dictionary<Font, Dictionary<char, int>> _fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
 
         public event MarginPaintEventHandler Painted;
         public event MarginMouseEventHandler MouseDown;
         public event MarginMouseEventHandler MouseMove;
         public event EventHandler MouseLeave;
 
-        public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
-        {
-            MouseDown?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
-        {
-            MouseMove?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseLeave(EventArgs e)
-        {
-            MouseLeave?.Invoke(this, e);
-        }
-        //????
+        public Rectangle DrawingPosition { get; set; }
+
+        public TextArea TextArea { get; }
+
+        public Cursor Cursor { get; set; } = Cursors.Default;
+
+        public Size Size { get { return new Size(-1, -1); } }
+
+        public bool IsVisible { get { return true; } }
+
         public Document.Document Document { get { return TextArea.Document; } }
-
-
 
         public Highlight Highlight { get; set; }
 
@@ -452,6 +441,7 @@ namespace ICSharpCode.TextEditor
                                 splitPos = Math.Min(splitPos, Highlight.OpenBrace.X - currentWordOffset);
                             }
                         }
+
                         if (Highlight.CloseBrace.Y == lineNumber)
                         {
                             if (Highlight.CloseBrace.X >= currentWordOffset && Highlight.CloseBrace.X <= currentWordEndOffset)
@@ -459,6 +449,7 @@ namespace ICSharpCode.TextEditor
                                 splitPos = Math.Min(splitPos, Highlight.CloseBrace.X - currentWordOffset);
                             }
                         }
+
                         if (splitPos == 0)
                         {
                             splitPos = 1; // split after highlight
@@ -682,6 +673,7 @@ namespace ICSharpCode.TextEditor
 
             if (word == null || word.Length == 0)
                 return 0;
+
             if (word.Length > MaximumWordLength)
             {
                 width = 0;
@@ -723,16 +715,14 @@ namespace ICSharpCode.TextEditor
         #endregion
 
         #region Conversion Functions
-        Dictionary<Font, Dictionary<char, int>> fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
-
         public int GetWidth(char ch, Font font)
         {
-            if (!fontBoundCharWidth.ContainsKey(font))
+            if (!_fontBoundCharWidth.ContainsKey(font))
             {
-                fontBoundCharWidth.Add(font, new Dictionary<char, int>());
+                _fontBoundCharWidth.Add(font, new Dictionary<char, int>());
             }
 
-            if (!fontBoundCharWidth[font].ContainsKey(ch))
+            if (!_fontBoundCharWidth[font].ContainsKey(ch))
             {
                 using (Graphics g = TextArea.CreateGraphics())
                 {
@@ -740,23 +730,23 @@ namespace ICSharpCode.TextEditor
                 }
             }
 
-            return fontBoundCharWidth[font][ch];
+            return _fontBoundCharWidth[font][ch];
         }
 
         public int GetWidth(Graphics g, char ch, Font font)
         {
-            if (!fontBoundCharWidth.ContainsKey(font))
+            if (!_fontBoundCharWidth.ContainsKey(font))
             {
-                fontBoundCharWidth.Add(font, new Dictionary<char, int>());
+                _fontBoundCharWidth.Add(font, new Dictionary<char, int>());
             }
 
-            if (!fontBoundCharWidth[font].ContainsKey(ch))
+            if (!_fontBoundCharWidth[font].ContainsKey(ch))
             {
                 //Console.WriteLine("Calculate character width: " + ch);
-                fontBoundCharWidth[font].Add(ch, MeasureStringWidth(g, ch.ToString(), font));
+                _fontBoundCharWidth[font].Add(ch, MeasureStringWidth(g, ch.ToString(), font));
             }
 
-            return fontBoundCharWidth[font][ch];
+            return _fontBoundCharWidth[font][ch];
         }
 
         public int GetVisualColumn(int logicalLine, int logicalColumn)
@@ -775,6 +765,7 @@ namespace ICSharpCode.TextEditor
             int lineOffset = line.Offset;
             int tabIndent = Shared.TEP.TabIndent;
             int guessedColumn = 0;
+
             for (int i = 0; i < logicalColumn; ++i)
             {
                 char ch;
@@ -807,8 +798,7 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public TextLocation GetLogicalPosition(Point mousePosition)
         {
-            FoldMarker dummy;
-            return GetLogicalColumn(GetLogicalLine(mousePosition.Y), mousePosition.X, out dummy);
+            return GetLogicalColumn(GetLogicalLine(mousePosition.Y), mousePosition.X, out FoldMarker dummy);
         }
 
         /// <summary>
@@ -816,8 +806,7 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public TextLocation GetLogicalPosition(int visualPosX, int visualPosY)
         {
-            FoldMarker dummy;
-            return GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out dummy);
+            return GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out FoldMarker dummy);
         }
 
         /// <summary>
@@ -825,8 +814,7 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public FoldMarker GetFoldMarkerFromPosition(int visualPosX, int visualPosY)
         {
-            FoldMarker foldMarker;
-            GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out foldMarker);
+            GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out FoldMarker foldMarker);
             return foldMarker;
         }
 
@@ -1134,7 +1122,7 @@ namespace ICSharpCode.TextEditor
             // search backwards until a new visible line is reched
             for (; i >= 0; --i)
             {
-                f = (FoldMarker)foldings[i];
+                f = foldings[i];
                 if (f.EndLine < logicalLine)   // reached the begin of a new visible line
                 {
                     break;
@@ -1221,5 +1209,18 @@ namespace ICSharpCode.TextEditor
             g.DrawLine(BrushRegistry.GetPen(vRulerColor.Color), DrawingPosition.Left + xpos, lineRectangle.Top, DrawingPosition.Left + xpos, lineRectangle.Bottom);
         }
         #endregion
+
+        public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseDown?.Invoke(this, mousepos, mouseButtons);
+        }
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseMove?.Invoke(this, mousepos, mouseButtons);
+        }
+        public void HandleMouseLeave(EventArgs e)
+        {
+            MouseLeave?.Invoke(this, e);
+        }
     }
 }

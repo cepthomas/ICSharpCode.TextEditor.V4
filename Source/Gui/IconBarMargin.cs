@@ -21,56 +21,28 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class IconBarMargin : IMargin
     {
-        const int iconBarWidth = 18;
+        const int ICON_BAR_WIDTH = 18;
 
-        static readonly Size _iconBarSize = new Size(iconBarWidth, -1);
-
-
-        /////////////// added:
-        public Rectangle DrawingPosition { get; set; }
-        public TextArea TextArea { get; }
-        //    public Document.Document Document { get { return TextArea.Document; } }
-        public Cursor Cursor { get; set; } = Cursors.Default;
+        static readonly Size _iconBarSize = new Size(ICON_BAR_WIDTH, -1);
 
         public event MarginPaintEventHandler Painted;
         public event MarginMouseEventHandler MouseDown;
         public event MarginMouseEventHandler MouseMove;
         public event EventHandler MouseLeave;
-        //public void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
-        //{
-        //    MouseDown?.Invoke(this, mousepos, mouseButtons);
-        //}
-        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
-        {
-            MouseMove?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseLeave(EventArgs e)
-        {
-            MouseLeave?.Invoke(this, e);
-        }
 
 
+        public Rectangle DrawingPosition { get; set; }
+
+        public TextArea TextArea { get; }
+
+        public Cursor Cursor { get; set; } = Cursors.Default;
+
+        public Size Size { get { return _iconBarSize; } }
+
+        public bool IsVisible { get { return Shared.TEP.IsIconBarVisible; } }
 
 
-
-        public Size Size
-        {
-            get
-            {
-                return _iconBarSize;
-            }
-        }
-
-        public bool IsVisible
-        {
-            get
-            {
-                return Shared.TEP.IsIconBarVisible;
-            }
-        }
-
-
-        public IconBarMargin(TextArea textArea)// : base(textArea)
+        public IconBarMargin(TextArea textArea)
         {
             TextArea = textArea;
         }
@@ -90,7 +62,7 @@ namespace ICSharpCode.TextEditor
             {
                 int lineNumber = TextArea.Document.GetVisibleLine(mark.LineNumber);
                 int lineHeight = TextArea.TextView.FontHeight;
-                int yPos = (int)(lineNumber * lineHeight) - TextArea.VirtualTop.Y;
+                int yPos = lineNumber * lineHeight - TextArea.VirtualTop.Y;
                 if (IsLineInsideRegion(yPos, yPos + lineHeight, rect.Y, rect.Bottom))
                 {
                     if (lineNumber == TextArea.Document.GetVisibleLine(mark.LineNumber - 1))
@@ -103,7 +75,6 @@ namespace ICSharpCode.TextEditor
             }
 
             Painted?.Invoke(this, g, rect);
-            //base.Paint(g, rect);
         }
 
         public void HandleMouseDown(Point mousePos, MouseButtons mouseButtons)
@@ -122,6 +93,7 @@ namespace ICSharpCode.TextEditor
             IList<Bookmark> marks = TextArea.Document.BookmarkManager.Marks;
             List<Bookmark> marksInLine = new List<Bookmark>();
             int oldCount = marks.Count;
+
             foreach (Bookmark mark in marks)
             {
                 if (mark.LineNumber == lineNumber)
@@ -129,6 +101,7 @@ namespace ICSharpCode.TextEditor
                     marksInLine.Add(mark);
                 }
             }
+
             for (int i = marksInLine.Count - 1; i >= 0; i--)
             {
                 Bookmark mark = marksInLine[i];
@@ -141,19 +114,26 @@ namespace ICSharpCode.TextEditor
                     return;
                 }
             }
-            //base.HandleMouseDown(mousePos, mouseButtons);
+
             MouseDown?.Invoke(this, mousePos, mouseButtons);
         }
+
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseMove?.Invoke(this, mousepos, mouseButtons);
+        }
+
+        public void HandleMouseLeave(EventArgs e)
+        {
+            MouseLeave?.Invoke(this, e);
+        }
+
 
         #region Drawing functions
         public void DrawBreakpoint(Graphics g, int y, bool isEnabled, bool isHealthy)
         {
-            int diameter = Math.Min(iconBarWidth - 2, TextArea.TextView.FontHeight);
-            Rectangle rect = new Rectangle(1,
-                                           y + (TextArea.TextView.FontHeight - diameter) / 2,
-                                           diameter,
-                                           diameter);
-
+            int diameter = Math.Min(ICON_BAR_WIDTH - 2, TextArea.TextView.FontHeight);
+            Rectangle rect = new Rectangle(1, y + (TextArea.TextView.FontHeight - diameter) / 2, diameter, diameter);
 
             using (GraphicsPath path = new GraphicsPath())
             {
@@ -188,10 +168,7 @@ namespace ICSharpCode.TextEditor
 
             if (isEnabled)
             {
-                using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top),
-                        new Point(rect.Right, rect.Bottom),
-                        Color.SkyBlue,
-                        Color.White))
+                using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top), new Point(rect.Right, rect.Bottom), Color.SkyBlue, Color.White))
                 {
                     FillRoundRect(g, brush, rect);
                 }
@@ -200,10 +177,7 @@ namespace ICSharpCode.TextEditor
             {
                 FillRoundRect(g, Brushes.White, rect);
             }
-            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top),
-                    new Point(rect.Right, rect.Bottom),
-                    Color.SkyBlue,
-                    Color.Blue))
+            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top), new Point(rect.Right, rect.Bottom), Color.SkyBlue, Color.Blue))
             {
                 using (Pen pen = new Pen(brush))
                 {
@@ -216,18 +190,12 @@ namespace ICSharpCode.TextEditor
         {
             int delta = TextArea.TextView.FontHeight / 8;
             Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea.TextView.FontHeight - delta * 2);
-            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top),
-                    new Point(rect.Right, rect.Bottom),
-                    Color.LightYellow,
-                    Color.Yellow))
+            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top), new Point(rect.Right, rect.Bottom), Color.LightYellow, Color.Yellow))
             {
                 FillArrow(g, brush, rect);
             }
 
-            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top),
-                    new Point(rect.Right, rect.Bottom),
-                    Color.Yellow,
-                    Color.Brown))
+            using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top), new Point(rect.Right, rect.Bottom), Color.Yellow, Color.Brown))
             {
                 using (Pen pen = new Pen(brush))
                 {
@@ -306,7 +274,7 @@ namespace ICSharpCode.TextEditor
 
         #endregion
 
-        static bool IsLineInsideRegion(int top, int bottom, int regionTop, int regionBottom)
+        bool IsLineInsideRegion(int top, int bottom, int regionTop, int regionBottom)
         {
             if (top >= regionTop && top <= regionBottom)
             {

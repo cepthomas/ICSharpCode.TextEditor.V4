@@ -108,7 +108,7 @@
     <Compile Include="Gui\TextAreaClipboardHandler.cs" />
     <Compile Include="Gui\TextView.cs" />
     <Compile Include="Gui\GutterMargin.cs" />
-    <Compile Include="Gui\AbstractMargin.cs" />
+    <Compile Include="Gui\IMargin.cs" />
     <Compile Include="Undo\IUndoableOperation.cs" />
     <Compile Include="Undo\UndoQueue.cs" />
     <Compile Include="Undo\UndoStack.cs" />

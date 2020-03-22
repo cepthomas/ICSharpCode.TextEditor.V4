@@ -21,78 +21,34 @@ namespace ICSharpCode.TextEditor
     /// </summary>
     public class GutterMargin : IMargin, IDisposable
     {
-        StringFormat numberStringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
-
-
-
-        /////////////// added:
-        public Rectangle DrawingPosition { get; set; }
-        public TextArea TextArea { get; }
-        //    public Document.Document Document { get { return TextArea.Document; } }
-        public Cursor Cursor { get; set; } = Cursors.Default;
+        StringFormat _numberStringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 
         public event MarginPaintEventHandler Painted;
         public event MarginMouseEventHandler MouseDown;
         public event MarginMouseEventHandler MouseMove;
         public event EventHandler MouseLeave;
 
-        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
-        {
-            MouseMove?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseLeave(EventArgs e)
-        {
-            MouseLeave?.Invoke(this, e);
-        }
+        public Rectangle DrawingPosition { get; set; }
 
+        public TextArea TextArea { get; }
 
+        public Cursor Cursor { get; set; } = Cursors.Default;
 
+        public Size Size { get { return new Size(TextArea.TextView.WideSpaceWidth * Math.Max(3, (int)Math.Log10(TextArea.Document.TotalNumberOfLines) + 1), -1); } }
 
+        public bool IsVisible { get { return Shared.TEP.ShowLineNumbers; } }
 
-        //static GutterMargin()
-        //{
-        //    Stream cursorStream = Assembly.GetCallingAssembly().GetManifestResourceStream("ICSharpCode.TextEditor.Resources.RightArrow.cur");
-        //    if (cursorStream == null) throw new Exception("could not find cursor resource");
-        //    RightLeftCursor = new Cursor(cursorStream);
-        //    cursorStream.Close();
-        //}
-
-        public void Dispose()
-        {
-            numberStringFormat.Dispose();
-        }
-
-        //public override Cursor Cursor
-        //{
-        //    get
-        //    {
-        //        return RightLeftCursor;
-        //    }
-        //}
-
-        public Size Size
-        {
-            get
-            {
-                return new Size(TextArea.TextView.WideSpaceWidth * Math.Max(3, (int)Math.Log10(TextArea.Document.TotalNumberOfLines) + 1), -1);
-            }
-        }
-
-        public bool IsVisible
-        {
-            get
-            {
-                return Shared.TEP.ShowLineNumbers;
-            }
-        }
-
-        public GutterMargin(TextArea textArea)// : base(textArea)
+        public GutterMargin(TextArea textArea)
         {
             TextArea = textArea;
 
-            numberStringFormat.LineAlignment = StringAlignment.Far;
-            numberStringFormat.FormatFlags   = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
-                                               StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
+            _numberStringFormat.LineAlignment = StringAlignment.Far;
+            _numberStringFormat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox | StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
+        }
+
+        public void Dispose()
+        {
+            _numberStringFormat.Dispose();
         }
 
         public void Paint(Graphics g, Rectangle rect)
@@ -101,13 +57,15 @@ namespace ICSharpCode.TextEditor
             {
                 return;
             }
+
             HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
             int fontHeight = TextArea.TextView.FontHeight;
             Brush fillBrush = TextArea.Enabled ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder;
             Brush drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
+            
             for (int y = 0; y < (DrawingPosition.Height + TextArea.TextView.VisibleLineDrawingRemainder) / fontHeight + 1; ++y)
             {
-                int ypos = DrawingPosition.Y + fontHeight * y  - TextArea.TextView.VisibleLineDrawingRemainder;
+                int ypos = DrawingPosition.Y + fontHeight * y - TextArea.TextView.VisibleLineDrawingRemainder;
                 Rectangle backgroundRectangle = new Rectangle(DrawingPosition.X, ypos, DrawingPosition.Width, fontHeight);
                 if (rect.IntersectsWith(backgroundRectangle))
                 {
@@ -120,7 +78,7 @@ namespace ICSharpCode.TextEditor
                                      lineNumberPainterColor.GetFont(Shared.FontContainer),
                                      drawBrush,
                                      backgroundRectangle,
-                                     numberStringFormat);
+                                     _numberStringFormat);
                     }
                 }
             }
@@ -137,15 +95,16 @@ namespace ICSharpCode.TextEditor
             if (realline >= 0 && realline < TextArea.Document.TotalNumberOfLines)
             {
                 // shift-select
-                if((Control.ModifierKeys & Keys.Shift) != 0)
+                if ((Control.ModifierKeys & Keys.Shift) != 0)
                 {
-                    if(!TextArea.SelectionManager.HasSomethingSelected && realline != TextArea.Caret.Position.Y)
+                    if (!TextArea.SelectionManager.HasSomethingSelected && realline != TextArea.Caret.Position.Y)
                     {
                         if (realline >= TextArea.Caret.Position.Y)
                         {
                             // at or below starting selection, place the cursor on the next line
                             // nothing is selected so make a new selection from cursor
                             selectionStartPos = TextArea.Caret.Position;
+
                             // whole line selection - start of line to start of next line
                             if (realline < TextArea.Document.TotalNumberOfLines - 1)
                             {
@@ -163,10 +122,11 @@ namespace ICSharpCode.TextEditor
                             // prior lines to starting selection, place the cursor on the same line as the new selection
                             // nothing is selected so make a new selection from cursor
                             selectionStartPos = TextArea.Caret.Position;
+
                             // whole line selection - start of line to start of next line
                             TextArea.SelectionManager.SetSelection(selectionStartPos, new TextLocation(0, realline + 1), isRect);
                             //            textArea.SelectionManager.SetSelection(selectionStartPos, new TextLocation(selectionStartPos.X, selectionStartPos.Y), isRect);
-                //            textArea.SelectionManager.ExtendSelection(new TextLocation(selectionStartPos.X, selectionStartPos.Y), new TextLocation(0, realline), false);
+                            //            textArea.SelectionManager.ExtendSelection(new TextLocation(selectionStartPos.X, selectionStartPos.Y), new TextLocation(0, realline), false);
                             TextArea.Caret.Position = new TextLocation(0, realline);
                         }
                     }
@@ -189,18 +149,26 @@ namespace ICSharpCode.TextEditor
                     // whole line selection - start of line to start of next line
                     if (realline < TextArea.Document.TotalNumberOfLines - 1)
                     {
-                        TextArea.SelectionManager.SetSelection(selectionStartPos, 
-                            new TextLocation(selectionStartPos.X, selectionStartPos.Y + 1), isRect);
+                        TextArea.SelectionManager.SetSelection(selectionStartPos, new TextLocation(selectionStartPos.X, selectionStartPos.Y + 1), isRect);
                         TextArea.Caret.Position = new TextLocation(selectionStartPos.X, selectionStartPos.Y + 1);
                     }
                     else
                     {
-                        TextArea.SelectionManager.SetSelection(new TextLocation(0, realline),
-                            new TextLocation(TextArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y), isRect);
+                        TextArea.SelectionManager.SetSelection(new TextLocation(0, realline), new TextLocation(TextArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y), isRect);
                         TextArea.Caret.Position = new TextLocation(TextArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y);
                     }
                 }
             }
+        }
+
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseMove?.Invoke(this, mousepos, mouseButtons);
+        }
+
+        public void HandleMouseLeave(EventArgs e)
+        {
+            MouseLeave?.Invoke(this, e);
         }
     }
 }
