@@ -89,7 +89,6 @@ namespace ICSharpCode.TextEditor.Util
         /// <summary>
         /// Check tree for consistency and being balanced.
         /// </summary>
-        [Conditional("DATACONSISTENCYTEST")]
         void CheckProperties()
         {
             int blackCount = -1;

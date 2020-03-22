@@ -16,12 +16,12 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public abstract class AbstractLineFormatAction : AbstractEditAction
+    public abstract class AbstractLineFormatAction : IEditAction
     {
         protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int startLine, int endLine);
 
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.SelectionManager.SelectionIsReadonly)
             {
@@ -46,12 +46,12 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public abstract class AbstractSelectionFormatAction : AbstractEditAction
+    public abstract class AbstractSelectionFormatAction : IEditAction
     {
         protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int offset, int length);
 
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.SelectionManager.SelectionIsReadonly)
             {

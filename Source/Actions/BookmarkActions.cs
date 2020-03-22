@@ -10,9 +10,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class ToggleBookmark : AbstractEditAction
+    public class ToggleBookmark : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.Document.BookmarkManager.ToggleMarkAt(textArea.Caret.Position);
             textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, textArea.Caret.Line));
@@ -20,7 +20,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class GotoPrevBookmark : AbstractEditAction
+    public class GotoPrevBookmark : IEditAction
     {
         Predicate<Bookmark> _predicate = null;
 
@@ -29,7 +29,7 @@ namespace ICSharpCode.TextEditor.Actions
             _predicate = predicate;
         }
 
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             Bookmark mark = textArea.Document.BookmarkManager.GetPrevMark(textArea.Caret.Line, _predicate);
             if (mark != null)
@@ -41,7 +41,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class GotoNextBookmark : AbstractEditAction
+    public class GotoNextBookmark : IEditAction
     {
         Predicate<Bookmark> _predicate = null;
 
@@ -50,7 +50,7 @@ namespace ICSharpCode.TextEditor.Actions
             _predicate = predicate;
         }
 
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             Bookmark mark = textArea.Document.BookmarkManager.GetNextMark(textArea.Caret.Line, _predicate);
             if (mark != null)
@@ -62,7 +62,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ClearAllBookmarks : AbstractEditAction
+    public class ClearAllBookmarks : IEditAction
     {
         Predicate<Bookmark> _predicate = null;
 
@@ -71,7 +71,7 @@ namespace ICSharpCode.TextEditor.Actions
             _predicate = predicate;
         }
 
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.Document.BookmarkManager.RemoveMarks(_predicate);
             textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));

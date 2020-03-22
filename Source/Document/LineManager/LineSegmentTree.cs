@@ -310,7 +310,6 @@ namespace ICSharpCode.TextEditor.Document
         }
 
 #if DEBUG_EX
-        [Conditional("DATACONSISTENCYTEST")]
         void CheckProperties()
         {
             if (tree.root == null)

@@ -15,7 +15,7 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class Tab : AbstractEditAction
+    public class Tab : IEditAction
     {
         public static string GetIndentationString(Document.Document document)
         {
@@ -91,7 +91,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.SelectionManager.SelectionIsReadonly)
             {
@@ -128,7 +128,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ShiftTab : AbstractEditAction
+    public class ShiftTab : IEditAction
     {
         void RemoveTabs(Document.Document document, SelectionManager selmgr, int y1, int y2)
         {
@@ -211,7 +211,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
@@ -247,13 +247,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ToggleComment : AbstractEditAction
+    public class ToggleComment : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.Document.ReadOnly)
             {
@@ -271,7 +271,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ToggleLineComment : AbstractEditAction
+    public class ToggleLineComment : IEditAction
     {
         int firstLine;
         int lastLine;
@@ -340,7 +340,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.Document.ReadOnly)
             {
@@ -404,13 +404,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ToggleBlockComment : AbstractEditAction
+    public class ToggleBlockComment : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.Document.ReadOnly)
             {
@@ -605,13 +605,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Backspace : AbstractEditAction
+    public class Backspace : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
@@ -649,7 +649,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Delete : AbstractEditAction
+    public class Delete : IEditAction
     {
         internal static void DeleteSelection(TextArea textArea)
         {
@@ -668,7 +668,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
@@ -707,13 +707,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class MovePageDown : AbstractEditAction
+    public class MovePageDown : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             int curLineNr = textArea.Caret.Line;
             int requestedLineNumber = Math.Min(textArea.Document.GetNextVisibleLineAbove(curLineNr, textArea.TextView.VisibleLineCount), textArea.Document.TotalNumberOfLines - 1);
@@ -726,13 +726,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class MovePageUp : AbstractEditAction
+    public class MovePageUp : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             int curLineNr = textArea.Caret.Line;
             int requestedLineNumber = Math.Max(textArea.Document.GetNextVisibleLineBelow(curLineNr, textArea.TextView.VisibleLineCount), 0);
@@ -744,13 +744,13 @@ namespace ICSharpCode.TextEditor.Actions
             }
         }
     }
-    public class Return : AbstractEditAction
+    public class Return : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="TextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {
@@ -779,13 +779,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ToggleEditMode : AbstractEditAction
+    public class ToggleEditMode : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {
@@ -803,25 +803,25 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Undo : AbstractEditAction
+    public class Undo : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.MotherTextEditorControl.Undo();
         }
     }
 
-    public class Redo : AbstractEditAction
+    public class Redo : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.MotherTextEditorControl.Redo();
         }
@@ -833,13 +833,13 @@ namespace ICSharpCode.TextEditor.Actions
     /// I will implement this as deleting back to the point that ctrl-leftarrow would
     /// take you to
     /// </summary>
-    public class WordBackspace : AbstractEditAction
+    public class WordBackspace : IEditAction
     {
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             // if anything is selected we will just delete it first
             if (textArea.SelectionManager.HasSomethingSelected)
@@ -903,7 +903,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// Executes this edit action
         /// </remarks>
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (textArea.SelectionManager.HasSomethingSelected)
             {
@@ -941,9 +941,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class DeleteLine : AbstractEditAction
+    public class DeleteLine : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             int lineNr = textArea.Caret.Line;
             LineSegment line = textArea.Document.GetLineSegment(lineNr);
@@ -958,9 +958,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class DeleteToLineEnd : AbstractEditAction
+    public class DeleteToLineEnd : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             int lineNr = textArea.Caret.Line;
             LineSegment line = textArea.Document.GetLineSegment(lineNr);
@@ -975,9 +975,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class GotoMatchingBrace : AbstractEditAction
+    public class GotoMatchingBrace : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             Highlight highlight = textArea.FindMatchingBracketHighlight();
             if (highlight != null)

@@ -15,9 +15,9 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class CaretLeft : AbstractEditAction
+    public class CaretLeft : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
             List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldedFoldingsWithEnd(position.Y);
@@ -55,9 +55,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class CaretRight : AbstractEditAction
+    public class CaretRight : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             LineSegment curLine = textArea.Document.GetLineSegment(textArea.Caret.Line);
             TextLocation position = textArea.Caret.Position;
@@ -96,9 +96,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class CaretUp : AbstractEditAction
+    public class CaretUp : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
             int lineNr = position.Y;
@@ -116,9 +116,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class CaretDown : AbstractEditAction
+    public class CaretDown : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
             int lineNr = position.Y;
@@ -141,7 +141,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class WordRight : CaretRight
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             LineSegment line   = textArea.Document.GetLineSegment(textArea.Caret.Position.Y);
             TextLocation oldPos = textArea.Caret.Position;
@@ -181,7 +181,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class WordLeft : CaretLeft
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             TextLocation oldPos = textArea.Caret.Position;
             if (textArea.Caret.Column == 0)
@@ -219,9 +219,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ScrollLineUp : AbstractEditAction
+    public class ScrollLineUp : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
 
@@ -230,9 +230,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ScrollLineDown : AbstractEditAction
+    public class ScrollLineDown : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
             textArea.MotherTextAreaControl.VScrollBar.Value = Math.Min(textArea.MotherTextAreaControl.VScrollBar.Maximum,

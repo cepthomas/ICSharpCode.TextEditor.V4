@@ -16,7 +16,7 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor
 {
-    public class TextAreaClipboardHandler //TODO2 What is all this?
+    public class TextAreaClipboardHandler //TODO2 What is all this? Use System.Windows.Forms.Clipboard
     {
         readonly TextArea textArea;
 

@@ -14,7 +14,7 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class ShiftCaretRight : CaretRight
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftCaretLeft : CaretLeft
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftCaretUp : CaretUp
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -44,7 +44,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftCaretDown : CaretDown
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -54,7 +54,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftWordRight : WordRight
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -64,7 +64,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftWordLeft : WordLeft
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -74,7 +74,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftHome : Home
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -84,7 +84,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftEnd : End
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftMoveToStart : MoveToStart
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -104,7 +104,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftMoveToEnd : MoveToEnd
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -114,7 +114,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftMovePageUp : MovePageUp
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -124,7 +124,7 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftMovePageDown : MovePageDown
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             base.Execute(textArea);
             textArea.AutoClearSelection = false;
@@ -132,9 +132,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class SelectWholeDocument : AbstractEditAction
+    public class SelectWholeDocument : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
             TextLocation endPoint = textArea.Document.OffsetToPosition(textArea.Document.TextLength);
@@ -148,9 +148,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ClearSelection : AbstractEditAction
+    public class ClearSelection : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.SelectionManager.ClearSelection();
         }

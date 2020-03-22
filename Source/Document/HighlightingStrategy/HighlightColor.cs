@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// A color used for highlighting
     /// </summary>
-    public class HighlightColor
+    public class HighlightColor //TODO0 fix this
     {
         #region Properties
         public bool HasForeground { get; } = false;

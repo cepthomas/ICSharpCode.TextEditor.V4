@@ -749,7 +749,7 @@ namespace ICSharpCode.TextEditor
                 {
                     document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
 
-                    // TODO1 this doesn't belong here.
+                    // TODO1 this doesn't belong here. I did it.
                     IFoldingStrategy fs = null;
 
                     if (document.HighlightingStrategy != null)

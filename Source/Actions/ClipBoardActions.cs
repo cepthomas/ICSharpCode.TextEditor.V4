@@ -9,9 +9,9 @@ using System;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class Cut : AbstractEditAction
+    public class Cut : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {
@@ -20,18 +20,18 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Copy : AbstractEditAction
+    public class Copy : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
             textArea.ClipboardHandler.Copy(null, null);
         }
     }
 
-    public class Paste : AbstractEditAction
+    public class Paste : IEditAction
     {
-        public override void Execute(TextArea textArea)
+        public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {
