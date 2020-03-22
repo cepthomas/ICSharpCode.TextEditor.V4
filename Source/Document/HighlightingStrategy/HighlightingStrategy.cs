@@ -16,23 +16,23 @@ namespace ICSharpCode.TextEditor.Document
     public class HighlightingStrategy
     {
         #region Fields
-        HighlightRuleSet defaultRuleSet = null;
+        HighlightRuleSet _defaultRuleSet = null;
 
         // Line state variable
-        protected LineSegment currentLine;
-        protected int currentLineNumber;
+        protected LineSegment _currentLine;
+        protected int _currentLineNumber;
 
         // Span stack state variable
-        protected SpanStack currentSpanStack;
+        protected SpanStack _currentSpanStack;
 
         // Span state variables
-        protected bool inSpan;
-        protected Span activeSpan;
-        protected HighlightRuleSet activeRuleSet;
+        protected bool _inSpan;
+        protected Span _activeSpan;
+        protected HighlightRuleSet _activeRuleSet;
 
         // Line scanning state variables
-        protected int currentOffset;
-        protected int currentLength;
+        protected int _currentOffset;
+        protected int _currentLength;
         #endregion
 
         #region Properties
@@ -98,7 +98,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 if (ruleSet.Name == null)
                 {
-                    defaultRuleSet = ruleSet;
+                    _defaultRuleSet = ruleSet;
                 }
 
                 foreach (Span aSpan in ruleSet.Spans)
@@ -128,7 +128,7 @@ namespace ICSharpCode.TextEditor.Document
                 }
             }
 
-            if (defaultRuleSet == null)
+            if (_defaultRuleSet == null)
             {
                 throw new Exception("No default RuleSet is defined for mode definition " + Name);
             }
@@ -169,7 +169,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public HighlightColor GetColor(Document document, LineSegment currentSegment, int currentOffset, int currentLength)
         {
-            return GetColor(defaultRuleSet, document, currentSegment, currentOffset, currentLength);
+            return GetColor(_defaultRuleSet, document, currentSegment, currentOffset, currentLength);
         }
 
         protected HighlightColor GetColor(HighlightRuleSet ruleSet, Document document, LineSegment currentSegment, int currentOffset, int currentLength)
@@ -192,7 +192,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (aSpan == null)
             {
-                return defaultRuleSet;
+                return _defaultRuleSet;
             }
             else
             {
@@ -231,84 +231,84 @@ namespace ICSharpCode.TextEditor.Document
                     break;                                                // then the last line is not in the collection :)
                 }
 
-                currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
+                _currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
 
-                if (currentSpanStack != null)
+                if (_currentSpanStack != null)
                 {
-                    while (!currentSpanStack.IsEmpty && currentSpanStack.Peek().StopEOL)
+                    while (!_currentSpanStack.IsEmpty && _currentSpanStack.Peek().StopEOL)
                     {
-                        currentSpanStack.Pop();
+                        _currentSpanStack.Pop();
                     }
-                    if (currentSpanStack.IsEmpty) currentSpanStack = null;
+                    if (_currentSpanStack.IsEmpty) _currentSpanStack = null;
                 }
 
-                currentLine = (LineSegment)document.LineSegmentCollection[lineNumber];
+                _currentLine = (LineSegment)document.LineSegmentCollection[lineNumber];
 
-                if (currentLine.Length == -1)   // happens when buffer is empty !
+                if (_currentLine.Length == -1)   // happens when buffer is empty !
                 {
                     return;
                 }
 
-                currentLineNumber = lineNumber;
+                _currentLineNumber = lineNumber;
                 List<TextWord> words = ParseLine(document);
                 // Alex: clear old words
-                if (currentLine.Words != null)
+                if (_currentLine.Words != null)
                 {
-                    currentLine.Words.Clear();
+                    _currentLine.Words.Clear();
                 }
-                currentLine.Words = words;
-                currentLine.HighlightSpanStack = (currentSpanStack == null || currentSpanStack.IsEmpty) ? null : currentSpanStack;
+                _currentLine.Words = words;
+                _currentLine.HighlightSpanStack = (_currentSpanStack == null || _currentSpanStack.IsEmpty) ? null : _currentSpanStack;
 
                 ++lineNumber;
             }
 
             document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
             document.CommitUpdate();
-            currentLine = null;
+            _currentLine = null;
         }
 
         bool MarkTokensInLine(Document document, int lineNumber, ref bool spanChanged)
         {
-            currentLineNumber = lineNumber;
+            _currentLineNumber = lineNumber;
             bool processNextLine = false;
             LineSegment previousLine = (lineNumber > 0 ? document.GetLineSegment(lineNumber - 1) : null);
 
-            currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
-            if (currentSpanStack != null)
+            _currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
+            if (_currentSpanStack != null)
             {
-                while (!currentSpanStack.IsEmpty && currentSpanStack.Peek().StopEOL)
+                while (!_currentSpanStack.IsEmpty && _currentSpanStack.Peek().StopEOL)
                 {
-                    currentSpanStack.Pop();
+                    _currentSpanStack.Pop();
                 }
-                if (currentSpanStack.IsEmpty)
+                if (_currentSpanStack.IsEmpty)
                 {
-                    currentSpanStack = null;
+                    _currentSpanStack = null;
                 }
             }
 
-            currentLine = document.LineSegmentCollection[lineNumber];
+            _currentLine = document.LineSegmentCollection[lineNumber];
 
-            if (currentLine.Length == -1)   // happens when buffer is empty !
+            if (_currentLine.Length == -1)   // happens when buffer is empty !
             {
                 return false;
             }
 
             List<TextWord> words = ParseLine(document);
 
-            if (currentSpanStack != null && currentSpanStack.IsEmpty)
+            if (_currentSpanStack != null && _currentSpanStack.IsEmpty)
             {
-                currentSpanStack = null;
+                _currentSpanStack = null;
             }
 
             // Check if the span state has changed, if so we must re-render the next line
             // This check may seem utterly complicated but I didn't want to introduce any function calls
             // or allocations here for perf reasons.
-            if (currentLine.HighlightSpanStack != currentSpanStack)
+            if (_currentLine.HighlightSpanStack != _currentSpanStack)
             {
-                if (currentLine.HighlightSpanStack == null)
+                if (_currentLine.HighlightSpanStack == null)
                 {
                     processNextLine = false;
-                    foreach (Span sp in currentSpanStack)
+                    foreach (Span sp in _currentSpanStack)
                     {
                         if (!sp.StopEOL)
                         {
@@ -318,10 +318,10 @@ namespace ICSharpCode.TextEditor.Document
                         }
                     }
                 }
-                else if (currentSpanStack == null)
+                else if (_currentSpanStack == null)
                 {
                     processNextLine = false;
-                    foreach (Span sp in currentLine.HighlightSpanStack)
+                    foreach (Span sp in _currentLine.HighlightSpanStack)
                     {
                         if (!sp.StopEOL)
                         {
@@ -333,8 +333,8 @@ namespace ICSharpCode.TextEditor.Document
                 }
                 else
                 {
-                    SpanStack.Enumerator e1 = currentSpanStack.GetEnumerator();
-                    SpanStack.Enumerator e2 = currentLine.HighlightSpanStack.GetEnumerator();
+                    SpanStack.Enumerator e1 = _currentSpanStack.GetEnumerator();
+                    SpanStack.Enumerator e2 = _currentLine.HighlightSpanStack.GetEnumerator();
                     bool done = false;
                     while (!done)
                     {
@@ -388,10 +388,10 @@ namespace ICSharpCode.TextEditor.Document
             }
 
             //// Alex: remove old words
-            if (currentLine.Words != null)
-                currentLine.Words.Clear();
-            currentLine.Words = words;
-            currentLine.HighlightSpanStack = (currentSpanStack != null && !currentSpanStack.IsEmpty) ? currentSpanStack : null;
+            if (_currentLine.Words != null)
+                _currentLine.Words.Clear();
+            _currentLine.Words = words;
+            _currentLine.HighlightSpanStack = (_currentSpanStack != null && !_currentSpanStack.IsEmpty) ? _currentSpanStack : null;
 
             return processNextLine;
         }
@@ -420,7 +420,7 @@ namespace ICSharpCode.TextEditor.Document
                         while (processNextLine && lineNumber < documentLineSegmentCount)
                         {
                             processNextLine = MarkTokensInLine(document, lineNumber, ref spanChanged);
-                            processedLines[currentLine] = true;
+                            processedLines[_currentLine] = true;
                             ++lineNumber;
                         }
                     }
@@ -446,14 +446,14 @@ namespace ICSharpCode.TextEditor.Document
 
             }
             document.CommitUpdate();
-            currentLine = null;
+            _currentLine = null;
         }
 
         void UpdateSpanStateVariables()
         {
-            inSpan = (currentSpanStack != null && !currentSpanStack.IsEmpty);
-            activeSpan = inSpan ? currentSpanStack.Peek() : null;
-            activeRuleSet = GetRuleSet(activeSpan);
+            _inSpan = (_currentSpanStack != null && !_currentSpanStack.IsEmpty);
+            _activeSpan = _inSpan ? _currentSpanStack.Peek() : null;
+            _activeRuleSet = GetRuleSet(_activeSpan);
         }
 
         List<TextWord> ParseLine(Document document)
@@ -461,12 +461,12 @@ namespace ICSharpCode.TextEditor.Document
             List<TextWord> words = new List<TextWord>();
             HighlightColor markNext = null;
 
-            currentOffset = 0;
-            currentLength = 0;
+            _currentOffset = 0;
+            _currentLength = 0;
             UpdateSpanStateVariables();
 
-            int currentLineLength = currentLine.Length;
-            int currentLineOffset = currentLine.Offset;
+            int currentLineLength = _currentLine.Length;
+            int currentLineOffset = _currentLine.Offset;
 
             for (int i = 0; i < currentLineLength; ++i)
             {
@@ -476,52 +476,52 @@ namespace ICSharpCode.TextEditor.Document
                     case '\n':
                     case '\r':
                         PushCurWord(document, ref markNext, words);
-                        ++currentOffset;
+                        ++_currentOffset;
                         break;
 
                     case ' ':
                         PushCurWord(document, ref markNext, words);
-                        if (activeSpan != null && activeSpan.Color.HasBackground)
+                        if (_activeSpan != null && _activeSpan.Color.HasBackground)
                         {
-                            words.Add(new SpaceTextWord(activeSpan.Color));
+                            words.Add(new SpaceTextWord(_activeSpan.Color));
                         }
                         else
                         {
                             words.Add(TextWord.Space);
                         }
-                        ++currentOffset;
+                        ++_currentOffset;
                         break;
 
                     case '\t':
                         PushCurWord(document, ref markNext, words);
-                        if (activeSpan != null && activeSpan.Color.HasBackground)
+                        if (_activeSpan != null && _activeSpan.Color.HasBackground)
                         {
-                            words.Add(new TabTextWord(activeSpan.Color));
+                            words.Add(new TabTextWord(_activeSpan.Color));
                         }
                         else
                         {
                             words.Add(TextWord.Tab);
                         }
-                        ++currentOffset;
+                        ++_currentOffset;
                         break;
 
                     default:
                         {
                             // handle escape characters
                             char escapeCharacter = '\0';
-                            if (activeSpan != null && activeSpan.EscapeCharacter != '\0')
+                            if (_activeSpan != null && _activeSpan.EscapeCharacter != '\0')
                             {
-                                escapeCharacter = activeSpan.EscapeCharacter;
+                                escapeCharacter = _activeSpan.EscapeCharacter;
                             }
-                            else if (activeRuleSet != null)
+                            else if (_activeRuleSet != null)
                             {
-                                escapeCharacter = activeRuleSet.EscapeCharacter;
+                                escapeCharacter = _activeRuleSet.EscapeCharacter;
                             }
                             if (escapeCharacter != '\0' && escapeCharacter == ch)
                             {
                                 // we found the escape character
-                                if (activeSpan != null && activeSpan.End != null && activeSpan.End.Length == 1
-                                        && escapeCharacter == activeSpan.End[0])
+                                if (_activeSpan != null && _activeSpan.End != null && _activeSpan.End.Length == 1
+                                        && escapeCharacter == _activeSpan.End[0])
                                 {
                                     // the escape character is a end-doubling escape character
                                     // it may count as escape only when the next character is the escape, too
@@ -529,7 +529,7 @@ namespace ICSharpCode.TextEditor.Document
                                     {
                                         if (document.GetCharAt(currentLineOffset + i + 1) == escapeCharacter)
                                         {
-                                            currentLength += 2;
+                                            _currentLength += 2;
                                             PushCurWord(document, ref markNext, words);
                                             ++i;
                                             continue;
@@ -539,10 +539,10 @@ namespace ICSharpCode.TextEditor.Document
                                 else
                                 {
                                     // this is a normal \-style escape
-                                    ++currentLength;
+                                    ++_currentLength;
                                     if (i + 1 < currentLineLength)
                                     {
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                     PushCurWord(document, ref markNext, words);
                                     ++i;
@@ -551,7 +551,7 @@ namespace ICSharpCode.TextEditor.Document
                             }
 
                             // highlight digits
-                            if (!inSpan && (Char.IsDigit(ch) || (ch == '.' && i + 1 < currentLineLength && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))) && currentLength == 0)
+                            if (!_inSpan && (Char.IsDigit(ch) || (ch == '.' && i + 1 < currentLineLength && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))) && _currentLength == 0)
                             {
                                 bool ishex = false;
                                 bool isfloatingpoint = false;
@@ -559,34 +559,34 @@ namespace ICSharpCode.TextEditor.Document
                                 if (ch == '0' && i + 1 < currentLineLength && Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1)) == 'X')   // hex digits
                                 {
                                     const string hex = "0123456789ABCDEF";
-                                    ++currentLength;
+                                    ++_currentLength;
                                     ++i; // skip 'x'
-                                    ++currentLength;
+                                    ++_currentLength;
                                     ishex = true;
                                     while (i + 1 < currentLineLength && hex.IndexOf(Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1))) != -1)
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                 }
                                 else
                                 {
-                                    ++currentLength;
+                                    ++_currentLength;
                                     while (i + 1 < currentLineLength && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                 }
                                 if (!ishex && i + 1 < currentLineLength && document.GetCharAt(currentLineOffset + i + 1) == '.')
                                 {
                                     isfloatingpoint = true;
                                     ++i;
-                                    ++currentLength;
+                                    ++_currentLength;
                                     while (i + 1 < currentLineLength && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                 }
 
@@ -594,27 +594,27 @@ namespace ICSharpCode.TextEditor.Document
                                 {
                                     isfloatingpoint = true;
                                     ++i;
-                                    ++currentLength;
-                                    if (i + 1 < currentLineLength && (document.GetCharAt(currentLineOffset + i + 1) == '+' || document.GetCharAt(currentLine.Offset + i + 1) == '-'))
+                                    ++_currentLength;
+                                    if (i + 1 < currentLineLength && (document.GetCharAt(currentLineOffset + i + 1) == '+' || document.GetCharAt(_currentLine.Offset + i + 1) == '-'))
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
-                                    while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))
+                                    while (i + 1 < _currentLine.Length && Char.IsDigit(document.GetCharAt(currentLineOffset + i + 1)))
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                 }
 
-                                if (i + 1 < currentLine.Length)
+                                if (i + 1 < _currentLine.Length)
                                 {
                                     char nextch = Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1));
                                     if (nextch == 'F' || nextch == 'M' || nextch == 'D')
                                     {
                                         isfloatingpoint = true;
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                     }
                                 }
 
@@ -624,42 +624,42 @@ namespace ICSharpCode.TextEditor.Document
                                     if (i + 1 < currentLineLength && Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1)) == 'U')
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                         isunsigned = true;
                                     }
                                     if (i + 1 < currentLineLength && Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1)) == 'L')
                                     {
                                         ++i;
-                                        ++currentLength;
+                                        ++_currentLength;
                                         if (!isunsigned && i + 1 < currentLineLength && Char.ToUpper(document.GetCharAt(currentLineOffset + i + 1)) == 'U')
                                         {
                                             ++i;
-                                            ++currentLength;
+                                            ++_currentLength;
                                         }
                                     }
                                 }
 
-                                words.Add(new TextWord(document, currentLine, currentOffset, currentLength, DigitColor, false));
-                                currentOffset += currentLength;
-                                currentLength = 0;
+                                words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, DigitColor, false));
+                                _currentOffset += _currentLength;
+                                _currentLength = 0;
                                 continue;
                             }
 
                             // Check for SPAN ENDs
-                            if (inSpan)
+                            if (_inSpan)
                             {
-                                if (activeSpan.End != null && activeSpan.End.Length > 0)
+                                if (_activeSpan.End != null && _activeSpan.End.Length > 0)
                                 {
-                                    if (MatchExpr(currentLine, activeSpan.End, i, document, activeSpan.IgnoreCase))
+                                    if (MatchExpr(_currentLine, _activeSpan.End, i, document, _activeSpan.IgnoreCase))
                                     {
                                         PushCurWord(document, ref markNext, words);
-                                        string regex = GetRegString(currentLine, activeSpan.End, i, document);
-                                        currentLength += regex.Length;
-                                        words.Add(new TextWord(document, currentLine, currentOffset, currentLength, activeSpan.EndColor, false));
-                                        currentOffset += currentLength;
-                                        currentLength = 0;
+                                        string regex = GetRegString(_currentLine, _activeSpan.End, i, document);
+                                        _currentLength += regex.Length;
+                                        words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, _activeSpan.EndColor, false));
+                                        _currentOffset += _currentLength;
+                                        _currentLength = 0;
                                         i += regex.Length - 1;
-                                        currentSpanStack.Pop();
+                                        _currentSpanStack.Pop();
                                         UpdateSpanStateVariables();
                                         continue;
                                     }
@@ -667,34 +667,34 @@ namespace ICSharpCode.TextEditor.Document
                             }
 
                             // check for SPAN BEGIN
-                            if (activeRuleSet != null)
+                            if (_activeRuleSet != null)
                             {
-                                foreach (Span span in activeRuleSet.Spans)
+                                foreach (Span span in _activeRuleSet.Spans)
                                 {
-                                    if ((!span.IsBeginSingleWord || currentLength == 0)
-                                            && (!span.IsBeginStartOfLine.HasValue || span.IsBeginStartOfLine.Value == (currentLength == 0 && words.TrueForAll(delegate (TextWord textWord)
+                                    if ((!span.IsBeginSingleWord || _currentLength == 0)
+                                            && (!span.IsBeginStartOfLine.HasValue || span.IsBeginStartOfLine.Value == (_currentLength == 0 && words.TrueForAll(delegate (TextWord textWord)
                                 {
                                     return textWord.Type != TextWordType.Word;
                                 })))
-                                && MatchExpr(currentLine, span.Begin, i, document, activeRuleSet.IgnoreCase))
+                                && MatchExpr(_currentLine, span.Begin, i, document, _activeRuleSet.IgnoreCase))
                                     {
                                         PushCurWord(document, ref markNext, words);
-                                        string regex = GetRegString(currentLine, span.Begin, i, document);
+                                        string regex = GetRegString(_currentLine, span.Begin, i, document);
 
                                         if (!OverrideSpan(regex, document, words, span, ref i))
                                         {
-                                            currentLength += regex.Length;
-                                            words.Add(new TextWord(document, currentLine, currentOffset, currentLength, span.BeginColor, false));
-                                            currentOffset += currentLength;
-                                            currentLength = 0;
+                                            _currentLength += regex.Length;
+                                            words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, span.BeginColor, false));
+                                            _currentOffset += _currentLength;
+                                            _currentLength = 0;
 
                                             i += regex.Length - 1;
-                                            if (currentSpanStack == null)
+                                            if (_currentSpanStack == null)
                                             {
-                                                currentSpanStack = new SpanStack();
+                                                _currentSpanStack = new SpanStack();
                                             }
-                                            currentSpanStack.Push(span);
-                                            span.IgnoreCase = activeRuleSet.IgnoreCase;
+                                            _currentSpanStack.Push(span);
+                                            span.IgnoreCase = _activeRuleSet.IgnoreCase;
 
                                             UpdateSpanStateVariables();
                                         }
@@ -705,18 +705,18 @@ namespace ICSharpCode.TextEditor.Document
                             }
 
                             // check if the char is a delimiter
-                            if (activeRuleSet != null && ch < 256 && activeRuleSet.Delimiters[ch])
+                            if (_activeRuleSet != null && ch < 256 && _activeRuleSet.Delimiters[ch])
                             {
                                 PushCurWord(document, ref markNext, words);
-                                if (currentOffset + currentLength + 1 < currentLine.Length)
+                                if (_currentOffset + _currentLength + 1 < _currentLine.Length)
                                 {
-                                    ++currentLength;
+                                    ++_currentLength;
                                     PushCurWord(document, ref markNext, words);
                                     goto skip;
                                 }
                             }
 
-                            ++currentLength;
+                            ++_currentLength;
                         skip: continue;
                         }
                 }
@@ -724,7 +724,7 @@ namespace ICSharpCode.TextEditor.Document
 
             PushCurWord(document, ref markNext, words);
 
-            OnParsedLine(document, currentLine, words);
+            OnParsedLine(document, _currentLine, words);
 
             return words;
         }
@@ -744,9 +744,9 @@ namespace ICSharpCode.TextEditor.Document
         void PushCurWord(Document document, ref HighlightColor markNext, List<TextWord> words)
         {
             // Svante Lidman : Need to look through the next prev logic.
-            if (currentLength > 0)
+            if (_currentLength > 0)
             {
-                if (words.Count > 0 && activeRuleSet != null)
+                if (words.Count > 0 && _activeRuleSet != null)
                 {
                     TextWord prevWord = null;
                     int pInd = words.Count - 1;
@@ -757,7 +757,7 @@ namespace ICSharpCode.TextEditor.Document
                             prevWord = (TextWord)words[pInd];
                             if (prevWord.HasDefaultColor)
                             {
-                                AdjacentMarker marker = (AdjacentMarker)activeRuleSet.PrevMarkers[document, currentLine, currentOffset, currentLength];
+                                AdjacentMarker marker = (AdjacentMarker)_activeRuleSet.PrevMarkers[document, _currentLine, _currentOffset, _currentLength];
                                 if (marker != null)
                                 {
                                     prevWord.SyntaxColor = marker.Color;
@@ -771,47 +771,47 @@ namespace ICSharpCode.TextEditor.Document
                     }
                 }
 
-                if (inSpan)
+                if (_inSpan)
                 {
                     HighlightColor c = null;
                     bool hasDefaultColor = true;
-                    if (activeSpan.Rule == null)
+                    if (_activeSpan.Rule == null)
                     {
-                        c = activeSpan.Color;
+                        c = _activeSpan.Color;
                     }
                     else
                     {
-                        c = GetColor(activeRuleSet, document, currentLine, currentOffset, currentLength);
+                        c = GetColor(_activeRuleSet, document, _currentLine, _currentOffset, _currentLength);
                         hasDefaultColor = false;
                     }
 
                     if (c == null)
                     {
-                        c = activeSpan.Color;
+                        c = _activeSpan.Color;
                         if (c.Color == Color.Transparent)
                         {
                             c = DefaultTextColor;
                         }
                         hasDefaultColor = true;
                     }
-                    words.Add(new TextWord(document, currentLine, currentOffset, currentLength, markNext != null ? markNext : c, hasDefaultColor));
+                    words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, markNext != null ? markNext : c, hasDefaultColor));
                 }
                 else
                 {
-                    HighlightColor c = markNext != null ? markNext : GetColor(activeRuleSet, document, currentLine, currentOffset, currentLength);
+                    HighlightColor c = markNext != null ? markNext : GetColor(_activeRuleSet, document, _currentLine, _currentOffset, _currentLength);
                     if (c == null)
                     {
-                        words.Add(new TextWord(document, currentLine, currentOffset, currentLength, DefaultTextColor, true));
+                        words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, DefaultTextColor, true));
                     }
                     else
                     {
-                        words.Add(new TextWord(document, currentLine, currentOffset, currentLength, c, false));
+                        words.Add(new TextWord(document, _currentLine, _currentOffset, _currentLength, c, false));
                     }
                 }
 
-                if (activeRuleSet != null)
+                if (_activeRuleSet != null)
                 {
-                    AdjacentMarker nextMarker = (AdjacentMarker)activeRuleSet.NextMarkers[document, currentLine, currentOffset, currentLength];
+                    AdjacentMarker nextMarker = (AdjacentMarker)_activeRuleSet.NextMarkers[document, _currentLine, _currentOffset, _currentLength];
                     if (nextMarker != null)
                     {
                         if (nextMarker.MarkMarker && words.Count > 0)
@@ -826,8 +826,8 @@ namespace ICSharpCode.TextEditor.Document
                         markNext = null;
                     }
                 }
-                currentOffset += currentLength;
-                currentLength = 0;
+                _currentOffset += _currentLength;
+                _currentLength = 0;
             }
         }
 

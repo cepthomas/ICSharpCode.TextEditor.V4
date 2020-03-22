@@ -27,66 +27,40 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class is used for a basic text area control</summary>
     public class TextEditorControl : UserControl
     {
-        protected Panel textAreaPanel = new Panel();
-        TextAreaControl primaryTextArea = null;
-        Splitter textAreaSplitter = null;
-        TextAreaControl secondaryTextArea = null;
-        string currentFileName = null;
-        int updateLevel = 0;
-        Document.Document document;
+        public event EventHandler FileNameChanged;
+
+        protected Panel _textAreaPanel = new Panel();
+
+        TextAreaControl _primaryTextArea = null;
+
+        Splitter _textAreaSplitter = null;
+
+        TextAreaControl _secondaryTextArea = null;
+
+        string _currentFileName = null;
+
+        int _updateLevel = 0;
+
+        Document.Document _document;
 
         /// <summary>
         /// This hashtable contains all editor keys, where
         /// the key is the key combination and the value the
         /// action.
         /// </summary>
-        protected Dictionary<Keys, IEditAction> editactions = new Dictionary<Keys, IEditAction>();
+        protected Dictionary<Keys, IEditAction> _editActions = new Dictionary<Keys, IEditAction>();
 
         bool _dirty = false;
-        /// <summary>Set the dirty flag.</summary>
-        /// <param name="value">New value.</param>
-        /// <returns>True if changed.</returns>
-        public bool SetDirty(bool value)
-        {
-            bool changed = value != _dirty;
-            _dirty = value;
-            return changed;
-        }
 
+        Encoding _encoding;
 
-        //[Browsable(false)]
-        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        //public TextEditorProperties TextEditorProperties
-        //{
-        //    get
-        //    {
-        //        return Shared.TEP;
-        //    }
-        //    set
-        //    {
-        //        Shared.TEP = value;
-        //        OptionsChanged();
-        //    }
-        //}
-
-        Encoding encoding;
 
         /// <value>
         /// Current file's character encoding
         /// </value>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Encoding Encoding
-        {
-            get
-            {
-                return encoding ?? Shared.TEP.Encoding;
-            }
-            set
-            {
-                encoding = value;
-            }
-        }
+        public Encoding Encoding { get { return _encoding ?? Shared.TEP.Encoding; } set { _encoding = value; } }
 
         /// <value>
         /// The current file name
@@ -97,13 +71,13 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return currentFileName;
+                return _currentFileName;
             }
             set
             {
-                if (currentFileName != value)
+                if (_currentFileName != value)
                 {
-                    currentFileName = value;
+                    _currentFileName = value;
                     OnFileNameChanged(EventArgs.Empty);
                 }
             }
@@ -118,26 +92,28 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return document;
+                return _document;
             }
             set
             {
                 if (value == null)
                     throw new ArgumentNullException("value");
-                if (document != null)
+
+                if (_document != null)
                 {
-                    document.DocumentChanged -= OnDocumentChanged;
+                    _document.DocumentChanged -= OnDocumentChanged;
                 }
-                document = value;
-                document.UndoStack.TextEditorControl = this;
-                document.DocumentChanged += OnDocumentChanged;
+                _document = value;
+                _document.UndoStack.TextEditorControl = this;
+                _document.DocumentChanged += OnDocumentChanged;
             }
         }
 
-        void OnDocumentChanged(object sender, EventArgs e)
-        {
-            OnTextChanged(e);
-        }
+        [Browsable(false)]
+        public bool EnableUndo { get { return Document.UndoStack.CanUndo; } }
+
+        [Browsable(false)]
+        public bool EnableRedo { get { return Document.UndoStack.CanRedo; } }
 
         [EditorBrowsable(EditorBrowsableState.Always), Browsable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -167,12 +143,6 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        static Font ParseFont(string font)
-        {
-            string[] descr = font.Split(new char[] { ',', '=' });
-            return new Font(descr[1], Single.Parse(descr[3]));
-        }
-
         /// <value>
         /// If set to true the contents can't be altered.
         /// </value>
@@ -198,7 +168,7 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                return updateLevel > 0;
+                return _updateLevel > 0;
             }
         }
 
@@ -214,7 +184,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        #region Document Properties
+        #region Document Properties TODO1 these
         /// <value>
         /// If true spaces are shown in the textarea
         /// </value>
@@ -571,13 +541,6 @@ namespace ICSharpCode.TextEditor
 
         #endregion
 
-        /// <summary>Get the dirty flag.</summary>
-        /// <returns></returns>
-        public bool GetDirty()
-        {
-            return _dirty;
-        }
-
         public TextAreaControl ActiveTextAreaControl { get; private set; } = null;
 
         protected void SetActiveTextAreaControl(TextAreaControl value)
@@ -600,24 +563,24 @@ namespace ICSharpCode.TextEditor
 
             SetStyle(ControlStyles.ContainerControl, true);
 
-            textAreaPanel.Dock = DockStyle.Fill;
+            _textAreaPanel.Dock = DockStyle.Fill;
 
             //Document = (new DocumentFactory()).CreateDocument();
             //Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy();
             Document = new Document.Document();
 
-            primaryTextArea = new TextAreaControl(this);
-            ActiveTextAreaControl = primaryTextArea;
+            _primaryTextArea = new TextAreaControl(this);
+            ActiveTextAreaControl = _primaryTextArea;
 
-            primaryTextArea.TextArea.GotFocus += delegate
+            _primaryTextArea.TextArea.GotFocus += delegate
             {
-                SetActiveTextAreaControl(primaryTextArea);
+                SetActiveTextAreaControl(_primaryTextArea);
             };
 
-            primaryTextArea.Dock = DockStyle.Fill;
-            textAreaPanel.Controls.Add(primaryTextArea);
-            InitializeTextAreaControl(primaryTextArea);
-            Controls.Add(textAreaPanel);
+            _primaryTextArea.Dock = DockStyle.Fill;
+            _textAreaPanel.Controls.Add(_primaryTextArea);
+            InitializeTextAreaControl(_primaryTextArea);
+            Controls.Add(_textAreaPanel);
             ResizeRedraw = true;
             Document.UpdateCommited += new EventHandler(CommitUpdateRequested);
             OptionsChanged();
@@ -627,9 +590,38 @@ namespace ICSharpCode.TextEditor
         {
         }
 
+        void OnDocumentChanged(object sender, EventArgs e)
+        {
+            OnTextChanged(e);
+        }
+
+        /// <summary>Set the dirty flag.</summary>
+        /// <param name="value">New value.</param>
+        /// <returns>True if changed.</returns>
+        public bool SetDirty(bool value) //TODO1 make this a property.
+        {
+            bool changed = value != _dirty;
+            _dirty = value;
+            return changed;
+        }
+
+        /// <summary>Get the dirty flag.</summary>
+        /// <returns></returns>
+        public bool GetDirty()
+        {
+            return _dirty;
+        }
+
+        //static Font ParseFont(string font)
+        //{
+        //    string[] descr = font.Split(new char[] { ',', '=' });
+        //    return new Font(descr[1], Single.Parse(descr[3]));
+        //}
+
+
         public bool IsEditAction(Keys keyData)
         {
-            return editactions.ContainsKey(keyData);
+            return _editActions.ContainsKey(keyData);
         }
 
         internal IEditAction GetEditAction(Keys keyData)
@@ -638,70 +630,70 @@ namespace ICSharpCode.TextEditor
             {
                 return null;
             }
-            return (IEditAction)editactions[keyData];
+            return (IEditAction)_editActions[keyData];
         }
 
-        void GenerateDefaultActions()
+        void GenerateDefaultActions() //TODO1 get from file/config
         {
-            editactions[Keys.Left] = new CaretLeft();
-            editactions[Keys.Left | Keys.Shift] = new ShiftCaretLeft();
-            editactions[Keys.Left | Keys.Control] = new WordLeft();
-            editactions[Keys.Left | Keys.Control | Keys.Shift] = new ShiftWordLeft();
-            editactions[Keys.Right] = new CaretRight();
-            editactions[Keys.Right | Keys.Shift] = new ShiftCaretRight();
-            editactions[Keys.Right | Keys.Control] = new WordRight();
-            editactions[Keys.Right | Keys.Control | Keys.Shift] = new ShiftWordRight();
-            editactions[Keys.Up] = new CaretUp();
-            editactions[Keys.Up | Keys.Shift] = new ShiftCaretUp();
-            editactions[Keys.Up | Keys.Control] = new ScrollLineUp();
-            editactions[Keys.Down] = new CaretDown();
-            editactions[Keys.Down | Keys.Shift] = new ShiftCaretDown();
-            editactions[Keys.Down | Keys.Control] = new ScrollLineDown();
+            _editActions[Keys.Left] = new CaretLeft();
+            _editActions[Keys.Left | Keys.Shift] = new ShiftCaretLeft();
+            _editActions[Keys.Left | Keys.Control] = new WordLeft();
+            _editActions[Keys.Left | Keys.Control | Keys.Shift] = new ShiftWordLeft();
+            _editActions[Keys.Right] = new CaretRight();
+            _editActions[Keys.Right | Keys.Shift] = new ShiftCaretRight();
+            _editActions[Keys.Right | Keys.Control] = new WordRight();
+            _editActions[Keys.Right | Keys.Control | Keys.Shift] = new ShiftWordRight();
+            _editActions[Keys.Up] = new CaretUp();
+            _editActions[Keys.Up | Keys.Shift] = new ShiftCaretUp();
+            _editActions[Keys.Up | Keys.Control] = new ScrollLineUp();
+            _editActions[Keys.Down] = new CaretDown();
+            _editActions[Keys.Down | Keys.Shift] = new ShiftCaretDown();
+            _editActions[Keys.Down | Keys.Control] = new ScrollLineDown();
 
-            editactions[Keys.Insert] = new ToggleEditMode();
-            editactions[Keys.Insert | Keys.Control] = new Copy();
-            editactions[Keys.Insert | Keys.Shift] = new Paste();
-            editactions[Keys.Delete] = new Delete();
-            editactions[Keys.Delete | Keys.Shift] = new Cut();
-            editactions[Keys.Home] = new Home();
-            editactions[Keys.Home | Keys.Shift] = new ShiftHome();
-            editactions[Keys.Home | Keys.Control] = new MoveToStart();
-            editactions[Keys.Home | Keys.Control | Keys.Shift] = new ShiftMoveToStart();
-            editactions[Keys.End] = new End();
-            editactions[Keys.End | Keys.Shift] = new ShiftEnd();
-            editactions[Keys.End | Keys.Control] = new MoveToEnd();
-            editactions[Keys.End | Keys.Control | Keys.Shift] = new ShiftMoveToEnd();
-            editactions[Keys.PageUp] = new MovePageUp();
-            editactions[Keys.PageUp | Keys.Shift] = new ShiftMovePageUp();
-            editactions[Keys.PageDown] = new MovePageDown();
-            editactions[Keys.PageDown | Keys.Shift] = new ShiftMovePageDown();
+            _editActions[Keys.Insert] = new ToggleEditMode();
+            _editActions[Keys.Insert | Keys.Control] = new Copy();
+            _editActions[Keys.Insert | Keys.Shift] = new Paste();
+            _editActions[Keys.Delete] = new Delete();
+            _editActions[Keys.Delete | Keys.Shift] = new Cut();
+            _editActions[Keys.Home] = new Home();
+            _editActions[Keys.Home | Keys.Shift] = new ShiftHome();
+            _editActions[Keys.Home | Keys.Control] = new MoveToStart();
+            _editActions[Keys.Home | Keys.Control | Keys.Shift] = new ShiftMoveToStart();
+            _editActions[Keys.End] = new End();
+            _editActions[Keys.End | Keys.Shift] = new ShiftEnd();
+            _editActions[Keys.End | Keys.Control] = new MoveToEnd();
+            _editActions[Keys.End | Keys.Control | Keys.Shift] = new ShiftMoveToEnd();
+            _editActions[Keys.PageUp] = new MovePageUp();
+            _editActions[Keys.PageUp | Keys.Shift] = new ShiftMovePageUp();
+            _editActions[Keys.PageDown] = new MovePageDown();
+            _editActions[Keys.PageDown | Keys.Shift] = new ShiftMovePageDown();
 
-            editactions[Keys.Return] = new Return();
-            editactions[Keys.Tab] = new Tab();
-            editactions[Keys.Tab | Keys.Shift] = new ShiftTab();
-            editactions[Keys.Back] = new Backspace();
-            editactions[Keys.Back | Keys.Shift] = new Backspace();
+            _editActions[Keys.Return] = new Return();
+            _editActions[Keys.Tab] = new Tab();
+            _editActions[Keys.Tab | Keys.Shift] = new ShiftTab();
+            _editActions[Keys.Back] = new Backspace();
+            _editActions[Keys.Back | Keys.Shift] = new Backspace();
 
-            editactions[Keys.X | Keys.Control] = new Cut();
-            editactions[Keys.C | Keys.Control] = new Copy();
-            editactions[Keys.V | Keys.Control] = new Paste();
+            _editActions[Keys.X | Keys.Control] = new Cut();
+            _editActions[Keys.C | Keys.Control] = new Copy();
+            _editActions[Keys.V | Keys.Control] = new Paste();
 
-            editactions[Keys.A | Keys.Control] = new SelectWholeDocument();
-            editactions[Keys.Escape] = new ClearSelection();
+            _editActions[Keys.A | Keys.Control] = new SelectWholeDocument();
+            _editActions[Keys.Escape] = new ClearSelection();
 
-            editactions[Keys.Divide | Keys.Control] = new ToggleComment();
-            editactions[Keys.OemQuestion | Keys.Control] = new ToggleComment();
+            _editActions[Keys.Divide | Keys.Control] = new ToggleComment();
+            _editActions[Keys.OemQuestion | Keys.Control] = new ToggleComment();
 
-            editactions[Keys.Back | Keys.Alt] = new Actions.Undo();
-            editactions[Keys.Z | Keys.Control] = new Actions.Undo();
-            editactions[Keys.Y | Keys.Control] = new Redo();
+            _editActions[Keys.Back | Keys.Alt] = new Actions.Undo();
+            _editActions[Keys.Z | Keys.Control] = new Actions.Undo();
+            _editActions[Keys.Y | Keys.Control] = new Redo();
 
-            editactions[Keys.Delete | Keys.Control] = new DeleteWord();
-            editactions[Keys.Back | Keys.Control] = new WordBackspace();
-            editactions[Keys.D | Keys.Control] = new DeleteLine();
-            editactions[Keys.D | Keys.Shift | Keys.Control] = new DeleteToLineEnd();
+            _editActions[Keys.Delete | Keys.Control] = new DeleteWord();
+            _editActions[Keys.Back | Keys.Control] = new WordBackspace();
+            _editActions[Keys.D | Keys.Control] = new DeleteLine();
+            _editActions[Keys.D | Keys.Shift | Keys.Control] = new DeleteToLineEnd();
 
-            editactions[Keys.B | Keys.Control] = new GotoMatchingBrace();
+            _editActions[Keys.B | Keys.Control] = new GotoMatchingBrace();
         }
 
         /// <remarks>
@@ -710,9 +702,8 @@ namespace ICSharpCode.TextEditor
         /// </remarks>
         public void BeginUpdate()
         {
-            ++updateLevel;
+            ++_updateLevel;
         }
-
 
         /// <remarks>
         /// Loads a file given by fileName
@@ -739,22 +730,22 @@ namespace ICSharpCode.TextEditor
         public void LoadFile(string fileName, Stream stream, bool autoLoadHighlighting, bool autodetectEncoding)
         {
             BeginUpdate();
-            document.TextContent = string.Empty;
-            document.UndoStack.ClearAll();
-            document.BookmarkManager.Clear();
+            _document.TextContent = string.Empty;
+            _document.UndoStack.ClearAll();
+            _document.BookmarkManager.Clear();
 
             if (autoLoadHighlighting)
             {
                 try
                 {
-                    document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
+                    _document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
 
                     // TODO1 this doesn't belong here. I did it.
                     IFoldingStrategy fs = null;
 
-                    if (document.HighlightingStrategy != null)
+                    if (_document.HighlightingStrategy != null)
                     {
-                        switch (document.HighlightingStrategy.Folding)
+                        switch (_document.HighlightingStrategy.Folding)
                         {
                             case "Code":
                                 fs = new CodeFoldingStrategy();
@@ -770,7 +761,7 @@ namespace ICSharpCode.TextEditor
                                 break;
                         }
                     }
-                    document.FoldingManager.FoldingStrategy = fs;
+                    _document.FoldingManager.FoldingStrategy = fs;
                 }
                 catch (Exception ex)
                 {
@@ -806,11 +797,12 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public bool CanSaveWithCurrentEncoding()
         {
-            if (encoding == null || Util.FileReader.IsUnicode(encoding))
+            if (_encoding == null || Util.FileReader.IsUnicode(_encoding))
                 return true;
+
             // not a unicode codepage
-            string text = document.TextContent;
-            return encoding.GetString(encoding.GetBytes(text)) == text;
+            string text = _document.TextContent;
+            return _encoding.GetString(_encoding.GetBytes(text)) == text;
         }
 
         /// <remarks>
@@ -822,7 +814,7 @@ namespace ICSharpCode.TextEditor
             {
                 SaveFile(fs);
             }
-            this.FileName = fileName;
+            FileName = fileName;
         }
 
         /// <remarks>
@@ -843,6 +835,7 @@ namespace ICSharpCode.TextEditor
                     char charAfterLine = Document.GetCharAt(line.Offset + line.Length);
                     if (charAfterLine != '\n' && charAfterLine != '\r')
                         throw new InvalidOperationException("The document cannot be saved because it is corrupted.");
+
                     // only save line terminator if the line has one
                     streamWriter.Write(Shared.TEP.LineTerminator);
                 }
@@ -850,17 +843,14 @@ namespace ICSharpCode.TextEditor
             streamWriter.Flush();
         }
 
-
-        // Localization ISSUES
-
-        // used in insight window
-        public virtual string GetRangeDescription(int selectedItem, int itemCount)
-        {
-            StringBuilder sb = new StringBuilder(selectedItem.ToString());
-            sb.Append(" from ");
-            sb.Append(itemCount.ToString());
-            return sb.ToString();
-        }
+        //// used in insight window
+        //public virtual string GetRangeDescription(int selectedItem, int itemCount)
+        //{
+        //    StringBuilder sb = new StringBuilder(selectedItem.ToString());
+        //    sb.Append(" from ");
+        //    sb.Append(itemCount.ToString());
+        //    return sb.ToString();
+        //}
 
         /// <remarks>
         /// Overwritten refresh method that does nothing if the control is in
@@ -875,7 +865,6 @@ namespace ICSharpCode.TextEditor
             base.Refresh();
         }
 
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -883,27 +872,27 @@ namespace ICSharpCode.TextEditor
                 Document.UndoStack.ClearAll();
                 Document.UpdateCommited -= new EventHandler(CommitUpdateRequested);
 
-                if (textAreaPanel != null)
+                if (_textAreaPanel != null)
                 {
-                    if (secondaryTextArea != null)
+                    if (_secondaryTextArea != null)
                     {
-                        secondaryTextArea.Dispose();
-                        textAreaSplitter.Dispose();
-                        secondaryTextArea = null;
-                        textAreaSplitter = null;
+                        _secondaryTextArea.Dispose();
+                        _textAreaSplitter.Dispose();
+                        _secondaryTextArea = null;
+                        _textAreaSplitter = null;
                     }
 
-                    if (primaryTextArea != null)
+                    if (_primaryTextArea != null)
                     {
-                        primaryTextArea.Dispose();
+                        _primaryTextArea.Dispose();
                     }
 
-                    textAreaPanel.Dispose();
-                    textAreaPanel = null;
+                    _textAreaPanel.Dispose();
+                    _textAreaPanel = null;
                 }
 
-                document.HighlightingStrategy = null;
-                document.UndoStack.TextEditorControl = null;
+                _document.HighlightingStrategy = null;
+                _document.UndoStack.TextEditorControl = null;
             }
 
             base.Dispose(disposing);
@@ -911,74 +900,52 @@ namespace ICSharpCode.TextEditor
 
         protected virtual void OnFileNameChanged(EventArgs e)
         {
-            if (FileNameChanged != null)
-            {
-                FileNameChanged(this, e);
-            }
+            FileNameChanged?.Invoke(this, e);
         }
-
-        public event EventHandler FileNameChanged;
-
-
-
-
-
 
         public void OptionsChanged()
         {
-            primaryTextArea.OptionsChanged();
-            if (secondaryTextArea != null)
+            _primaryTextArea.OptionsChanged();
+            if (_secondaryTextArea != null)
             {
-                secondaryTextArea.OptionsChanged();
+                _secondaryTextArea.OptionsChanged();
             }
         }
 
         public void Split()
         {
-            if (secondaryTextArea == null)
+            if (_secondaryTextArea == null)
             {
-                secondaryTextArea = new TextAreaControl(this);
-                secondaryTextArea.Dock = DockStyle.Bottom;
-                secondaryTextArea.Height = Height / 2;
+                _secondaryTextArea = new TextAreaControl(this);
+                _secondaryTextArea.Dock = DockStyle.Bottom;
+                _secondaryTextArea.Height = Height / 2;
 
-                secondaryTextArea.TextArea.GotFocus += delegate
+                _secondaryTextArea.TextArea.GotFocus += delegate
                 {
-                    SetActiveTextAreaControl(secondaryTextArea);
+                    SetActiveTextAreaControl(_secondaryTextArea);
                 };
 
-                textAreaSplitter = new Splitter();
-                textAreaSplitter.BorderStyle = BorderStyle.FixedSingle;
-                textAreaSplitter.Height = 8;
-                textAreaSplitter.Dock = DockStyle.Bottom;
-                textAreaPanel.Controls.Add(textAreaSplitter);
-                textAreaPanel.Controls.Add(secondaryTextArea);
-                InitializeTextAreaControl(secondaryTextArea);
-                secondaryTextArea.OptionsChanged();
+                _textAreaSplitter = new Splitter();
+                _textAreaSplitter.BorderStyle = BorderStyle.FixedSingle;
+                _textAreaSplitter.Height = 8;
+                _textAreaSplitter.Dock = DockStyle.Bottom;
+                _textAreaPanel.Controls.Add(_textAreaSplitter);
+                _textAreaPanel.Controls.Add(_secondaryTextArea);
+                InitializeTextAreaControl(_secondaryTextArea);
+                _secondaryTextArea.OptionsChanged();
             }
             else
             {
-                SetActiveTextAreaControl(primaryTextArea);
+                SetActiveTextAreaControl(_primaryTextArea);
 
-                textAreaPanel.Controls.Remove(secondaryTextArea);
-                textAreaPanel.Controls.Remove(textAreaSplitter);
+                _textAreaPanel.Controls.Remove(_secondaryTextArea);
+                _textAreaPanel.Controls.Remove(_textAreaSplitter);
 
-                secondaryTextArea.Dispose();
-                textAreaSplitter.Dispose();
-                secondaryTextArea = null;
-                textAreaSplitter = null;
+                _secondaryTextArea.Dispose();
+                _textAreaSplitter.Dispose();
+                _secondaryTextArea = null;
+                _textAreaSplitter = null;
             }
-        }
-
-        [Browsable(false)]
-        public bool EnableUndo
-        {
-            get { return Document.UndoStack.CanUndo; }
-        }
-
-        [Browsable(false)]
-        public bool EnableRedo
-        {
-            get { return Document.UndoStack.CanRedo; }
         }
 
         public void Undo()
@@ -994,11 +961,11 @@ namespace ICSharpCode.TextEditor
                 Document.UndoStack.Undo();
 
                 Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
-                this.primaryTextArea.TextArea.UpdateMatchingBracket();
+                this._primaryTextArea.TextArea.UpdateMatchingBracket();
 
-                if (secondaryTextArea != null)
+                if (_secondaryTextArea != null)
                 {
-                    this.secondaryTextArea.TextArea.UpdateMatchingBracket();
+                    this._secondaryTextArea.TextArea.UpdateMatchingBracket();
                 }
                 EndUpdate();
             }
@@ -1017,17 +984,15 @@ namespace ICSharpCode.TextEditor
                 Document.UndoStack.Redo();
 
                 Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
-                this.primaryTextArea.TextArea.UpdateMatchingBracket();
-                if (secondaryTextArea != null)
+                _primaryTextArea.TextArea.UpdateMatchingBracket();
+                if (_secondaryTextArea != null)
                 {
-                    this.secondaryTextArea.TextArea.UpdateMatchingBracket();
+                    _secondaryTextArea.TextArea.UpdateMatchingBracket();
                 }
 
                 EndUpdate();
             }
         }
-
-        #region Update Methods
 
         /// <remarks>
         /// Call this method to 'unlock' the text area. After this call
@@ -1037,7 +1002,7 @@ namespace ICSharpCode.TextEditor
         public void EndUpdate()//override
         {
             //Debug.Assert(updateLevel > 0);
-            updateLevel = Math.Max(0, updateLevel - 1);
+            _updateLevel = Math.Max(0, _updateLevel - 1);
 
             Document.CommitUpdate();
             if (!IsInUpdate)
@@ -1058,43 +1023,43 @@ namespace ICSharpCode.TextEditor
                 switch (update.TextAreaUpdateType)
                 {
                     case TextAreaUpdateType.PositionToEnd:
-                        this.primaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
-                        if (this.secondaryTextArea != null)
+                        this._primaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
+                        if (this._secondaryTextArea != null)
                         {
-                            this.secondaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
+                            this._secondaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.PositionToLineEnd:
                     case TextAreaUpdateType.SingleLine:
-                        this.primaryTextArea.TextArea.UpdateLine(update.Position.Y);
-                        if (this.secondaryTextArea != null)
+                        this._primaryTextArea.TextArea.UpdateLine(update.Position.Y);
+                        if (this._secondaryTextArea != null)
                         {
-                            this.secondaryTextArea.TextArea.UpdateLine(update.Position.Y);
+                            this._secondaryTextArea.TextArea.UpdateLine(update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.SinglePosition:
-                        this.primaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
-                        if (this.secondaryTextArea != null)
+                        this._primaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
+                        if (this._secondaryTextArea != null)
                         {
-                            this.secondaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
+                            this._secondaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
                         }
                         break;
 
                     case TextAreaUpdateType.LinesBetween:
-                        this.primaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
-                        if (this.secondaryTextArea != null)
+                        this._primaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
+                        if (this._secondaryTextArea != null)
                         {
-                            this.secondaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
+                            this._secondaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.WholeTextArea:
-                        this.primaryTextArea.TextArea.Invalidate();
-                        if (this.secondaryTextArea != null)
+                        this._primaryTextArea.TextArea.Invalidate();
+                        if (this._secondaryTextArea != null)
                         {
-                            this.secondaryTextArea.TextArea.Invalidate();
+                            this._secondaryTextArea.TextArea.Invalidate();
                         }
                         break;
                 }
@@ -1102,6 +1067,5 @@ namespace ICSharpCode.TextEditor
 
             Document.UpdateQueue.Clear();
         }
-        #endregion
     }
 }

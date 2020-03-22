@@ -34,3 +34,22 @@ Things that have changed from the original (so far):
 - Removed some hierarchy and abstraction. Because.
 - Removed code tools, like completion etc.
 
+
+Features to add
+- line: delete, dupe, swap, indent/outdent, ...
+- Lines: trim, sort, remove empty, unique, dupe, 
+- Projects: ignore/hide files/folders, 
+- show images - needs new renderer
+- rect and multi-cursor select/edit
+- minimap
+- search/replace, in files, quick search
+- bookmarks
+- fancy menu system, keymaps
+- structures/persist/bultin-user: colors/theme, key maps, syntax/colors,  
+- brace matching
+- scripting
+- console/repl/builder, ...
+- ? dragndrop files
+- ? folding
+- ? formatting strategy
+- split H/v, w/wo sync scrolling.

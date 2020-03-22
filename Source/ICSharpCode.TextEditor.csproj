@@ -140,6 +140,7 @@
     <Compile Include="Gui\ToolTipRequestEventArgs.cs" />
     <Compile Include="Document\HighlightingStrategy\SpanStack.cs" />
     <Compile Include="Util\WeakCollection.cs" />
+    <None Include="Document.cd" />
     <None Include="SyntaxDefinition\BAT-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -186,6 +187,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Top.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

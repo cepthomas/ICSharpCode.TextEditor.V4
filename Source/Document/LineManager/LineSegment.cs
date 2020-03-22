@@ -15,7 +15,9 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class LineSegment : ISegment
     {
-        internal LineSegmentTree.Enumerator treeEntry;
+        internal LineSegmentTree.Enumerator _treeEntry;
+
+        Util.WeakCollection<TextAnchor> _anchors;
 
         public TextWord GetWord(int column)
         {
@@ -35,7 +37,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return !treeEntry.IsValid;
+                return !_treeEntry.IsValid;
             }
         }
 
@@ -43,7 +45,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return treeEntry.CurrentIndex;
+                return _treeEntry.CurrentIndex;
             }
         }
 
@@ -51,7 +53,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             get
             {
-                return treeEntry.CurrentOffset;
+                return _treeEntry.CurrentOffset;
             }
 
             set { }
@@ -104,7 +106,6 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         #region Anchor management
-        Util.WeakCollection<TextAnchor> anchors;
 
         public TextAnchor CreateAnchor(int column)
         {
@@ -119,10 +120,10 @@ namespace ICSharpCode.TextEditor.Document
         {
             //Debug.Assert(anchor.Line == this);
 
-            if (anchors == null)
-                anchors = new Util.WeakCollection<TextAnchor>();
+            if (_anchors == null)
+                _anchors = new Util.WeakCollection<TextAnchor>();
 
-            anchors.Add(anchor);
+            _anchors.Add(anchor);
         }
 
         /// <summary>
@@ -131,14 +132,14 @@ namespace ICSharpCode.TextEditor.Document
         internal void Deleted(ref DeferredEventList deferredEventList)
         {
             //Console.WriteLine("Deleted");
-            treeEntry = LineSegmentTree.Enumerator.Invalid;
-            if (anchors != null)
+            _treeEntry = LineSegmentTree.Enumerator.Invalid;
+            if (_anchors != null)
             {
-                foreach (TextAnchor a in anchors)
+                foreach (TextAnchor a in _anchors)
                 {
                     a.Delete(ref deferredEventList);
                 }
-                anchors = null;
+                _anchors = null;
             }
         }
 
@@ -152,10 +153,10 @@ namespace ICSharpCode.TextEditor.Document
             //Debug.Assert(length > 0);
 
             //Console.WriteLine("RemovedLinePart " + startColumn + ", " + length);
-            if (anchors != null)
+            if (_anchors != null)
             {
                 List<TextAnchor> deletedAnchors = null;
-                foreach (TextAnchor a in anchors)
+                foreach (TextAnchor a in _anchors)
                 {
                     if (a.ColumnNumber > startColumn)
                     {
@@ -176,7 +177,7 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     foreach (TextAnchor a in deletedAnchors)
                     {
-                        anchors.Remove(a);
+                        _anchors.Remove(a);
                     }
                 }
             }
@@ -192,9 +193,9 @@ namespace ICSharpCode.TextEditor.Document
             //Debug.Assert(length > 0);
 
             //Console.WriteLine("InsertedLinePart " + startColumn + ", " + length);
-            if (anchors != null)
+            if (_anchors != null)
             {
-                foreach (TextAnchor a in anchors)
+                foreach (TextAnchor a in _anchors)
                 {
                     if (a.MovementType == AnchorMovementType.BeforeInsertion
                             ? a.ColumnNumber > startColumn
@@ -217,15 +218,15 @@ namespace ICSharpCode.TextEditor.Document
         {
             //Console.WriteLine("MergedWith");
 
-            if (deletedLine.anchors != null)
+            if (deletedLine._anchors != null)
             {
-                foreach (TextAnchor a in deletedLine.anchors)
+                foreach (TextAnchor a in deletedLine._anchors)
                 {
                     a.Line = this;
                     AddAnchor(a);
                     a.ColumnNumber += firstLineLength;
                 }
-                deletedLine.anchors = null;
+                deletedLine._anchors = null;
             }
         }
 
@@ -236,10 +237,10 @@ namespace ICSharpCode.TextEditor.Document
         {
             //Console.WriteLine("SplitTo");
 
-            if (anchors != null)
+            if (_anchors != null)
             {
                 List<TextAnchor> movedAnchors = null;
-                foreach (TextAnchor a in anchors)
+                foreach (TextAnchor a in _anchors)
                 {
                     if (a.MovementType == AnchorMovementType.BeforeInsertion
                             ? a.ColumnNumber > this.Length
@@ -258,7 +259,7 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     foreach (TextAnchor a in movedAnchors)
                     {
-                        anchors.Remove(a);
+                        _anchors.Remove(a);
                     }
                 }
             }

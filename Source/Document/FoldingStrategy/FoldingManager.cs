@@ -14,20 +14,25 @@ namespace ICSharpCode.TextEditor.Document
 {
     public class FoldingManager
     {
-        List<FoldMarker> foldMarker = new List<FoldMarker>();
-        List<FoldMarker> foldMarkerByEnd = new List<FoldMarker>();
-        readonly Document document;
+        public event EventHandler FoldingsChanged;
 
-        public IList<FoldMarker> FoldMarker
-        {
-            get { return foldMarker.AsReadOnly(); }
-        }
+        List<FoldMarker> _foldMarker = new List<FoldMarker>();
+
+        List<FoldMarker> _foldMarkerByEnd = new List<FoldMarker>();
+
+        readonly Document _document;
+
+
+
+        public IList<FoldMarker> FoldMarker { get { return _foldMarker.AsReadOnly(); } }
 
         public IFoldingStrategy FoldingStrategy { get; set; } = null;
 
+
+
         internal FoldingManager(Document document, LineManager lineTracker)
         {
-            this.document = document;
+            this._document = document;
             document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
 
 //			lineTracker.LineCountChanged  += new LineManagerEventHandler(LineManagerLineCountChanged);
@@ -50,22 +55,22 @@ namespace ICSharpCode.TextEditor.Document
 
         void DocumentChanged(object sender, DocumentEventArgs e)
         {
-            int oldCount = foldMarker.Count;
-            document.UpdateSegmentListOnDocumentChange(foldMarker, e);
-            if (oldCount != foldMarker.Count)
+            int oldCount = _foldMarker.Count;
+            _document.UpdateSegmentListOnDocumentChange(_foldMarker, e);
+            if (oldCount != _foldMarker.Count)
             {
-                document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+                _document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
             }
         }
 
         public List<FoldMarker> GetFoldingsFromPosition(int line, int column)
         {
             List<FoldMarker> foldings = new List<FoldMarker>();
-            if (foldMarker != null)
+            if (_foldMarker != null)
             {
-                for (int i = 0; i < foldMarker.Count; ++i)
+                for (int i = 0; i < _foldMarker.Count; ++i)
                 {
-                    FoldMarker fm = foldMarker[i];
+                    FoldMarker fm = _foldMarker[i];
                     if ((fm.StartLine == line && column > fm.StartColumn && !(fm.EndLine == line && column >= fm.EndColumn)) ||
                             (fm.EndLine == line && column < fm.EndColumn && !(fm.StartLine == line && column <= fm.StartColumn)) ||
                             (line > fm.StartLine && line < fm.EndLine))
@@ -111,16 +116,16 @@ namespace ICSharpCode.TextEditor.Document
         {
             List<FoldMarker> foldings = new List<FoldMarker>();
 
-            if (foldMarker != null)
+            if (_foldMarker != null)
             {
-                int index = foldMarker.BinarySearch(
-                                new FoldMarker(document, lineNumber, column, lineNumber, column),
+                int index = _foldMarker.BinarySearch(
+                                new FoldMarker(_document, lineNumber, column, lineNumber, column),
                                 StartComparer.Instance);
                 if (index < 0) index = ~index;
 
-                for (; index < foldMarker.Count; index++)
+                for (; index < _foldMarker.Count; index++)
                 {
-                    FoldMarker fm = foldMarker[index];
+                    FoldMarker fm = _foldMarker[index];
                     if (fm.StartLine > lineNumber)
                         break;
                     if (fm.StartColumn <= column)
@@ -151,14 +156,14 @@ namespace ICSharpCode.TextEditor.Document
         {
             List<FoldMarker> foldings = new List<FoldMarker>();
 
-            if (foldMarker != null)
+            if (_foldMarker != null)
             {
-                int index =  foldMarkerByEnd.BinarySearch(new FoldMarker(document, lineNumber, column, lineNumber, column), EndComparer.Instance);
+                int index =  _foldMarkerByEnd.BinarySearch(new FoldMarker(_document, lineNumber, column, lineNumber, column), EndComparer.Instance);
                 if (index < 0) index = ~index;
 
-                for (; index < foldMarkerByEnd.Count; index++)
+                for (; index < _foldMarkerByEnd.Count; index++)
                 {
-                    FoldMarker fm = foldMarkerByEnd[index];
+                    FoldMarker fm = _foldMarkerByEnd[index];
                     if (fm.EndLine > lineNumber)
                         break;
                     if (fm.EndColumn <= column)
@@ -193,9 +198,9 @@ namespace ICSharpCode.TextEditor.Document
         public List<FoldMarker> GetFoldingsContainsLineNumber(int lineNumber)
         {
             List<FoldMarker> foldings = new List<FoldMarker>();
-            if (foldMarker != null)
+            if (_foldMarker != null)
             {
-                foreach (FoldMarker fm in foldMarker)
+                foreach (FoldMarker fm in _foldMarker)
                 {
                     if (fm.StartLine < lineNumber && lineNumber < fm.EndLine)
                     {
@@ -224,10 +229,10 @@ namespace ICSharpCode.TextEditor.Document
         public List<FoldMarker> GetTopLevelFoldedFoldings()
         {
             List<FoldMarker> foldings = new List<FoldMarker>();
-            if (foldMarker != null)
+            if (_foldMarker != null)
             {
                 Point end = new Point(0, 0);
-                foreach (FoldMarker fm in foldMarker)
+                foreach (FoldMarker fm in _foldMarker)
                 {
                     if (fm.IsFolded && (fm.StartLine > end.Y || fm.StartLine == end.Y && fm.StartColumn >= end.X))
                     {
@@ -243,32 +248,32 @@ namespace ICSharpCode.TextEditor.Document
         {
             if(FoldingStrategy != null)
             {
-                var ff = FoldingStrategy.GenerateFoldMarkers(document/*, fileName, parseInfo*/);
+                var ff = FoldingStrategy.GenerateFoldMarkers(_document/*, fileName, parseInfo*/);
                 UpdateFoldings(ff);
             }
         }
 
         public void UpdateFoldings(List<FoldMarker> newFoldings)
         {
-            int oldFoldingsCount = foldMarker.Count;
+            int oldFoldingsCount = _foldMarker.Count;
             lock (this)
             {
                 if (newFoldings != null && newFoldings.Count != 0)
                 {
                     newFoldings.Sort();
-                    if (foldMarker.Count == newFoldings.Count)
+                    if (_foldMarker.Count == newFoldings.Count)
                     {
-                        for (int i = 0; i < foldMarker.Count; ++i)
+                        for (int i = 0; i < _foldMarker.Count; ++i)
                         {
-                            newFoldings[i].IsFolded = foldMarker[i].IsFolded;
+                            newFoldings[i].IsFolded = _foldMarker[i].IsFolded;
                         }
-                        foldMarker = newFoldings;
+                        _foldMarker = newFoldings;
                     }
                     else
                     {
-                        for (int i = 0, j = 0; i < foldMarker.Count && j < newFoldings.Count;)
+                        for (int i = 0, j = 0; i < _foldMarker.Count && j < newFoldings.Count;)
                         {
-                            int n = newFoldings[j].CompareTo(foldMarker[i]);
+                            int n = newFoldings[j].CompareTo(_foldMarker[i]);
                             if (n > 0)
                             {
                                 ++i;
@@ -277,7 +282,7 @@ namespace ICSharpCode.TextEditor.Document
                             {
                                 if (n == 0)
                                 {
-                                    newFoldings[j].IsFolded = foldMarker[i].IsFolded;
+                                    newFoldings[j].IsFolded = _foldMarker[i].IsFolded;
                                 }
                                 ++j;
                             }
@@ -286,27 +291,27 @@ namespace ICSharpCode.TextEditor.Document
                 }
                 if (newFoldings != null)
                 {
-                    foldMarker = newFoldings;
-                    foldMarkerByEnd = new List<FoldMarker>(newFoldings);
-                    foldMarkerByEnd.Sort(EndComparer.Instance);
+                    _foldMarker = newFoldings;
+                    _foldMarkerByEnd = new List<FoldMarker>(newFoldings);
+                    _foldMarkerByEnd.Sort(EndComparer.Instance);
                 }
                 else
                 {
-                    foldMarker.Clear();
-                    foldMarkerByEnd.Clear();
+                    _foldMarker.Clear();
+                    _foldMarkerByEnd.Clear();
                 }
             }
-            if (oldFoldingsCount != foldMarker.Count)
+            if (oldFoldingsCount != _foldMarker.Count)
             {
-                document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
-                document.CommitUpdate();
+                _document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+                _document.CommitUpdate();
             }
         }
 
         public string SerializeToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (FoldMarker marker in this.foldMarker)
+            foreach (FoldMarker marker in this._foldMarker)
             {
                 sb.Append(marker.Offset);
                 sb.Append("\n");
@@ -332,7 +337,7 @@ namespace ICSharpCode.TextEditor.Document
                     string text   = lines[i + 2];
                     bool isFolded = Boolean.Parse(lines[i + 3]);
                     bool found    = false;
-                    foreach (FoldMarker marker in foldMarker)
+                    foreach (FoldMarker marker in _foldMarker)
                     {
                         if (marker.Offset == offset && marker.Length == length)
                         {
@@ -343,7 +348,7 @@ namespace ICSharpCode.TextEditor.Document
                     }
                     if (!found)
                     {
-                        foldMarker.Add(new FoldMarker(document, offset, length, text, isFolded));
+                        _foldMarker.Add(new FoldMarker(_document, offset, length, text, isFolded));
                     }
                 }
                 if (lines.Length > 0)
@@ -363,8 +368,5 @@ namespace ICSharpCode.TextEditor.Document
                 FoldingsChanged(this, e);
             }
         }
-
-
-        public event EventHandler FoldingsChanged;
     }
 }

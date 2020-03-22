@@ -132,10 +132,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public UndoStack UndoStack { get; } = new UndoStack();
 
-        public IList<LineSegment> LineSegmentCollection
-        {
-            get { return LineManager.LineSegmentCollection; }
-        }
+        public IList<LineSegment> LineSegmentCollection { get { return LineManager.LineSegmentCollection; } }
 
         public bool ReadOnly { get; set; } = false;
 

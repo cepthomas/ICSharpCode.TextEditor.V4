@@ -19,13 +19,28 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class paints the textarea.</summary>
     public class TextView : IMargin, IDisposable
     {
+        // split words after 1000 characters. Fixes GDI+ crash on very longs words, for example a 100 KB Base64-file without any line breaks.
+        const int MAX_WORD_LEN = 1000;
+        const int MAX_CACHE_SIZE = 2000;
+
         const int ADDITIONAL_FOLD_TEXT_SIZE = 1;
+
+        const int MIN_TAB_WIDTH = 4;
+
+        // Important: Some flags combinations work on WinXP, but not on Win2000.
+        // Make sure to test changes here on all operating systems.
+        const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.PreserveGraphicsClipping;
 
         int _physicalColumn = 0; // used for calculating physical column during paint
 
         Font _lastFont; //TODO1 only monospace fonts
 
-        Dictionary<Font, Dictionary<char, int>> _fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
+        readonly Dictionary<Font, Dictionary<char, int>> _fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
+
+        readonly Dictionary<WordFontPair, int> _measureCache = new Dictionary<WordFontPair, int>();
+
+        readonly List<MarkerToDraw> _markersToDraw = new List<MarkerToDraw>();
+
 
         public event MarginPaintEventHandler Painted;
         public event MarginMouseEventHandler MouseDown;
@@ -86,7 +101,7 @@ namespace ICSharpCode.TextEditor
 
         public void Dispose()
         {
-            measureCache.Clear();
+            _measureCache.Clear();
             //measureStringFormat.Dispose();
         }
 
@@ -311,17 +326,16 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        List<MarkerToDraw> markersToDraw = new List<MarkerToDraw>();
 
         void DrawMarker(Graphics g, TextMarker marker, RectangleF drawingRect)
         {
             // draw markers later so they can overdraw the following text
-            markersToDraw.Add(new MarkerToDraw(marker, drawingRect));
+            _markersToDraw.Add(new MarkerToDraw(marker, drawingRect));
         }
 
         void DrawMarkerDraw(Graphics g)
         {
-            foreach (MarkerToDraw m in markersToDraw)
+            foreach (MarkerToDraw m in _markersToDraw)
             {
                 TextMarker marker = m.marker;
                 RectangleF drawingRect = m.drawingRect;
@@ -347,7 +361,7 @@ namespace ICSharpCode.TextEditor
                         break;
                 }
             }
-            markersToDraw.Clear();
+            _markersToDraw.Clear();
         }
 
         /// <summary>Get the marker brush (for solid block markers) at a given position.</summary>
@@ -539,7 +553,7 @@ namespace ICSharpCode.TextEditor
                     _physicalColumn += Shared.TEP.TabIndent;
                     _physicalColumn = (_physicalColumn / Shared.TEP.TabIndent) * Shared.TEP.TabIndent;
                     // go to next tabstop
-                    int physicalTabEnd = ((physicalXPos + MinTabWidth - lineRectangle.X)
+                    int physicalTabEnd = ((physicalXPos + MIN_TAB_WIDTH - lineRectangle.X)
                                           / WideSpaceWidth / Shared.TEP.TabIndent)
                                          * WideSpaceWidth * Shared.TEP.TabIndent + lineRectangle.X;
                     physicalTabEnd += WideSpaceWidth * Shared.TEP.TabIndent;
@@ -610,15 +624,15 @@ namespace ICSharpCode.TextEditor
                 return 0;
             }
 
-            if (word.Length > MaximumWordLength)
+            if (word.Length > MAX_WORD_LEN)
             {
                 int width = 0;
-                for (int i = 0; i < word.Length; i += MaximumWordLength)
+                for (int i = 0; i < word.Length; i += MAX_WORD_LEN)
                 {
                     Point pos = position;
                     pos.X += width;
-                    if (i + MaximumWordLength < word.Length)
-                        width += DrawDocumentWord(g, word.Substring(i, MaximumWordLength), pos, font, foreColor, backBrush);
+                    if (i + MAX_WORD_LEN < word.Length)
+                        width += DrawDocumentWord(g, word.Substring(i, MAX_WORD_LEN), pos, font, foreColor, backBrush);
                     else
                         width += DrawDocumentWord(g, word.Substring(i, word.Length - i), pos, font, foreColor, backBrush);
                 }
@@ -660,13 +674,6 @@ namespace ICSharpCode.TextEditor
             //}
         }
 
-        Dictionary<WordFontPair, int> measureCache = new Dictionary<WordFontPair, int>();
-
-        // split words after 1000 characters. Fixes GDI+ crash on very longs words, for example
-        // a 100 KB Base64-file without any line breaks.
-        const int MaximumWordLength = 1000;
-        const int MaximumCacheSize = 2000;
-
         int MeasureStringWidth(Graphics g, string word, Font font)
         {
             int width;
@@ -674,27 +681,27 @@ namespace ICSharpCode.TextEditor
             if (word == null || word.Length == 0)
                 return 0;
 
-            if (word.Length > MaximumWordLength)
+            if (word.Length > MAX_WORD_LEN)
             {
                 width = 0;
-                for (int i = 0; i < word.Length; i += MaximumWordLength)
+                for (int i = 0; i < word.Length; i += MAX_WORD_LEN)
                 {
-                    if (i + MaximumWordLength < word.Length)
-                        width += MeasureStringWidth(g, word.Substring(i, MaximumWordLength), font);
+                    if (i + MAX_WORD_LEN < word.Length)
+                        width += MeasureStringWidth(g, word.Substring(i, MAX_WORD_LEN), font);
                     else
                         width += MeasureStringWidth(g, word.Substring(i, word.Length - i), font);
                 }
                 return width;
             }
 
-            if (measureCache.TryGetValue(new WordFontPair(word, font), out width))
+            if (_measureCache.TryGetValue(new WordFontPair(word, font), out width))
             {
                 return width;
             }
 
-            if (measureCache.Count > MaximumCacheSize)
+            if (_measureCache.Count > MAX_CACHE_SIZE)
             {
-                measureCache.Clear();
+                _measureCache.Clear();
             }
 
             // This code here provides better results than MeasureString!
@@ -704,14 +711,11 @@ namespace ICSharpCode.TextEditor
             // this also fixes "jumping" characters when selecting in non-monospace fonts
             // [...]
             // Replaced GDI+ measurement with GDI measurement: faster and even more exact
-            width = TextRenderer.MeasureText(g, word, font, new Size(short.MaxValue, short.MaxValue), textFormatFlags).Width;
-            measureCache.Add(new WordFontPair(word, font), width);
+            width = TextRenderer.MeasureText(g, word, font, new Size(short.MaxValue, short.MaxValue), TEXT_FORMAT_FLAGS).Width;
+            _measureCache.Add(new WordFontPair(word, font), width);
             return width;
         }
 
-        // Important: Some flags combinations work on WinXP, but not on Win2000.
-        // Make sure to test changes here on all operating systems.
-        const TextFormatFlags textFormatFlags = TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.PreserveGraphicsClipping;
         #endregion
 
         #region Conversion Functions
@@ -928,7 +932,7 @@ namespace ICSharpCode.TextEditor
 
                         case TextWordType.Tab:
                             // go to next tab position
-                            drawingPos = (int)((drawingPos + MinTabWidth) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
+                            drawingPos = (int)((drawingPos + MIN_TAB_WIDTH) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
                             newDrawingPos = drawingPos + tabIndent * WideSpaceWidth;
                             if (newDrawingPos >= targetVisualPosX)
                                 return IsNearerToAThanB(targetVisualPosX, drawingPos, newDrawingPos) ? wordOffset : wordOffset + 1;
@@ -982,7 +986,6 @@ namespace ICSharpCode.TextEditor
                 return null;
         }
 
-        const int MinTabWidth = 4;
 
         float CountColumns(ref int column, int start, int end, int logicalLine, Graphics g)
         {
@@ -1019,7 +1022,7 @@ namespace ICSharpCode.TextEditor
 
                         case TextWordType.Tab:
                             // go to next tab position
-                            drawingPos = (int)((drawingPos + MinTabWidth) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
+                            drawingPos = (int)((drawingPos + MIN_TAB_WIDTH) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
                             drawingPos += tabIndent * WideSpaceWidth;
                             break;
 
@@ -1165,7 +1168,7 @@ namespace ICSharpCode.TextEditor
 
         void DrawString(Graphics g, string text, Font font, Color color, int x, int y)
         {
-            TextRenderer.DrawText(g, text, font, new Point(x, y), color, textFormatFlags);
+            TextRenderer.DrawText(g, text, font, new Point(x, y), color, TEXT_FORMAT_FLAGS);
         }
 
         void DrawInvalidLineMarker(Graphics g, int x, int y)

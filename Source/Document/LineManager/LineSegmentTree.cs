@@ -214,7 +214,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (segment == null)
                 throw new ArgumentNullException("segment");
-            RedBlackTreeNode<RBNode> node = segment.treeEntry.it.node;
+            RedBlackTreeNode<RBNode> node = segment._treeEntry.it.node;
             segment.TotalLength = newTotalLength;
             default(MyHost).UpdateAfterChildrenChange(node);
 #if DEBUG_EX
@@ -224,7 +224,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public void RemoveSegment(LineSegment segment)
         {
-            tree.RemoveAt(segment.treeEntry.it);
+            tree.RemoveAt(segment._treeEntry.it);
 #if DEBUG_EX
             CheckProperties();
 #endif
@@ -236,7 +236,7 @@ namespace ICSharpCode.TextEditor.Document
             newSegment.TotalLength = length;
             newSegment.DelimiterLength = segment.DelimiterLength;
 
-            newSegment.treeEntry = InsertAfter(segment.treeEntry.it.node, newSegment);
+            newSegment._treeEntry = InsertAfter(segment._treeEntry.it.node, newSegment);
             return newSegment;
         }
 
@@ -364,7 +364,7 @@ namespace ICSharpCode.TextEditor.Document
             emptySegment.TotalLength = 0;
             emptySegment.DelimiterLength = 0;
             tree.Add(new RBNode(emptySegment));
-            emptySegment.treeEntry = GetEnumeratorForIndex(0);
+            emptySegment._treeEntry = GetEnumeratorForIndex(0);
 #if DEBUG_EX
             CheckProperties();
 #endif
