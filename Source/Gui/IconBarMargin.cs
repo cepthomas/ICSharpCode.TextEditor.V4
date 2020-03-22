@@ -19,13 +19,41 @@ namespace ICSharpCode.TextEditor
     /// <summary>
     /// This class views the line numbers and folding markers.
     /// </summary>
-    public class IconBarMargin : AbstractMargin
+    public class IconBarMargin : IMargin
     {
         const int iconBarWidth = 18;
 
         static readonly Size _iconBarSize = new Size(iconBarWidth, -1);
 
-        public override Size Size
+
+        /////////////// added:
+        public Rectangle DrawingPosition { get; set; }
+        public TextArea TextArea { get; }
+        //    public Document.Document Document { get { return TextArea.Document; } }
+        public Cursor Cursor { get; set; } = Cursors.Default;
+
+        public event MarginPaintEventHandler Painted;
+        public event MarginMouseEventHandler MouseDown;
+        public event MarginMouseEventHandler MouseMove;
+        public event EventHandler MouseLeave;
+        //public void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseDown?.Invoke(this, mousepos, mouseButtons);
+        //}
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseMove?.Invoke(this, mousepos, mouseButtons);
+        }
+        public void HandleMouseLeave(EventArgs e)
+        {
+            MouseLeave?.Invoke(this, e);
+        }
+
+
+
+
+
+        public Size Size
         {
             get
             {
@@ -33,7 +61,7 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public override bool IsVisible
+        public bool IsVisible
         {
             get
             {
@@ -42,29 +70,30 @@ namespace ICSharpCode.TextEditor
         }
 
 
-        public IconBarMargin(TextArea textArea) : base(textArea)
+        public IconBarMargin(TextArea textArea)// : base(textArea)
         {
+            TextArea = textArea;
         }
 
-        public override void Paint(Graphics g, Rectangle rect)
+        public void Paint(Graphics g, Rectangle rect)
         {
             if (rect.Width <= 0 || rect.Height <= 0)
             {
                 return;
             }
             // paint background
-            g.FillRectangle(SystemBrushes.Control, new Rectangle(drawingPosition.X, rect.Top, drawingPosition.Width - 1, rect.Height));
-            g.DrawLine(SystemPens.ControlDark, base.drawingPosition.Right - 1, rect.Top, base.drawingPosition.Right - 1, rect.Bottom);
+            g.FillRectangle(SystemBrushes.Control, new Rectangle(DrawingPosition.X, rect.Top, DrawingPosition.Width - 1, rect.Height));
+            g.DrawLine(SystemPens.ControlDark, DrawingPosition.Right - 1, rect.Top, DrawingPosition.Right - 1, rect.Bottom);
 
             // paint icons
-            foreach (Bookmark mark in textArea.Document.BookmarkManager.Marks)
+            foreach (Bookmark mark in TextArea.Document.BookmarkManager.Marks)
             {
-                int lineNumber = textArea.Document.GetVisibleLine(mark.LineNumber);
-                int lineHeight = textArea.TextView.FontHeight;
-                int yPos = (int)(lineNumber * lineHeight) - textArea.VirtualTop.Y;
+                int lineNumber = TextArea.Document.GetVisibleLine(mark.LineNumber);
+                int lineHeight = TextArea.TextView.FontHeight;
+                int yPos = (int)(lineNumber * lineHeight) - TextArea.VirtualTop.Y;
                 if (IsLineInsideRegion(yPos, yPos + lineHeight, rect.Y, rect.Bottom))
                 {
-                    if (lineNumber == textArea.Document.GetVisibleLine(mark.LineNumber - 1))
+                    if (lineNumber == TextArea.Document.GetVisibleLine(mark.LineNumber - 1))
                     {
                         // marker is inside folded region, do not draw it
                         continue;
@@ -72,23 +101,25 @@ namespace ICSharpCode.TextEditor
                     mark.Draw(this, g, new Point(0, yPos));
                 }
             }
-            base.Paint(g, rect);
+
+            Painted?.Invoke(this, g, rect);
+            //base.Paint(g, rect);
         }
 
-        public override void HandleMouseDown(Point mousePos, MouseButtons mouseButtons)
+        public void HandleMouseDown(Point mousePos, MouseButtons mouseButtons)
         {
-            int clickedVisibleLine = (mousePos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight;
-            int lineNumber = textArea.Document.GetFirstLogicalLine(clickedVisibleLine);
+            int clickedVisibleLine = (mousePos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight;
+            int lineNumber = TextArea.Document.GetFirstLogicalLine(clickedVisibleLine);
 
             if ((mouseButtons & MouseButtons.Right) == MouseButtons.Right)
             {
-                if (textArea.Caret.Line != lineNumber)
+                if (TextArea.Caret.Line != lineNumber)
                 {
-                    textArea.Caret.Line = lineNumber;
+                    TextArea.Caret.Line = lineNumber;
                 }
             }
 
-            IList<Bookmark> marks = textArea.Document.BookmarkManager.Marks;
+            IList<Bookmark> marks = TextArea.Document.BookmarkManager.Marks;
             List<Bookmark> marksInLine = new List<Bookmark>();
             int oldCount = marks.Count;
             foreach (Bookmark mark in marks)
@@ -101,24 +132,25 @@ namespace ICSharpCode.TextEditor
             for (int i = marksInLine.Count - 1; i >= 0; i--)
             {
                 Bookmark mark = marksInLine[i];
-                if (mark.Click(textArea, new MouseEventArgs(mouseButtons, 1, mousePos.X, mousePos.Y, 0)))
+                if (mark.Click(TextArea, new MouseEventArgs(mouseButtons, 1, mousePos.X, mousePos.Y, 0)))
                 {
                     if (oldCount != marks.Count)
                     {
-                        textArea.UpdateLine(lineNumber);
+                        TextArea.UpdateLine(lineNumber);
                     }
                     return;
                 }
             }
-            base.HandleMouseDown(mousePos, mouseButtons);
+            //base.HandleMouseDown(mousePos, mouseButtons);
+            MouseDown?.Invoke(this, mousePos, mouseButtons);
         }
 
         #region Drawing functions
         public void DrawBreakpoint(Graphics g, int y, bool isEnabled, bool isHealthy)
         {
-            int diameter = Math.Min(iconBarWidth - 2, textArea.TextView.FontHeight);
+            int diameter = Math.Min(iconBarWidth - 2, TextArea.TextView.FontHeight);
             Rectangle rect = new Rectangle(1,
-                                           y + (textArea.TextView.FontHeight - diameter) / 2,
+                                           y + (TextArea.TextView.FontHeight - diameter) / 2,
                                            diameter,
                                            diameter);
 
@@ -151,8 +183,8 @@ namespace ICSharpCode.TextEditor
 
         public void DrawBookmark(Graphics g, int y, bool isEnabled)
         {
-            int delta = textArea.TextView.FontHeight / 8;
-            Rectangle rect = new Rectangle(1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
+            int delta = TextArea.TextView.FontHeight / 8;
+            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea.TextView.FontHeight - delta * 2);
 
             if (isEnabled)
             {
@@ -182,8 +214,8 @@ namespace ICSharpCode.TextEditor
 
         public void DrawArrow(Graphics g, int y)
         {
-            int delta = textArea.TextView.FontHeight / 8;
-            Rectangle rect = new Rectangle(1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
+            int delta = TextArea.TextView.FontHeight / 8;
+            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea.TextView.FontHeight - delta * 2);
             using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top),
                     new Point(rect.Right, rect.Bottom),
                     Color.LightYellow,

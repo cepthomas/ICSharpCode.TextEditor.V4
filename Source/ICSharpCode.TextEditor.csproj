@@ -135,7 +135,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\RightArrow.cur" />
     <Compile Include="Util\FileReader.cs" />
     <Compile Include="Gui\DrawableLine.cs" />
     <Compile Include="Gui\ToolTipRequestEventArgs.cs" />
@@ -188,7 +187,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

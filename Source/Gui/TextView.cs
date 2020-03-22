@@ -17,26 +17,58 @@ using ICSharpCode.TextEditor.Common;
 namespace ICSharpCode.TextEditor
 {
     /// <summary>This class paints the textarea.</summary>
-    public class TextView : AbstractMargin, IDisposable
+    public class TextView : IMargin, IDisposable
     {
         int _physicalColumn = 0; // used for calculating physical column during paint
         const int ADDITIONAL_FOLD_TEXT_SIZE = 1;
         Font _lastFont;
 
+
+        /////////////// added:
+        public Rectangle DrawingPosition { get; set; }
+        public TextArea TextArea { get; }
+        public Cursor Cursor { get; set; } = Cursors.Default;
+        
+        public Size Size { get { return new Size(-1, -1); } }
+        public bool IsVisible { get { return true; } }
+
+
+        public event MarginPaintEventHandler Painted;
+        public event MarginMouseEventHandler MouseDown;
+        public event MarginMouseEventHandler MouseMove;
+        public event EventHandler MouseLeave;
+
+        public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseDown?.Invoke(this, mousepos, mouseButtons);
+        }
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        {
+            MouseMove?.Invoke(this, mousepos, mouseButtons);
+        }
+        public void HandleMouseLeave(EventArgs e)
+        {
+            MouseLeave?.Invoke(this, e);
+        }
+        //????
+        public Document.Document Document { get { return TextArea.Document; } }
+
+
+
         public Highlight Highlight { get; set; }
 
-        public int FirstPhysicalLine { get { return textArea.VirtualTop.Y / FontHeight; } }
+        public int FirstPhysicalLine { get { return TextArea.VirtualTop.Y / FontHeight; } }
 
-        public int LineHeightRemainder { get { return textArea.VirtualTop.Y % FontHeight; } }
+        public int LineHeightRemainder { get { return TextArea.VirtualTop.Y % FontHeight; } }
 
         /// <summary>Gets the first visible <b>logical</b> line.</summary>
         public int FirstVisibleLine
         {
-            get { return textArea.Document.GetFirstLogicalLine(textArea.VirtualTop.Y / FontHeight); }
-            set { if (FirstVisibleLine != value) textArea.VirtualTop = new Point(textArea.VirtualTop.X, textArea.Document.GetVisibleLine(value) * FontHeight); }
+            get { return TextArea.Document.GetFirstLogicalLine(TextArea.VirtualTop.Y / FontHeight); }
+            set { if (FirstVisibleLine != value) TextArea.VirtualTop = new Point(TextArea.VirtualTop.X, TextArea.Document.GetVisibleLine(value) * FontHeight); }
         }
 
-        public int VisibleLineDrawingRemainder { get { return textArea.VirtualTop.Y % FontHeight; } }
+        public int VisibleLineDrawingRemainder { get { return TextArea.VirtualTop.Y % FontHeight; } }
 
         public int FontHeight { get; private set; }
 
@@ -57,9 +89,9 @@ namespace ICSharpCode.TextEditor
         public int WideSpaceWidth { get; private set; }
 
         public TextView(TextArea textArea)
-            : base(textArea)
         {
-            base.Cursor = Cursors.IBeam;
+            TextArea = textArea;
+            Cursor = Cursors.IBeam;
             OptionsChanged();
         }
 
@@ -88,7 +120,7 @@ namespace ICSharpCode.TextEditor
         }
 
         #region Paint functions
-        public override void Paint(Graphics g, Rectangle rect)
+        public void Paint(Graphics g, Rectangle rect)
         {
             if (rect.Width <= 0 || rect.Height <= 0)
             {
@@ -99,10 +131,10 @@ namespace ICSharpCode.TextEditor
             if (_lastFont != Shared.FontContainer.RegularFont)
             {
                 OptionsChanged();
-                textArea.Invalidate();
+                TextArea.Invalidate();
             }
 
-            int horizontalDelta = textArea.VirtualTop.X;
+            int horizontalDelta = TextArea.VirtualTop.X;
             if (horizontalDelta > 0)
             {
                 g.SetClip(DrawingPosition);
@@ -114,8 +146,8 @@ namespace ICSharpCode.TextEditor
 
                 if (rect.IntersectsWith(lineRectangle))
                 {
-                    int fvl = textArea.Document.GetVisibleLine(FirstVisibleLine);
-                    int currentLine = textArea.Document.GetFirstLogicalLine(textArea.Document.GetVisibleLine(FirstVisibleLine) + y);
+                    int fvl = TextArea.Document.GetVisibleLine(FirstVisibleLine);
+                    int currentLine = TextArea.Document.GetFirstLogicalLine(TextArea.Document.GetVisibleLine(FirstVisibleLine) + y);
                     PaintDocumentLine(g, currentLine, lineRectangle); //this redraws everything, twice
                 }
             }
@@ -127,16 +159,16 @@ namespace ICSharpCode.TextEditor
                 g.ResetClip();
             }
 
-            textArea.Caret.PaintCaret(g);
+            TextArea.Caret.PaintCaret(g);
         }
 
         void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle)
         {
             //Debug.Assert(lineNumber >= 0);
             Brush bgColorBrush = GetBgColorBrush(lineNumber);
-            Brush backgroundBrush = textArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+            Brush backgroundBrush = TextArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
 
-            if (lineNumber >= textArea.Document.TotalNumberOfLines)
+            if (lineNumber >= TextArea.Document.TotalNumberOfLines)
             {
                 g.FillRectangle(backgroundBrush, lineRectangle);
 
@@ -164,13 +196,13 @@ namespace ICSharpCode.TextEditor
                 // there can't be a folding wich starts in an above line and ends here, because the line is a new one, there must be a return before this line.
                 while (true)
                 {
-                    List<FoldMarker> starts = textArea.Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column - 1);
+                    List<FoldMarker> starts = TextArea.Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column - 1);
                     if (starts == null || starts.Count <= 0)
                     {
                         // No foldings.
-                        if (lineNumber < textArea.Document.TotalNumberOfLines)
+                        if (lineNumber < TextArea.Document.TotalNumberOfLines)
                         {
-                            physicalXPos = PaintLinePart(g, lineNumber, column, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+                            physicalXPos = PaintLinePart(g, lineNumber, column, TextArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
                         }
                         break;
                     }
@@ -189,13 +221,13 @@ namespace ICSharpCode.TextEditor
                     physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos);
                     column = firstFolding.EndColumn;
                     lineNumber = firstFolding.EndLine;
-                    if (lineNumber >= textArea.Document.TotalNumberOfLines)
+                    if (lineNumber >= TextArea.Document.TotalNumberOfLines)
                     {
                         //Debug.Assert(false, "Folding ends after document end");
                         break;
                     }
 
-                    ColumnRange selectionRange2 = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
+                    ColumnRange selectionRange2 = TextArea.SelectionManager.GetSelectionAtLine(lineNumber);
                     bool drawSelected = ColumnRange.WHOLE_COLUMN.Equals(selectionRange2) || firstFolding.StartColumn >= selectionRange2.StartColumn && firstFolding.EndColumn <= selectionRange2.EndColumn;
 
                     physicalXPos = PaintFoldingText(g, lineNumber, physicalXPos, lineRectangle, firstFolding.FoldText, drawSelected);
@@ -203,15 +235,15 @@ namespace ICSharpCode.TextEditor
             }
             else // simple paint
             {
-                physicalXPos = PaintLinePart(g, lineNumber, 0, textArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+                physicalXPos = PaintLinePart(g, lineNumber, 0, TextArea.Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
             }
 
-            if (lineNumber < textArea.Document.TotalNumberOfLines)
+            if (lineNumber < TextArea.Document.TotalNumberOfLines)
             {
                 // Paint things after end of line
-                LineSegment currentLine = textArea.Document.GetLineSegment(lineNumber);
+                LineSegment currentLine = TextArea.Document.GetLineSegment(lineNumber);
                 HighlightColor selectionColor = Shared.TEP.SelectionColor;
-                ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
+                ColumnRange selectionRange = TextArea.SelectionManager.GetSelectionAtLine(lineNumber);
 
                 bool selectionBeyondEOL = selectionRange.EndColumn > currentLine.Length || ColumnRange.WHOLE_COLUMN.Equals(selectionRange);
 
@@ -242,7 +274,7 @@ namespace ICSharpCode.TextEditor
 
         bool DrawLineMarkerAtLine(int lineNumber)
         {
-            return lineNumber == base.textArea.Caret.Line && Shared.TEP.LineViewerStyle == LineViewerStyle.FullRow;
+            return lineNumber == TextArea.Caret.Line && Shared.TEP.LineViewerStyle == LineViewerStyle.FullRow;
         }
 
         Brush GetBgColorBrush(int lineNumber)
@@ -262,7 +294,7 @@ namespace ICSharpCode.TextEditor
         {
             HighlightColor selectionColor = Shared.TEP.SelectionColor;
             Brush bgColorBrush = drawSelected ? BrushRegistry.GetBrush(selectionColor.BackgroundColor) : GetBgColorBrush(lineNumber);
-            Brush backgroundBrush = textArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+            Brush backgroundBrush = TextArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
 
             Font font = Shared.FontContainer.RegularFont;
 
@@ -354,14 +386,14 @@ namespace ICSharpCode.TextEditor
         int PaintLinePart(Graphics g, int lineNumber, int startColumn, int endColumn, Rectangle lineRectangle, int physicalXPos)
         {
             bool drawLineMarker = DrawLineMarkerAtLine(lineNumber);
-            Brush backgroundBrush = textArea.Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
+            Brush backgroundBrush = TextArea.Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
 
             HighlightColor selectionColor = Shared.TEP.SelectionColor;
-            ColumnRange selectionRange = textArea.SelectionManager.GetSelectionAtLine(lineNumber);
+            ColumnRange selectionRange = TextArea.SelectionManager.GetSelectionAtLine(lineNumber);
             HighlightColor tabMarkerColor = Shared.TEP.TabMarkersColor;
             HighlightColor spaceMarkerColor = Shared.TEP.SpaceMarkersColor;
 
-            LineSegment currentLine = textArea.Document.GetLineSegment(lineNumber);
+            LineSegment currentLine = TextArea.Document.GetLineSegment(lineNumber);
 
             Brush selectionBackgroundBrush = BrushRegistry.GetBrush(selectionColor.BackgroundColor);
 
@@ -702,7 +734,7 @@ namespace ICSharpCode.TextEditor
 
             if (!fontBoundCharWidth[font].ContainsKey(ch))
             {
-                using (Graphics g = textArea.CreateGraphics())
+                using (Graphics g = TextArea.CreateGraphics())
                 {
                     return GetWidth(g, ch, font);
                 }
@@ -730,7 +762,7 @@ namespace ICSharpCode.TextEditor
         public int GetVisualColumn(int logicalLine, int logicalColumn)
         {
             int column = 0;
-            using (Graphics g = textArea.CreateGraphics())
+            using (Graphics g = TextArea.CreateGraphics())
             {
                 CountColumns(ref column, 0, logicalColumn, logicalLine, g);
             }
@@ -803,13 +835,13 @@ namespace ICSharpCode.TextEditor
         /// </summary>
         public int GetLogicalLine(int visualPosY)
         {
-            int clickedVisualLine = Math.Max(0, (visualPosY + textArea.VirtualTop.Y) / FontHeight);
+            int clickedVisualLine = Math.Max(0, (visualPosY + TextArea.VirtualTop.Y) / FontHeight);
             return Document.GetFirstLogicalLine(clickedVisualLine);
         }
 
         internal TextLocation GetLogicalColumn(int lineNumber, int visualPosX, out FoldMarker inFoldMarker)
         {
-            visualPosX += textArea.VirtualTop.X;
+            visualPosX += TextArea.VirtualTop.X;
 
             inFoldMarker = null;
             if (lineNumber >= Document.TotalNumberOfLines)
@@ -826,7 +858,7 @@ namespace ICSharpCode.TextEditor
             int posX = 0; // visual position
 
             int result;
-            using (Graphics g = textArea.CreateGraphics())
+            using (Graphics g = TextArea.CreateGraphics())
             {
                 // call GetLogicalColumnInternal to skip over text,
                 // then skip over fold markers
@@ -1081,13 +1113,13 @@ namespace ICSharpCode.TextEditor
             int column = 0;
             int tabIndent = Shared.TEP.TabIndent;
             float drawingPos;
-            Graphics g = textArea.CreateGraphics();
+            Graphics g = TextArea.CreateGraphics();
 
             // if no folding is interresting
             if (f == null || !(f.StartLine < logicalLine || f.StartLine == logicalLine && f.StartColumn < logicalColumn))
             {
                 drawingPos = CountColumns(ref column, 0, logicalColumn, logicalLine, g);
-                return (int)(drawingPos - textArea.VirtualTop.X);
+                return (int)(drawingPos - TextArea.VirtualTop.X);
             }
 
             // if logicalLine/logicalColumn is in folding
@@ -1114,7 +1146,7 @@ namespace ICSharpCode.TextEditor
             if (lastFolding < firstFolding)
             {
                 drawingPos = CountColumns(ref column, 0, logicalColumn, logicalLine, g);
-                return (int)(drawingPos - textArea.VirtualTop.X);
+                return (int)(drawingPos - TextArea.VirtualTop.X);
             }
 
             int foldEnd = 0;
@@ -1132,7 +1164,7 @@ namespace ICSharpCode.TextEditor
 
             drawingPos += CountColumns(ref column, foldEnd, logicalColumn, logicalLine, g);
             g.Dispose();
-            return (int)(drawingPos - textArea.VirtualTop.X);
+            return (int)(drawingPos - TextArea.VirtualTop.X);
         }
         #endregion
 
@@ -1179,14 +1211,14 @@ namespace ICSharpCode.TextEditor
 
         void DrawVerticalRuler(Graphics g, Rectangle lineRectangle)
         {
-            int xpos = WideSpaceWidth * Shared.TEP.VerticalRulerRow - textArea.VirtualTop.X;
+            int xpos = WideSpaceWidth * Shared.TEP.VerticalRulerRow - TextArea.VirtualTop.X;
             if (xpos <= 0)
             {
                 return;
             }
 
             HighlightColor vRulerColor = Shared.TEP.VRulerColor;
-            g.DrawLine(BrushRegistry.GetPen(vRulerColor.Color), drawingPosition.Left + xpos, lineRectangle.Top, drawingPosition.Left + xpos, lineRectangle.Bottom);
+            g.DrawLine(BrushRegistry.GetPen(vRulerColor.Color), DrawingPosition.Left + xpos, lineRectangle.Top, DrawingPosition.Left + xpos, lineRectangle.Bottom);
         }
         #endregion
     }

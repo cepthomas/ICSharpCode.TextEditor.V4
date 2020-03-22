@@ -39,18 +39,18 @@ namespace ICSharpCode.TextEditor
 
         Point _virtualTop = new Point(0, 0);
         readonly List<BracketHighlightingSheme> _bracketshemes = new List<BracketHighlightingSheme>();
-        List<AbstractMargin> _leftMargins = new List<AbstractMargin>();
+        List<IMargin> _leftMargins = new List<IMargin>();
         bool _disposed;
 
         public Point MousePos { get; set; }
 
         [Browsable(false)]
-        public IList<AbstractMargin> LeftMargins
+        public IList<IMargin> LeftMargins
         {
             get { return _leftMargins.AsReadOnly(); }
         }
 
-        public void InsertLeftMargin(int index, AbstractMargin margin)
+        public void InsertLeftMargin(int index, IMargin margin)
         {
             _leftMargins.Insert(index, margin);
             Refresh();
@@ -153,7 +153,7 @@ namespace ICSharpCode.TextEditor
             GutterMargin = new GutterMargin(this);
             FoldMargin = new FoldMargin(this);
             IconBarMargin = new IconBarMargin(this);
-            _leftMargins.AddRange(new AbstractMargin[] { IconBarMargin, GutterMargin, FoldMargin });
+            _leftMargins.AddRange(new IMargin[] { IconBarMargin, GutterMargin, FoldMargin });
             OptionsChanged();
 
 
@@ -253,7 +253,7 @@ namespace ICSharpCode.TextEditor
             Refresh();
         }
 
-        AbstractMargin lastMouseInMargin;
+        IMargin lastMouseInMargin;
 
         protected override void OnMouseLeave(System.EventArgs e)
         {
@@ -278,7 +278,7 @@ namespace ICSharpCode.TextEditor
             base.OnMouseDown(e);
             CloseToolTip();
 
-            foreach (AbstractMargin margin in _leftMargins)
+            foreach (IMargin margin in _leftMargins)
             {
                 if (margin.DrawingPosition.Contains(e.X, e.Y))
                 {
@@ -426,7 +426,7 @@ namespace ICSharpCode.TextEditor
                     RequestToolTip(e.Location);
             }
 
-            foreach (AbstractMargin margin in _leftMargins)
+            foreach (IMargin margin in _leftMargins)
             {
                 if (margin.DrawingPosition.Contains(e.X, e.Y))
                 {
@@ -469,9 +469,9 @@ namespace ICSharpCode.TextEditor
             this.Cursor = Cursors.Default;
         }
 
-        AbstractMargin updateMargin = null;
+        IMargin updateMargin = null;
 
-        public void Refresh(AbstractMargin margin)
+        public void Refresh(IMargin margin)
         {
             updateMargin = margin;
             Invalidate(updateMargin.DrawingPosition);
@@ -506,7 +506,7 @@ namespace ICSharpCode.TextEditor
                 return;
             }
 
-            foreach (AbstractMargin margin in _leftMargins)
+            foreach (IMargin margin in _leftMargins)
             {
                 if (margin.IsVisible)
                 {
@@ -946,7 +946,7 @@ namespace ICSharpCode.TextEditor
                     MotherTextAreaControl = null;
                     MotherTextEditorControl = null;
 
-                    foreach (AbstractMargin margin in _leftMargins)
+                    foreach (IMargin margin in _leftMargins)
                     {
                         if (margin is IDisposable)
                             (margin as IDisposable).Dispose();

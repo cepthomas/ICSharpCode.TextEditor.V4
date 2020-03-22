@@ -18,32 +18,46 @@ namespace ICSharpCode.TextEditor
     /// <summary>
     /// This class views the line numbers and folding markers.
     /// </summary>
-    public class FoldMargin : AbstractMargin
+    public class FoldMargin : IMargin
     {
         int selectedFoldLine = -1;
 
-        public override Size Size
+        /////////////// added:
+        public Rectangle DrawingPosition { get; set; }
+        public TextArea TextArea { get; }
+        //    public Document.Document Document { get { return TextArea.Document; } }
+        public Cursor Cursor { get; set; } = Cursors.Default;
+
+        public event MarginPaintEventHandler Painted;
+        public event MarginMouseEventHandler MouseDown;
+        public event MarginMouseEventHandler MouseMove;
+        public event EventHandler MouseLeave;
+        //public void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseDown?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseMove?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseLeave(EventArgs e)
+        //{
+        //    MouseLeave?.Invoke(this, e);
+        //}
+
+
+
+        //////////////// original:
+        public Size Size { get { return new Size(TextArea.TextView.FontHeight, -1); } }
+
+        public bool IsVisible { get { return Shared.TEP.EnableFolding; } }
+
+        public FoldMargin(TextArea textArea) //: base(textArea)
         {
-            get
-            {
-                return new Size((int)(textArea.TextView.FontHeight),
-                                -1);
-            }
+            TextArea = textArea;
         }
 
-        public override bool IsVisible
-        {
-            get
-            {
-                return Shared.TEP.EnableFolding;
-            }
-        }
-
-        public FoldMargin(TextArea textArea) : base(textArea)
-        {
-        }
-
-        public override void Paint(Graphics g, Rectangle rect)
+        public void Paint(Graphics g, Rectangle rect)
         {
             if (rect.Width <= 0 || rect.Height <= 0)
             {
@@ -52,34 +66,34 @@ namespace ICSharpCode.TextEditor
             HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
 
 
-            for (int y = 0; y < (DrawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder) / textArea.TextView.FontHeight + 1; ++y)
+            for (int y = 0; y < (DrawingPosition.Height + TextArea.TextView.VisibleLineDrawingRemainder) / TextArea.TextView.FontHeight + 1; ++y)
             {
                 Rectangle markerRectangle = new Rectangle(DrawingPosition.X,
-                        DrawingPosition.Top + y * textArea.TextView.FontHeight - textArea.TextView.VisibleLineDrawingRemainder,
+                        DrawingPosition.Top + y * TextArea.TextView.FontHeight - TextArea.TextView.VisibleLineDrawingRemainder,
                         DrawingPosition.Width,
-                        textArea.TextView.FontHeight);
+                        TextArea.TextView.FontHeight);
 
                 if (rect.IntersectsWith(markerRectangle))
                 {
                     // draw dotted separator line
                     if (Shared.TEP.ShowLineNumbers)
                     {
-                        g.FillRectangle(BrushRegistry.GetBrush(textArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder),
+                        g.FillRectangle(BrushRegistry.GetBrush(TextArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder),
                                         markerRectangle);
 
                         g.DrawLine(BrushRegistry.GetDotPen(lineNumberPainterColor.Color),
-                                   base.drawingPosition.X,
+                                   DrawingPosition.X,
                                    markerRectangle.Y,
-                                   base.drawingPosition.X,
+                                   DrawingPosition.X,
                                    markerRectangle.Bottom);
                     }
                     else
                     {
-                        g.FillRectangle(BrushRegistry.GetBrush(textArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder), markerRectangle);
+                        g.FillRectangle(BrushRegistry.GetBrush(TextArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder), markerRectangle);
                     }
 
-                    int currentLine = textArea.Document.GetFirstLogicalLine(textArea.TextView.FirstPhysicalLine + y);
-                    if (currentLine < textArea.Document.TotalNumberOfLines)
+                    int currentLine = TextArea.Document.GetFirstLogicalLine(TextArea.TextView.FirstPhysicalLine + y);
+                    if (currentLine < TextArea.Document.TotalNumberOfLines)
                     {
                         PaintFoldMarker(g, currentLine, markerRectangle);
                     }
@@ -107,9 +121,9 @@ namespace ICSharpCode.TextEditor
             HighlightColor foldLineColor = Shared.TEP.FoldLineColor;
             HighlightColor selectedFoldLine = Shared.TEP.SelectedFoldLineColor;
 
-            List<FoldMarker> foldingsWithStart = textArea.Document.FoldingManager.GetFoldingsWithStart(lineNumber);
-            List<FoldMarker> foldingsBetween   = textArea.Document.FoldingManager.GetFoldingsContainsLineNumber(lineNumber);
-            List<FoldMarker> foldingsWithEnd   = textArea.Document.FoldingManager.GetFoldingsWithEnd(lineNumber);
+            List<FoldMarker> foldingsWithStart = TextArea.Document.FoldingManager.GetFoldingsWithStart(lineNumber);
+            List<FoldMarker> foldingsBetween   = TextArea.Document.FoldingManager.GetFoldingsContainsLineNumber(lineNumber);
+            List<FoldMarker> foldingsWithEnd   = TextArea.Document.FoldingManager.GetFoldingsWithEnd(lineNumber);
 
             bool isFoldStart = foldingsWithStart.Count > 0;
             bool isBetween   = foldingsBetween.Count > 0;
@@ -119,7 +133,7 @@ namespace ICSharpCode.TextEditor
             bool isBetweenSelected = SelectedFoldingFrom(foldingsBetween);
             bool isEndSelected     = SelectedFoldingFrom(foldingsWithEnd);
 
-            int foldMarkerSize = (int)Math.Round(textArea.TextView.FontHeight * 0.57f);
+            int foldMarkerSize = (int)Math.Round(TextArea.TextView.FontHeight * 0.57f);
             foldMarkerSize -= (foldMarkerSize) % 2;
             int foldMarkerYPos = drawingRectangle.Y + (int)((drawingRectangle.Height - foldMarkerSize) / 2);
             int xPos = drawingRectangle.X + (drawingRectangle.Width - foldMarkerSize) / 2 + foldMarkerSize / 2;
@@ -221,18 +235,18 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public override void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
         {
             bool  showFolding  = Shared.TEP.EnableFolding;
-            int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
-            int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+            int   physicalLine = + (int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight);
+            int   realline     = TextArea.Document.GetFirstLogicalLine(physicalLine);
 
-            if (!showFolding || realline < 0 || realline + 1 >= textArea.Document.TotalNumberOfLines)
+            if (!showFolding || realline < 0 || realline + 1 >= TextArea.Document.TotalNumberOfLines)
             {
                 return;
             }
 
-            List<FoldMarker> foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(realline);
+            List<FoldMarker> foldMarkers = TextArea.Document.FoldingManager.GetFoldingsWithStart(realline);
             int oldSelection = selectedFoldLine;
             if (foldMarkers.Count > 0)
             {
@@ -245,38 +259,38 @@ namespace ICSharpCode.TextEditor
             
             if (oldSelection != selectedFoldLine)
             {
-                textArea.Refresh(this);
+                TextArea.Refresh(this);
             }
         }
 
-        public override void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        public void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
         {
             bool  showFolding  = Shared.TEP.EnableFolding;
-            int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
-            int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+            int   physicalLine = + (int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight);
+            int   realline     = TextArea.Document.GetFirstLogicalLine(physicalLine);
 
             // focus the textarea if the user clicks on the line number view
-            textArea.Focus();
+            TextArea.Focus();
 
-            if (!showFolding || realline < 0 || realline + 1 >= textArea.Document.TotalNumberOfLines)
+            if (!showFolding || realline < 0 || realline + 1 >= TextArea.Document.TotalNumberOfLines)
             {
                 return;
             }
 
-            List<FoldMarker> foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(realline);
+            List<FoldMarker> foldMarkers = TextArea.Document.FoldingManager.GetFoldingsWithStart(realline);
             foreach (FoldMarker fm in foldMarkers)
             {
                 fm.IsFolded = !fm.IsFolded;
             }
-            textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
+            TextArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
         }
 
-        public override void HandleMouseLeave(EventArgs e)
+        public void HandleMouseLeave(EventArgs e)
         {
             if (selectedFoldLine != -1)
             {
                 selectedFoldLine = -1;
-                textArea.Refresh(this);
+                TextArea.Refresh(this);
             }
         }
 
