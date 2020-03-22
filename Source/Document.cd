@@ -1,29 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ICSharpCode.TextEditor.Document.Document">
-    <Position X="4.75" Y="0.75" Width="2" />
+    <Position X="3.75" Y="0.75" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
+    <AssociationLine Name="LineManager" Type="ICSharpCode.TextEditor.Document.LineManager" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="4.003" />
+        <Point X="2.25" Y="4.003" />
+        <Point X="2.25" Y="4.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.873" Y="0.435" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="MarkerStrategy" Type="ICSharpCode.TextEditor.Document.MarkerStrategy">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.182" Y="0.402" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>ACIAA0MBCAAABAA4IsBABgAAQAAAUAYAKQCcDAAAAHE=</HashCode>
+      <HashCode>ACIAA0MBCAAAAAA4IsBABgAAQAAAEAYAKQCcDAAAAHE=</HashCode>
       <FileName>Document\Document.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="BookmarkManager" />
-      <Property Name="FoldingManager" />
-      <Property Name="FormattingStrategy" />
-      <Property Name="HighlightingStrategy" />
       <Property Name="LineManager" />
       <Property Name="MarkerStrategy" />
       <Property Name="TextBuffer" />
+      <Property Name="FormattingStrategy" />
+      <Property Name="FoldingManager" />
+      <Property Name="HighlightingStrategy" />
+      <Property Name="BookmarkManager" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="LineSegmentCollection" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.BookmarkManager">
-    <Position X="9.25" Y="3.25" Width="1.5" />
+    <Position X="7.5" Y="3.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -39,7 +54,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.FoldingManager">
-    <Position X="10.25" Y="0.5" Width="1.5" />
+    <Position X="9.25" Y="0.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -60,6 +75,11 @@
         <Lollipop Position="0.2" />
       </Class>
     </NestedTypes>
+    <AssociationLine Name="FoldingStrategy" Type="ICSharpCode.TextEditor.Document.IFoldingStrategy">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.407" Y="0.21" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>GAEAAYBAAEgABEBgGAAAIIAIEAAAAAAAEAAIAUAABAA=</HashCode>
       <FileName>Document\FoldingStrategy\FoldingManager.cs</FileName>
@@ -70,7 +90,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.HighlightingStrategy">
-    <Position X="12.25" Y="2" Width="1.5" />
+    <Position X="0.5" Y="2" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -82,7 +102,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.LineManager">
-    <Position X="0.5" Y="3.5" Width="1.5" />
+    <Position X="1" Y="4.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -96,6 +116,18 @@
         </TypeIdentifier>
       </Class>
     </NestedTypes>
+    <AssociationLine Name="_document" Type="ICSharpCode.TextEditor.Document.Document" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.875" Y="4.75" />
+        <Point X="1.875" Y="3.683" />
+        <Point X="3.75" Y="3.683" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="HighlightingStrategy" Type="ICSharpCode.TextEditor.Document.HighlightingStrategy">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.382" Y="0.21" Height="0.182" Width="1.48" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AQAAAkAASEIgJAAxAIAABgAAAAAAUAYgAQAQAAAgBCU=</HashCode>
       <FileName>Document\LineManager\LineManager.cs</FileName>
@@ -106,11 +138,16 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.MarkerStrategy">
-    <Position X="5" Y="6.25" Width="1.5" />
+    <Position X="4.25" Y="5.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
+    <AssociationLine Name="Document" Type="ICSharpCode.TextEditor.Document.Document">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.698" Y="0.493" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAQAAAAEAAACAAAAgCAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Document\MarkerStrategy\MarkerStrategy.cs</FileName>
@@ -120,7 +157,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.TextBuffer" Collapsed="true">
-    <Position X="0.5" Y="2" Width="1.5" />
+    <Position X="0.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEEgAAIAAAAICAAABIBQAAAEAAAgCAAAEAEAADA=</HashCode>
       <FileName>Document\TextBuffer.cs</FileName>
@@ -135,14 +172,14 @@
     <Lollipop Position="0.2" />
   </Class>
   <Interface Name="ICSharpCode.TextEditor.Document.IFormattingStrategy" Collapsed="true">
-    <Position X="8.25" Y="1.75" Width="1.5" />
+    <Position X="7.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAQAAACCQAAABAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Document\FormattingStrategy\IFormattingStrategy.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ICSharpCode.TextEditor.Document.IFoldingStrategy" Collapsed="true">
-    <Position X="13" Y="1" Width="1.5" />
+    <Position X="9.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Document\FoldingStrategy\IFoldingStrategy.cs</FileName>

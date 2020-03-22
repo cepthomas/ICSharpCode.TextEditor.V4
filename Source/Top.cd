@@ -1,28 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ICSharpCode.TextEditor.TextAreaControl">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Position X="1" Y="0.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
+    <AssociationLine Name="_motherTextEditorControl" Type="ICSharpCode.TextEditor.TextEditorControl" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="1.375" />
+        <Point X="5.25" Y="1.375" />
+      </Path>
+    </AssociationLine>
     <AssociationLine Name="TextArea" Type="ICSharpCode.TextEditor.TextArea" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="0.625" Y="2.059" />
-        <Point X="0.625" Y="5.159" />
-        <Point X="2" Y="5.159" />
+        <Point X="1.125" Y="2.059" />
+        <Point X="1.125" Y="5.159" />
+        <Point X="2.5" Y="5.159" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="Document" Type="ICSharpCode.TextEditor.Document.Document" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="1.562" Y="2.059" />
-        <Point X="1.562" Y="3.284" />
-        <Point X="2.393" Y="3.284" Type="JumpStart" />
-        <Point X="2.56" Y="3.284" Type="JumpEnd" />
-        <Point X="2.87" Y="3.284" Type="JumpStart" />
-        <Point X="3.036" Y="3.284" Type="JumpEnd" />
-        <Point X="9" Y="3.284" />
+        <Point X="2.062" Y="2.059" />
+        <Point X="2.062" Y="3.534" />
+        <Point X="2.893" Y="3.534" Type="JumpStart" />
+        <Point X="3.06" Y="3.534" Type="JumpEnd" />
+        <Point X="3.37" Y="3.534" Type="JumpStart" />
+        <Point X="3.536" Y="3.534" Type="JumpEnd" />
+        <Point X="8" Y="3.534" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -36,7 +42,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.TextArea">
-    <Position X="2" Y="4.25" Width="1.5" />
+    <Position X="2.5" Y="4.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -45,17 +51,20 @@
     </Compartments>
     <AssociationLine Name="MotherTextEditorControl" Type="ICSharpCode.TextEditor.TextEditorControl" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.953" Y="4.25" />
-        <Point X="2.953" Y="2.062" />
-        <Point X="5.75" Y="2.062" />
+        <Point X="3.453" Y="4.25" />
+        <Point X="3.453" Y="2.062" />
+        <Point X="5.25" Y="2.062" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="MotherTextAreaControl" Type="ICSharpCode.TextEditor.TextAreaControl" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2" Y="4.625" />
-        <Point X="1.188" Y="4.625" />
-        <Point X="1.188" Y="2.059" />
+        <Point X="2.5" Y="4.625" />
+        <Point X="1.688" Y="4.625" />
+        <Point X="1.688" Y="2.059" />
       </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.373" Y="0.593" Height="0.182" Width="1.635" />
+      </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
       <HashCode>AyDAQNOI4qBOgAF4AQgIQAoA6BgAKAwKJSJFAXgAYMA=</HashCode>
@@ -69,32 +78,44 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.TextEditorControl">
-    <Position X="5.75" Y="0.5" Width="1.5" />
+    <Position X="5.25" Y="0.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Events" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="_primaryTextArea" Type="ICSharpCode.TextEditor.TextAreaControl" FixedFromPoint="true">
+    <AssociationLine Name="_primaryTextAreaControl" Type="ICSharpCode.TextEditor.TextAreaControl" FixedFromPoint="true">
       <Path>
-        <Point X="5.75" Y="0.938" />
-        <Point X="2" Y="0.938" />
+        <Point X="5.25" Y="0.75" />
+        <Point X="2.5" Y="0.75" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_secondaryTextAreaControl" Type="ICSharpCode.TextEditor.TextAreaControl" FixedFromPoint="true">
+      <Path>
+        <Point X="5.25" Y="1.062" />
+        <Point X="2.5" Y="1.062" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="ActiveTextAreaControl" Type="ICSharpCode.TextEditor.TextAreaControl" FixedToPoint="true">
+      <Path>
+        <Point X="5.25" Y="1.688" />
+        <Point X="2.5" Y="1.688" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>ECACCIKgIOhiZAAQKAgIBAABiIQKFAASjAIgCjxo3gA=</HashCode>
+      <HashCode>ECACCIKgIOhiZAAQKAgIBAABiIQIHAASjAIgCjxo3gA=</HashCode>
       <FileName>Gui\TextEditorControl.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="_primaryTextArea" />
-      <Field Name="_secondaryTextArea" />
+      <Field Name="_primaryTextAreaControl" />
+      <Field Name="_secondaryTextAreaControl" />
       <Property Name="Document" />
       <Property Name="ActiveTextAreaControl" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ICSharpCode.TextEditor.TextView">
-    <Position X="5.5" Y="4.25" Width="1.5" />
+    <Position X="5.25" Y="4.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
@@ -121,16 +142,16 @@
       <Property Name="TextArea" />
       <Property Name="Document" />
     </ShowAsAssociation>
-    <Lollipop Position="0.2" Collapsed="true" />
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ICSharpCode.TextEditor.Document.Document">
-    <Position X="9" Y="1" Width="1.5" />
+    <Position X="8" Y="1.25" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Events" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>ACIAA0MBCAAABAA4IsBABgAAQAAAUAYAKQCcDAAAAHE=</HashCode>
+      <HashCode>ACIAA0MBCAAAAAA4IsBABgAAQAAAEAYAKQCcDAAAAHE=</HashCode>
       <FileName>Document\Document.cs</FileName>
     </TypeIdentifier>
   </Class>

@@ -183,30 +183,31 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Events
-        public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
-        {
-            add { LineManager.LineLengthChanged += value; }
-            remove { LineManager.LineLengthChanged -= value; }
-        }
+        //public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
+        //{
+        //    add { LineManager.LineLengthChanged += value; }
+        //    remove { LineManager.LineLengthChanged -= value; }
+        //}
 
-        public event EventHandler<LineCountChangeEventArgs> LineCountChanged
-        {
-            add { LineManager.LineCountChanged += value; }
-            remove { LineManager.LineCountChanged -= value; }
-        }
+        //public event EventHandler<LineCountChangeEventArgs> LineCountChanged
+        //{
+        //    add { LineManager.LineCountChanged += value; }
+        //    remove { LineManager.LineCountChanged -= value; }
+        //}
 
-        public event EventHandler<LineEventArgs> LineDeleted
-        {
-            add { LineManager.LineDeleted += value; }
-            remove { LineManager.LineDeleted -= value; }
-        }
+        //public event EventHandler<LineEventArgs> LineDeleted
+        //{
+        //    add { LineManager.LineDeleted += value; }
+        //    remove { LineManager.LineDeleted -= value; }
+        //}
 
         public event EventHandler UpdateCommited;
+
         public event EventHandler TextContentChanged;
 
         public event DocumentEventHandler DocumentAboutToBeChanged;
-        public event DocumentEventHandler DocumentChanged;
 
+        public event DocumentEventHandler DocumentChanged;
         #endregion
 
         #region Lifecycle

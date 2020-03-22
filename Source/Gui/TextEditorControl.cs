@@ -31,11 +31,11 @@ namespace ICSharpCode.TextEditor
 
         protected Panel _textAreaPanel = new Panel();
 
-        TextAreaControl _primaryTextArea = null;
-
         Splitter _textAreaSplitter = null;
 
-        TextAreaControl _secondaryTextArea = null;
+        TextAreaControl _primaryTextAreaControl = null;
+
+        TextAreaControl _secondaryTextAreaControl = null;
 
         string _currentFileName = null;
 
@@ -569,17 +569,17 @@ namespace ICSharpCode.TextEditor
             //Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy();
             Document = new Document.Document();
 
-            _primaryTextArea = new TextAreaControl(this);
-            ActiveTextAreaControl = _primaryTextArea;
+            _primaryTextAreaControl = new TextAreaControl(this);
+            ActiveTextAreaControl = _primaryTextAreaControl;
 
-            _primaryTextArea.TextArea.GotFocus += delegate
+            _primaryTextAreaControl.TextArea.GotFocus += delegate
             {
-                SetActiveTextAreaControl(_primaryTextArea);
+                SetActiveTextAreaControl(_primaryTextAreaControl);
             };
 
-            _primaryTextArea.Dock = DockStyle.Fill;
-            _textAreaPanel.Controls.Add(_primaryTextArea);
-            InitializeTextAreaControl(_primaryTextArea);
+            _primaryTextAreaControl.Dock = DockStyle.Fill;
+            _textAreaPanel.Controls.Add(_primaryTextAreaControl);
+            InitializeTextAreaControl(_primaryTextAreaControl);
             Controls.Add(_textAreaPanel);
             ResizeRedraw = true;
             Document.UpdateCommited += new EventHandler(CommitUpdateRequested);
@@ -874,17 +874,17 @@ namespace ICSharpCode.TextEditor
 
                 if (_textAreaPanel != null)
                 {
-                    if (_secondaryTextArea != null)
+                    if (_secondaryTextAreaControl != null)
                     {
-                        _secondaryTextArea.Dispose();
+                        _secondaryTextAreaControl.Dispose();
                         _textAreaSplitter.Dispose();
-                        _secondaryTextArea = null;
+                        _secondaryTextAreaControl = null;
                         _textAreaSplitter = null;
                     }
 
-                    if (_primaryTextArea != null)
+                    if (_primaryTextAreaControl != null)
                     {
-                        _primaryTextArea.Dispose();
+                        _primaryTextAreaControl.Dispose();
                     }
 
                     _textAreaPanel.Dispose();
@@ -905,24 +905,24 @@ namespace ICSharpCode.TextEditor
 
         public void OptionsChanged()
         {
-            _primaryTextArea.OptionsChanged();
-            if (_secondaryTextArea != null)
+            _primaryTextAreaControl.OptionsChanged();
+            if (_secondaryTextAreaControl != null)
             {
-                _secondaryTextArea.OptionsChanged();
+                _secondaryTextAreaControl.OptionsChanged();
             }
         }
 
         public void Split()
         {
-            if (_secondaryTextArea == null)
+            if (_secondaryTextAreaControl == null)
             {
-                _secondaryTextArea = new TextAreaControl(this);
-                _secondaryTextArea.Dock = DockStyle.Bottom;
-                _secondaryTextArea.Height = Height / 2;
+                _secondaryTextAreaControl = new TextAreaControl(this);
+                _secondaryTextAreaControl.Dock = DockStyle.Bottom;
+                _secondaryTextAreaControl.Height = Height / 2;
 
-                _secondaryTextArea.TextArea.GotFocus += delegate
+                _secondaryTextAreaControl.TextArea.GotFocus += delegate
                 {
-                    SetActiveTextAreaControl(_secondaryTextArea);
+                    SetActiveTextAreaControl(_secondaryTextAreaControl);
                 };
 
                 _textAreaSplitter = new Splitter();
@@ -930,20 +930,20 @@ namespace ICSharpCode.TextEditor
                 _textAreaSplitter.Height = 8;
                 _textAreaSplitter.Dock = DockStyle.Bottom;
                 _textAreaPanel.Controls.Add(_textAreaSplitter);
-                _textAreaPanel.Controls.Add(_secondaryTextArea);
-                InitializeTextAreaControl(_secondaryTextArea);
-                _secondaryTextArea.OptionsChanged();
+                _textAreaPanel.Controls.Add(_secondaryTextAreaControl);
+                InitializeTextAreaControl(_secondaryTextAreaControl);
+                _secondaryTextAreaControl.OptionsChanged();
             }
             else
             {
-                SetActiveTextAreaControl(_primaryTextArea);
+                SetActiveTextAreaControl(_primaryTextAreaControl);
 
-                _textAreaPanel.Controls.Remove(_secondaryTextArea);
+                _textAreaPanel.Controls.Remove(_secondaryTextAreaControl);
                 _textAreaPanel.Controls.Remove(_textAreaSplitter);
 
-                _secondaryTextArea.Dispose();
+                _secondaryTextAreaControl.Dispose();
                 _textAreaSplitter.Dispose();
-                _secondaryTextArea = null;
+                _secondaryTextAreaControl = null;
                 _textAreaSplitter = null;
             }
         }
@@ -961,11 +961,11 @@ namespace ICSharpCode.TextEditor
                 Document.UndoStack.Undo();
 
                 Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
-                this._primaryTextArea.TextArea.UpdateMatchingBracket();
+                this._primaryTextAreaControl.TextArea.UpdateMatchingBracket();
 
-                if (_secondaryTextArea != null)
+                if (_secondaryTextAreaControl != null)
                 {
-                    this._secondaryTextArea.TextArea.UpdateMatchingBracket();
+                    this._secondaryTextAreaControl.TextArea.UpdateMatchingBracket();
                 }
                 EndUpdate();
             }
@@ -984,10 +984,10 @@ namespace ICSharpCode.TextEditor
                 Document.UndoStack.Redo();
 
                 Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
-                _primaryTextArea.TextArea.UpdateMatchingBracket();
-                if (_secondaryTextArea != null)
+                _primaryTextAreaControl.TextArea.UpdateMatchingBracket();
+                if (_secondaryTextAreaControl != null)
                 {
-                    _secondaryTextArea.TextArea.UpdateMatchingBracket();
+                    _secondaryTextAreaControl.TextArea.UpdateMatchingBracket();
                 }
 
                 EndUpdate();
@@ -1023,43 +1023,43 @@ namespace ICSharpCode.TextEditor
                 switch (update.TextAreaUpdateType)
                 {
                     case TextAreaUpdateType.PositionToEnd:
-                        this._primaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
-                        if (this._secondaryTextArea != null)
+                        this._primaryTextAreaControl.TextArea.UpdateToEnd(update.Position.Y);
+                        if (this._secondaryTextAreaControl != null)
                         {
-                            this._secondaryTextArea.TextArea.UpdateToEnd(update.Position.Y);
+                            this._secondaryTextAreaControl.TextArea.UpdateToEnd(update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.PositionToLineEnd:
                     case TextAreaUpdateType.SingleLine:
-                        this._primaryTextArea.TextArea.UpdateLine(update.Position.Y);
-                        if (this._secondaryTextArea != null)
+                        this._primaryTextAreaControl.TextArea.UpdateLine(update.Position.Y);
+                        if (this._secondaryTextAreaControl != null)
                         {
-                            this._secondaryTextArea.TextArea.UpdateLine(update.Position.Y);
+                            this._secondaryTextAreaControl.TextArea.UpdateLine(update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.SinglePosition:
-                        this._primaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
-                        if (this._secondaryTextArea != null)
+                        this._primaryTextAreaControl.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
+                        if (this._secondaryTextAreaControl != null)
                         {
-                            this._secondaryTextArea.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
+                            this._secondaryTextAreaControl.TextArea.UpdateLine(update.Position.Y, update.Position.X, update.Position.X);
                         }
                         break;
 
                     case TextAreaUpdateType.LinesBetween:
-                        this._primaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
-                        if (this._secondaryTextArea != null)
+                        this._primaryTextAreaControl.TextArea.UpdateLines(update.Position.X, update.Position.Y);
+                        if (this._secondaryTextAreaControl != null)
                         {
-                            this._secondaryTextArea.TextArea.UpdateLines(update.Position.X, update.Position.Y);
+                            this._secondaryTextAreaControl.TextArea.UpdateLines(update.Position.X, update.Position.Y);
                         }
                         break;
 
                     case TextAreaUpdateType.WholeTextArea:
-                        this._primaryTextArea.TextArea.Invalidate();
-                        if (this._secondaryTextArea != null)
+                        this._primaryTextAreaControl.TextArea.Invalidate();
+                        if (this._secondaryTextAreaControl != null)
                         {
-                            this._secondaryTextArea.TextArea.Invalidate();
+                            this._secondaryTextAreaControl.TextArea.Invalidate();
                         }
                         break;
                 }
