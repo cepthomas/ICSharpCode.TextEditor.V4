@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// A color used for highlighting
     /// </summary>
-    public class HighlightColor //TODO0 fix this syntax
+    public class HighlightColor //TODOsyntax
     {
         #region Properties
         public bool HasForeground { get { return Color != Color.Transparent; } }

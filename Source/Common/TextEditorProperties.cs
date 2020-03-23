@@ -58,7 +58,7 @@ namespace ICSharpCode.TextEditor.Common
         [JsonIgnore]
         // TODO1   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
         public Encoding Encoding { get; set; } = Encoding.UTF8;
-        public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
+        public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } } //TODO0
         #endregion
 
 

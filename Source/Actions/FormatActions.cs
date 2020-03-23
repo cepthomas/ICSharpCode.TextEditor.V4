@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml.Linq;
+using System.Xml.Linq; // used for formatting only
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Common;
 
