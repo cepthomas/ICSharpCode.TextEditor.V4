@@ -29,29 +29,89 @@ namespace ICSharpCode.TextEditor.Common
     [Serializable]
     public class TextEditorProperties
     {
-        //TODO2 Add doc like: [Category("\tFavorites"), DisplayName("Filter Favorites"), Description("Filter strings or regular expressions.")]
+        //[Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
 
-        #region Properties same for all controls
-        public bool CaretLine { get; set; } = false;
-        public bool AutoInsertCurlyBracket { get; set; } = true;
+        #region Editable properties common for all controls
+
+        [Category("Appearance")]
+        [Description("Editor font")]
+        public Font Font { get; set; } = new Font("Consolas", 9.0f);
+
+        [Category("Appearance")]
+        [Description("If true the horizontal ruler is shown in the textarea")]
+        public bool ShowHRuler { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("If true the vertical ruler is shown in the textarea")]
+        public bool ShowVRuler { get; set; }
+
+        [Category("Appearance")]
+        [Description("The row in which the vertical ruler is displayed")]
+        public int VRulerRow { get; set; } = 80;
+
+        [Category("Appearance")]
+        [Description("Show the caret line")]
+        public bool CaretLine { get; set; } = true;
+
+        [Category("Behavior")]
+        [Description("Hide the mouse cursor while typing")]
         public bool HideMouseCursor { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("If true the icon bar is displayed")]
         public bool IsIconBarVisible { get; set; } = true;
-        public bool AllowCaretBeyondEOL { get; set; } = true;
+
+        [Category("Behavior")]
+        [Description("Allows the caret to be placed beyond the end of line")]
+        public bool AllowCaretBeyondEOL { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("If true matching brackets are highlighted")]
         public bool ShowMatchingBracket { get; set; } = true;
+
+        [Category("Appearance")]
+        [Description("Specifies the quality of text rendering (whether to use hinting and/or anti-aliasing).")]
         public TextRenderingHint TextRenderingHint { get; set; } = TextRenderingHint.SystemDefault;
-        public bool MouseWheelScrollDown { get; set; } = true;
-        public bool MouseWheelTextZoom { get; set; } = true;
-        public string LineTerminator { get; set; } = Environment.NewLine;
-        public LineViewerStyle LineViewerStyle { get; set; } = LineViewerStyle.FullRow; //TODO1 just gutter opt
+
+        [Category("Appearance")]
+        [Description("The line viewer style")]
+        public LineViewerStyle LineViewerStyle { get; set; } = LineViewerStyle.None;
+
+        [Category("Appearance")]
+        [Description("If true invalid lines are marked in the textarea")]
         public bool ShowInvalidLines { get; set; } = false;
-        public int VerticalRulerRow { get; set; } = 80;
-        public bool ShowHorizontalRuler { get; set; } = false;
-        public bool ShowVerticalRuler { get; set; } = false;
-        public bool EnableFolding { get; set; } = true;
+
+        [Category("Appearance")]
+        [Description("If true line numbers are shown in the textarea")]
         public bool ShowLineNumbers { get; set; } = true;
-        public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
+
+        [Category("Appearance")]
+        [Description("If true folding is enabled in the textarea")]
+        public bool EnableFolding { get; set; } = true;
+
+        [Category("Behavior")]
+        [Description("Specifies if the bracket matching should match the bracket before or after the caret.")]
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
+        #endregion
+
+        #region TODO1 These?
+        public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
+
+        public int VerticalRulerRow { get; set; } = 80;
+
+        public bool ShowHorizontalRuler { get; set; } = false;
+
+        public bool ShowVerticalRuler { get; set; } = false;
+        
         public bool SupportReadOnlySegments { get; set; } = false;
+
+        public bool MouseWheelScrollDown { get; set; } = true;
+
+        public bool MouseWheelTextZoom { get; set; } = true;
+
+        public string LineTerminator { get; set; } = Environment.NewLine;
+        
+        //public bool AutoInsertCurlyBracket { get; set; } = true;
         #endregion
 
         #region Stuff json or serialization can't handle TODO1
@@ -61,17 +121,33 @@ namespace ICSharpCode.TextEditor.Common
         //public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
         #endregion
 
-
-        public Font Font { get; set; } = new Font("Consolas", 9.0f);
-
-
-        #region Properties that can be overriden per control TODO0 see TextEditorControl
+        #region Properties that can be overriden per control
+        [Category("Appearance")]
+        [Description("If true spaces are shown in the textarea")]
         public bool ShowSpaces { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("If true tabs are shown in the textarea")]
         public bool ShowTabs { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("If true EOL markers are shown in the textarea")]
         public bool ShowEOLMarker { get; set; } = false;
-        public bool ConvertTabsToSpaces { get; set; } = true;
+
+        [Category("Behavior")]
+        [Description("Converts tabs to spaces while typing")]
+        public bool ConvertTabsToSpaces { get; set; } = false;
+
+        [Category("Appearance")]
+        [Description("The width in spaces of a tab character")]
         public int TabIndent { get; set; } = 4;
+
+        [Category("Appearance")]
+        [Description("Used for auto indentation")]
         public int IndentationSize { get; set; } = 4;
+
+        [Category("Behavior")]
+        [Description("The indent style")]
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         #endregion
 

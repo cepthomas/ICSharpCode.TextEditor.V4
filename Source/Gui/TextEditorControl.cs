@@ -54,7 +54,7 @@ namespace ICSharpCode.TextEditor
         Encoding _encoding;
         #endregion
 
-        #region Properties
+        #region Properties - internal
         /// <value>
         /// Current file's character encoding
         /// </value>
@@ -110,31 +110,26 @@ namespace ICSharpCode.TextEditor
         }
 
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool EnableUndo { get { return Document.UndoStack.CanUndo; } }
 
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool EnableRedo { get { return Document.UndoStack.CanRedo; } }
 
-        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public override string Text
         {
-            get
-            {
-                return Document.TextContent;
-            }
-            set
-            {
-                Document.TextContent = value;
-            }
+            get { return Document.TextContent; }
+            set { Document.TextContent = value; }
         }
-
 
         /// <value>
         /// If set to true the contents can't be altered.
         /// </value>
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool IsReadOnly
         {
             get
@@ -152,30 +147,55 @@ namespace ICSharpCode.TextEditor
         /// it updates it status no redraw operation occurs.
         /// </value>
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool IsInUpdate
         {
-            get
-            {
-                return _updateLevel > 0;
-            }
-        }
+            get { return _updateLevel > 0; } }
 
         /// <value>
         /// supposedly this is the way to do it according to .NET docs,
         /// as opposed to setting the size in the constructor
         /// </value>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         protected override Size DefaultSize
         {
-            get
-            {
-                return new Size(100, 100);
-            }
+            get { return new Size(100, 100); }
         }
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TextAreaControl ActiveTextAreaControl { get; private set; } = null;
+        #endregion
 
+        #region Document Properties TODO0 initialize from TEP when creating control
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ShowSpaces { get; set; } = false;
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ShowTabs { get; set; } = false;
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ShowEOLMarker { get; set; } = false;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ConvertTabsToSpaces { get; set; } = false;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int TabIndent { get; set; } = 4;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int IndentationSize { get; set; } = 4;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         #endregion
 
         #region Events
@@ -228,11 +248,7 @@ namespace ICSharpCode.TextEditor
             Document.UpdateCommited += new EventHandler(CommitUpdateRequested);
             OptionsChanged();
         }
-
         #endregion
-
-
-
 
         #region Actions
         public bool IsEditAction(Keys keyData)
@@ -246,7 +262,7 @@ namespace ICSharpCode.TextEditor
             {
                 return null;
             }
-            return (IEditAction)_editActions[keyData];
+            return _editActions[keyData];
         }
 
         void GenerateDefaultActions() //TODO1 get from file/config
@@ -311,364 +327,6 @@ namespace ICSharpCode.TextEditor
 
             _editActions[Keys.B | Keys.Control] = new GotoMatchingBrace();
         }
-        #endregion
-
-
-        #region Document Properties TODO0 these with TEP.
-        /// <value>
-        /// If true spaces are shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true spaces are shown in the textarea")]
-        public bool ShowSpaces
-        {
-            get
-            {
-                return Shared.TEP.ShowSpaces;
-            }
-            set
-            {
-                Shared.TEP.ShowSpaces = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// Specifies the quality of text rendering (whether to use hinting and/or anti-aliasing).
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(TextRenderingHint.SystemDefault)]
-        [Description("Specifies the quality of text rendering (whether to use hinting and/or anti-aliasing).")]
-        public TextRenderingHint TextRenderingHint
-        {
-            get
-            {
-                return Shared.TEP.TextRenderingHint;
-            }
-            set
-            {
-                Shared.TEP.TextRenderingHint = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true tabs are shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true tabs are shown in the textarea")]
-        public bool ShowTabs
-        {
-            get
-            {
-                return Shared.TEP.ShowTabs;
-            }
-            set
-            {
-                Shared.TEP.ShowTabs = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true EOL markers are shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true EOL markers are shown in the textarea")]
-        public bool ShowEOLMarkers
-        {
-            get
-            {
-                return Shared.TEP.ShowEOLMarker;
-            }
-            set
-            {
-                Shared.TEP.ShowEOLMarker = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true the horizontal ruler is shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true the horizontal ruler is shown in the textarea")]
-        public bool ShowHRuler
-        {
-            get
-            {
-                return Shared.TEP.ShowHorizontalRuler;
-            }
-            set
-            {
-                Shared.TEP.ShowHorizontalRuler = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true the vertical ruler is shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(true)]
-        [Description("If true the vertical ruler is shown in the textarea")]
-        public bool ShowVRuler
-        {
-            get
-            {
-                return Shared.TEP.ShowVerticalRuler;
-            }
-            set
-            {
-                Shared.TEP.ShowVerticalRuler = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// The row in which the vertical ruler is displayed
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(80)]
-        [Description("The row in which the vertical ruler is displayed")]
-        public int VRulerRow
-        {
-            get
-            {
-                return Shared.TEP.VerticalRulerRow;
-            }
-            set
-            {
-                Shared.TEP.VerticalRulerRow = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true line numbers are shown in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(true)]
-        [Description("If true line numbers are shown in the textarea")]
-        public bool ShowLineNumbers
-        {
-            get
-            {
-                return Shared.TEP.ShowLineNumbers;
-            }
-            set
-            {
-                Shared.TEP.ShowLineNumbers = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true invalid lines are marked in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true invalid lines are marked in the textarea")]
-        public bool ShowInvalidLines
-        {
-            get
-            {
-                return Shared.TEP.ShowInvalidLines;
-            }
-            set
-            {
-                Shared.TEP.ShowInvalidLines = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// If true folding is enabled in the textarea
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(true)]
-        [Description("If true folding is enabled in the textarea")]
-        public bool EnableFolding
-        {
-            get
-            {
-                return Shared.TEP.EnableFolding;
-            }
-            set
-            {
-                Shared.TEP.EnableFolding = value;
-                OptionsChanged();
-            }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(true)]
-        [Description("If true matching brackets are highlighted")]
-        public bool ShowMatchingBracket
-        {
-            get
-            {
-                return Shared.TEP.ShowMatchingBracket;
-            }
-            set
-            {
-                Shared.TEP.ShowMatchingBracket = value;
-                OptionsChanged();
-            }
-        }
-
-        [Category("Appearance")]
-        [DefaultValue(false)]
-        [Description("If true the icon bar is displayed")]
-        public bool IsIconBarVisible
-        {
-            get
-            {
-                return Shared.TEP.IsIconBarVisible;
-            }
-            set
-            {
-                Shared.TEP.IsIconBarVisible = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// The width in spaces of a tab character
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(4)]
-        [Description("The width in spaces of a tab character")]
-        public int TabIndent
-        {
-            get
-            {
-                return Shared.TEP.TabIndent;
-            }
-            set
-            {
-                Shared.TEP.TabIndent = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// The line viewer style
-        /// </value>
-        [Category("Appearance")]
-        [DefaultValue(LineViewerStyle.None)]
-        [Description("The line viewer style")]
-        public LineViewerStyle LineViewerStyle
-        {
-            get
-            {
-                return Shared.TEP.LineViewerStyle;
-            }
-            set
-            {
-                Shared.TEP.LineViewerStyle = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// The indent style
-        /// </value>
-        [Category("Behavior")]
-        [DefaultValue(IndentStyle.Smart)]
-        [Description("The indent style")]
-        public IndentStyle IndentStyle
-        {
-            get
-            {
-                return Shared.TEP.IndentStyle;
-            }
-            set
-            {
-                Shared.TEP.IndentStyle = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// if true spaces are converted to tabs
-        /// </value>
-        [Category("Behavior")]
-        [DefaultValue(false)]
-        [Description("Converts tabs to spaces while typing")]
-        public bool ConvertTabsToSpaces
-        {
-            get
-            {
-                return Shared.TEP.ConvertTabsToSpaces;
-            }
-            set
-            {
-                Shared.TEP.ConvertTabsToSpaces = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// if true spaces are converted to tabs
-        /// </value>
-        [Category("Behavior")]
-        [DefaultValue(false)]
-        [Description("Hide the mouse cursor while typing")]
-        public bool HideMouseCursor
-        {
-            get
-            {
-                return Shared.TEP.HideMouseCursor;
-            }
-            set
-            {
-                Shared.TEP.HideMouseCursor = value;
-                OptionsChanged();
-            }
-        }
-
-        /// <value>
-        /// if true spaces are converted to tabs
-        /// </value>
-        [Category("Behavior")]
-        [DefaultValue(false)]
-        [Description("Allows the caret to be placed beyond the end of line")]
-        public bool AllowCaretBeyondEOL
-        {
-            get
-            {
-                return Shared.TEP.AllowCaretBeyondEOL;
-            }
-            set
-            {
-                Shared.TEP.AllowCaretBeyondEOL = value;
-                OptionsChanged();
-            }
-        }
-        /// <value>
-        /// if true spaces are converted to tabs
-        /// </value>
-        [Category("Behavior")]
-        [DefaultValue(BracketMatchingStyle.After)]
-        [Description("Specifies if the bracket matching should match the bracket before or after the caret.")]
-        public BracketMatchingStyle BracketMatchingStyle
-        {
-            get
-            {
-                return Shared.TEP.BracketMatchingStyle;
-            }
-            set
-            {
-                Shared.TEP.BracketMatchingStyle = value;
-                OptionsChanged();
-            }
-        }
-
         #endregion
 
         #region Public functions
