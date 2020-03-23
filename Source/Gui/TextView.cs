@@ -114,7 +114,7 @@ namespace ICSharpCode.TextEditor
 
         public void OptionsChanged()
         {
-            _lastFont = Shared.FontContainer.RegularFont;
+            _lastFont = FontRegistry.GetFont();
             FontHeight = GetFontHeight(_lastFont);
             // use minimum width - in some fonts, space has no width but kerning is used instead
             // -> DivideByZeroException
@@ -132,7 +132,7 @@ namespace ICSharpCode.TextEditor
             }
 
             // Just to ensure that fontHeight and char widths are always correct...
-            if (_lastFont != Shared.FontContainer.RegularFont)
+            if (_lastFont != FontRegistry.GetFont())
             {
                 OptionsChanged();
                 TextArea.Invalidate();
@@ -300,7 +300,7 @@ namespace ICSharpCode.TextEditor
             Brush bgColorBrush = drawSelected ? BrushRegistry.GetBrush(selectionColor.BackgroundColor) : GetBgColorBrush(lineNumber);
             Brush backgroundBrush = TextArea.Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
 
-            Font font = Shared.FontContainer.RegularFont;
+            Font font = FontRegistry.GetFont();
 
             int wordWidth = MeasureStringWidth(g, text, font) + ADDITIONAL_FOLD_TEXT_SIZE;
             Rectangle rect = new Rectangle(physicalXPos, lineRectangle.Y, wordWidth, lineRectangle.Height - 1);
@@ -408,7 +408,6 @@ namespace ICSharpCode.TextEditor
             int currentWordOffset = 0; // we cannot use currentWord.Offset because it is not set on space words
             TextWord currentWord;
             TextWord nextCurrentWord = null;
-            FontContainer fontContainer = Shared.FontContainer;
 
             for (int wordIdx = 0; wordIdx < currentLine.Words.Count; wordIdx++)
             {
@@ -569,7 +568,7 @@ namespace ICSharpCode.TextEditor
                 }
                 else
                 {
-                    int wordWidth = DrawDocumentWord(g, currentWord.Word, new Point(physicalXPos, lineRectangle.Y), currentWord.GetFont(fontContainer), wordForeColor, wordBackBrush);
+                    int wordWidth = DrawDocumentWord(g, currentWord.Word, new Point(physicalXPos, lineRectangle.Y), currentWord.GetFont(), wordForeColor, wordBackBrush);
                     wordRectangle = new RectangleF(physicalXPos, lineRectangle.Y, wordWidth, lineRectangle.Height);
                     physicalXPos += wordWidth;
                 }
@@ -871,7 +870,7 @@ namespace ICSharpCode.TextEditor
                     // reached fold marker
                     lineNumber = nextFolding.EndLine;
                     start = nextFolding.EndColumn;
-                    int newPosX = posX + 1 + MeasureStringWidth(g, nextFolding.FoldText, Shared.FontContainer.RegularFont);
+                    int newPosX = posX + 1 + MeasureStringWidth(g, nextFolding.FoldText, FontRegistry.GetFont());
                     if (newPosX >= visualPosX)
                     {
                         inFoldMarker = nextFolding;
@@ -906,7 +905,7 @@ namespace ICSharpCode.TextEditor
             int wordOffset = 0;
             FontContainer fontContainer = TextEditorProperties.FontContainer;
              */
-            FontContainer fontContainer = Shared.FontContainer;
+
 
             List<TextWord> words = line.Words;
             if (words == null) return 0;
@@ -942,7 +941,7 @@ namespace ICSharpCode.TextEditor
                             int wordStart = Math.Max(wordOffset, start);
                             int wordLength = Math.Min(wordOffset + word.Length, end) - wordStart;
                             string text = Document.GetText(line.Offset + wordStart, wordLength);
-                            Font font = word.GetFont(fontContainer) ?? fontContainer.RegularFont;
+                            Font font = word.GetFont() ?? FontRegistry.GetFont();
                             newDrawingPos = drawingPos + MeasureStringWidth(g, text, font);
                             if (newDrawingPos >= targetVisualPosX)
                             {
@@ -1005,7 +1004,6 @@ namespace ICSharpCode.TextEditor
 
             int wordCount = words.Count;
             int wordOffset = 0;
-            FontContainer fontContainer = Shared.FontContainer;
 
             for (int i = 0; i < wordCount; i++)
             {
@@ -1030,7 +1028,7 @@ namespace ICSharpCode.TextEditor
                             int wordStart = Math.Max(wordOffset, start);
                             int wordLength = Math.Min(wordOffset + word.Length, end) - wordStart;
                             string text = Document.GetText(currentLine.Offset + wordStart, wordLength);
-                            drawingPos += MeasureStringWidth(g, text, word.GetFont(fontContainer) ?? fontContainer.RegularFont);
+                            drawingPos += MeasureStringWidth(g, text, word.GetFont() ?? FontRegistry.GetFont());
                             break;
                     }
                 }
@@ -1150,7 +1148,7 @@ namespace ICSharpCode.TextEditor
                 foldEnd = f.EndColumn;
                 column += f.FoldText.Length;
                 drawingPos += ADDITIONAL_FOLD_TEXT_SIZE;
-                drawingPos += MeasureStringWidth(g, f.FoldText, Shared.FontContainer.RegularFont);
+                drawingPos += MeasureStringWidth(g, f.FoldText, FontRegistry.GetFont());
             }
 
             drawingPos += CountColumns(ref column, foldEnd, logicalColumn, logicalLine, g);
@@ -1174,29 +1172,29 @@ namespace ICSharpCode.TextEditor
         void DrawInvalidLineMarker(Graphics g, int x, int y)
         {
             HighlightColor invalidLinesColor = Shared.TEP.InvalidLinesColor;
-            DrawString(g, "~", invalidLinesColor.GetFont(Shared.FontContainer), invalidLinesColor.Color, x, y);
+            DrawString(g, "~", FontRegistry.GetFont(invalidLinesColor.Bold, invalidLinesColor.Italic), invalidLinesColor.Color, x, y);
         }
 
         void DrawSpaceMarker(Graphics g, Color color, int x, int y)
         {
             HighlightColor spaceMarkerColor = Shared.TEP.SpaceMarkersColor;
-            DrawString(g, "\u00B7", spaceMarkerColor.GetFont(Shared.FontContainer), color, x, y);
+            DrawString(g, "\u00B7", FontRegistry.GetFont(spaceMarkerColor.Bold, spaceMarkerColor.Italic), color, x, y);
         }
 
         void DrawTabMarker(Graphics g, Color color, int x, int y)
         {
             HighlightColor tabMarkerColor = Shared.TEP.TabMarkersColor;
-            DrawString(g, "\u00BB", tabMarkerColor.GetFont(Shared.FontContainer), color, x, y);
+            DrawString(g, "\u00BB", FontRegistry.GetFont(tabMarkerColor.Bold, tabMarkerColor.Italic), color, x, y);
         }
 
         int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y)
         {
             HighlightColor eolMarkerColor = Shared.TEP.EOLMarkersColor;
 
-            int width = GetWidth('\u00B6', eolMarkerColor.GetFont(Shared.FontContainer));
+            int width = GetWidth('\u00B6', FontRegistry.GetFont(eolMarkerColor.Bold, eolMarkerColor.Italic));
             g.FillRectangle(backBrush, new RectangleF(x, y, width, FontHeight));
 
-            DrawString(g, "\u00B6", eolMarkerColor.GetFont(Shared.FontContainer), color, x, y);
+            DrawString(g, "\u00B6", FontRegistry.GetFont(eolMarkerColor.Bold, eolMarkerColor.Italic), color, x, y);
             return width;
         }
 

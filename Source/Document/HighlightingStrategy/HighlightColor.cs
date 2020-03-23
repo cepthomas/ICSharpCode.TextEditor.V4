@@ -33,10 +33,6 @@ namespace ICSharpCode.TextEditor.Document
         public Color Color { get; } = Color.Transparent;
         #endregion
 
-
-        static HighlightColor DEF_HL_COL = new HighlightColor(Color.Transparent);
-
-
         #region Lifecycle
         public HighlightColor(XmlElement el, HighlightColor defaultColor)
         {
@@ -201,17 +197,6 @@ namespace ICSharpCode.TextEditor.Document
         public HighlightColor()
         {
 
-        }
-        #endregion
-
-        #region Public functions
-        public Font GetFont(FontContainer fontContainer)//TODO0 syntax clean this up.
-        {
-            if (Bold)
-            {
-                return Italic ? fontContainer.BoldItalicFont : fontContainer.BoldFont;
-            }
-            return Italic ? fontContainer.ItalicFont : fontContainer.RegularFont;
         }
         #endregion
 

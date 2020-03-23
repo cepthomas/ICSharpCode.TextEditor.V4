@@ -75,7 +75,7 @@ namespace ICSharpCode.TextEditor
                     if (curLine < TextArea.Document.TotalNumberOfLines)
                     {
                         g.DrawString((curLine + 1).ToString(),
-                                     lineNumberPainterColor.GetFont(Shared.FontContainer),
+                                     FontRegistry.GetFont(lineNumberPainterColor.Bold, lineNumberPainterColor.Italic),
                                      drawBrush,
                                      backgroundRectangle,
                                      _numberStringFormat);

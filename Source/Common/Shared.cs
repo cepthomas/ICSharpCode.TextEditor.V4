@@ -15,13 +15,8 @@ namespace ICSharpCode.TextEditor.Common
     public class Shared
     {
         public static TextEditorProperties TEP { get; set; } = new TextEditorProperties();
-        
-        public static FontContainer FontContainer { get; set; }
 
-        public static void SetContainerFont(Font font)
-        {
-            FontContainer = new FontContainer(font);
-        }
+      //  public static FontContainer FontContainer { get; set; } = new FontContainer();
 
         public static void Init(string appDir)
         {
@@ -30,12 +25,36 @@ namespace ICSharpCode.TextEditor.Common
 
             TEP = TextEditorProperties.Load(appDir);
 
-            SetContainerFont(TEP.Font);
+            FontRegistry.SetFont(TEP.Font);
+        }
+    }
+
+    public class FontRegistry
+    {
+        #region Fonts
+        static Font _regularFont;
+        static Font _boldFont;
+        static Font _italicFont;
+        static Font _boldItalicFont;
+
+        public static Font GetFont(bool bold = false, bool italic = false)
+        {
+            if (bold)
+            {
+                return italic ? _boldItalicFont : _boldFont;
+            }
+            return italic ? _italicFont : _regularFont;
         }
 
-        public static void Save()
+        public static void SetFont(Font font)
         {
-            TEP.Save();
+            _regularFont = font;
+            _boldFont = new Font(_regularFont, FontStyle.Bold);
+            _italicFont = new Font(_regularFont, FontStyle.Italic);
+            _boldItalicFont = new Font(_regularFont, FontStyle.Bold | FontStyle.Italic);
         }
+        #endregion
+
+
     }
 }

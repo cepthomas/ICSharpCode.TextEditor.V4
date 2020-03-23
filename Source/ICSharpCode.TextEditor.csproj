@@ -64,7 +64,6 @@
     <Compile Include="Document\FormattingStrategy\DefaultFormattingStrategy.cs" />
     <Compile Include="Document\FormattingStrategy\IFormattingStrategy.cs" />
     <Compile Include="Document\HighlightingStrategy\HighlightingStrategy.cs" />
-    <Compile Include="Document\HighlightingStrategy\FontContainer.cs" />
     <Compile Include="Document\HighlightingStrategy\HighlightColor.cs" />
     <Compile Include="Document\HighlightingStrategy\HighlightingDefinitionParser.cs" />
     <Compile Include="Document\HighlightingStrategy\HighlightingManager.cs" />

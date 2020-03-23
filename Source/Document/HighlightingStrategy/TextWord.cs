@@ -8,6 +8,8 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using ICSharpCode.TextEditor.Common;
+
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -92,9 +94,9 @@ namespace ICSharpCode.TextEditor.Document
             return after;
         }
 
-        public virtual Font GetFont(FontContainer fontContainer)
+        public virtual Font GetFont()
         {
-            return SyntaxColor.GetFont(fontContainer);
+            return FontRegistry.GetFont(SyntaxColor.Bold, SyntaxColor.Italic);
         }
         #endregion
     }
@@ -112,7 +114,7 @@ namespace ICSharpCode.TextEditor.Document
             SyntaxColor = color;
         }
 
-        public override Font GetFont(FontContainer fontContainer)
+        public override Font GetFont()
         {
             return null;
         }
@@ -147,7 +149,7 @@ namespace ICSharpCode.TextEditor.Document
             SyntaxColor = color;
         }
 
-        public override Font GetFont(FontContainer fontContainer)
+        public override Font GetFont()
         {
             return null;
         }
