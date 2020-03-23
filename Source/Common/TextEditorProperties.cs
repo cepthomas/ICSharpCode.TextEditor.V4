@@ -35,7 +35,7 @@ namespace ICSharpCode.TextEditor.Common
         public bool CaretLine { get; set; } = false;
         public bool AutoInsertCurlyBracket { get; set; } = true;
         public bool HideMouseCursor { get; set; } = false;
-        public bool IsIconBarVisible { get; set; } = false;
+        public bool IsIconBarVisible { get; set; } = true;
         public bool AllowCaretBeyondEOL { get; set; } = true;
         public bool ShowMatchingBracket { get; set; } = true;
         public TextRenderingHint TextRenderingHint { get; set; } = TextRenderingHint.SystemDefault;
@@ -62,7 +62,7 @@ namespace ICSharpCode.TextEditor.Common
         #endregion
 
 
-        #region Properties that can be overriden per control TODO1
+        #region Properties that can be overriden per control TODO0 see TextEditorControl
         public bool ShowSpaces { get; set; } = false;
         public bool ShowTabs { get; set; } = false;
         public bool ShowEOLMarker { get; set; } = false;
@@ -73,19 +73,19 @@ namespace ICSharpCode.TextEditor.Common
         #endregion
 
         #region Properties for colors TODOsyntax relocated from highlighting environment, put in a style thing when syntax colors get fixed.
-        public HighlightColor DefaultColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
+        public HighlightColor DefaultColor { get; set; } = new HighlightColor(SystemColors.WindowText, SystemColors.Window, false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.WhiteSmoke, false, false); // the selection line
-        public HighlightColor SelectionColor { get; set; } = new HighlightColor("HighlightText", "Highlight", false, false);
-        public HighlightColor EOLMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
-        public HighlightColor SpaceMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
-        public HighlightColor TabMarkersColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
+        public HighlightColor SelectionColor { get; set; } = new HighlightColor(SystemColors.HighlightText, SystemColors.Highlight, false, false);
+        public HighlightColor EOLMarkersColor { get; set; } = new HighlightColor(SystemColors.ControlLight, SystemColors.Window, false, false);
+        public HighlightColor SpaceMarkersColor { get; set; } = new HighlightColor(SystemColors.ControlLight, SystemColors.Window, false, false);
+        public HighlightColor TabMarkersColor { get; set; } = new HighlightColor(SystemColors.ControlLight, SystemColors.Window, false, false);
         public HighlightColor InvalidLinesColor { get; set; } = new HighlightColor(Color.Red, false, false);
-        public HighlightColor CaretLineColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
-        public HighlightColor LineNumbersColor { get; set; } = new HighlightColor("ControlDark", "Window", false, false);
-        public HighlightColor FoldLineColor { get; set; } = new HighlightColor("ControlDark", false, false);
-        public HighlightColor FoldMarkerColor { get; set; } = new HighlightColor("WindowText", "Window", false, false);
-        public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor("WindowText", false, false);
-        public HighlightColor VRulerColor { get; set; } = new HighlightColor("ControlLight", "Window", false, false);
+        public HighlightColor CaretLineColor { get; set; } = new HighlightColor(SystemColors.ControlLight, SystemColors.Window, false, false);
+        public HighlightColor LineNumbersColor { get; set; } = new HighlightColor(SystemColors.ControlDark, SystemColors.Window, false, false);
+        public HighlightColor FoldLineColor { get; set; } = new HighlightColor(SystemColors.ControlDark, false, false);
+        public HighlightColor FoldMarkerColor { get; set; } = new HighlightColor(SystemColors.WindowText, SystemColors.Window, false, false);
+        public HighlightColor SelectedFoldLineColor { get; set; } = new HighlightColor(SystemColors.WindowText, false, false);
+        public HighlightColor VRulerColor { get; set; } = new HighlightColor(SystemColors.ControlLight, SystemColors.Window, false, false);
 
         #endregion
 

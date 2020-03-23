@@ -23,7 +23,7 @@ namespace ICSharpCode.TextEditor.Document
     {
         Document _document;
 
-        TextArea _textArea; // TODO0 which has a SelMgr <--> Actually the whole class structure is tightly coupled.
+        TextArea _textArea;
 
         bool _isRect;
 

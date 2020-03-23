@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Document
     public class HighlightRuleSet
     {
         #region Fields
-        internal HighlightingStrategy Highlighter; // TODO0 messed up binding
+        internal HighlightingStrategy Highlighter;
         #endregion
 
         #region Properties

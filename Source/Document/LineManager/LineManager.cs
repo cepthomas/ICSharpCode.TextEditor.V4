@@ -111,7 +111,7 @@ namespace ICSharpCode.TextEditor.Document
             int numberOfLinesAfterRemoving = TotalNumberOfLines;
 
             InsertInternal(offset, text ?? "");
-            //TODO1*** 1.5 sec
+            //TODO1*** 50 Mb takes 1.5 sec
 
 #if DEBUG_EX
 			Console.WriteLine("New line collection:");
@@ -123,7 +123,7 @@ namespace ICSharpCode.TextEditor.Document
             // Otherwise we would expose inconsistent state to the event handlers.
             RunHighlighter(lineStart, 1 + Math.Max(0, TotalNumberOfLines - numberOfLinesAfterRemoving));
 
-            //TODO1*** 5 sec
+            //TODO1*** 50 Mb takes 5 sec
 
             if (deferredEventList.removedLines != null)
             {

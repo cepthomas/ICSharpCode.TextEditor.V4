@@ -97,7 +97,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public delegate void DocumentEventHandler(object sender, DocumentEventArgs e);
 
-    // TODO2 update events
+    // TODO1 update events
     //public event EventHandler<DocumentEventArgs> DocumentEventHandler;
 
     public class DocumentEventArgs : EventArgs
@@ -172,17 +172,17 @@ namespace ICSharpCode.TextEditor.Document
             {
                 OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 TextBuffer.SetContent(value);
-                LineManager.SetContent(value); // TODO1*** 6 seconds
+                LineManager.SetContent(value); // TODO1*** 50Mb takes 6 seconds
                 UndoStack.ClearAll();
                 OnDocumentChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 OnTextContentChanged(EventArgs.Empty);
 
-                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings...
+                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... se TE-doc.docx
             }
         }
         #endregion
 
-        #region Events
+        #region Events TODO1 these?
         //public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
         //{
         //    add { LineManager.LineLengthChanged += value; }

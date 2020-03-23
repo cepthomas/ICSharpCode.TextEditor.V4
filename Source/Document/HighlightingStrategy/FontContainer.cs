@@ -13,10 +13,11 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// This class is used to generate bold, italic and bold/italic fonts out of a base font.
     /// </summary>
-    public class FontContainer //TODOsyntax this is a bit messed up - maybe refactor. Like syntax color...
+    public class FontContainer //TODO0 syntax this is a bit messed up - maybe refactor. Like syntax color... Limit to monospace.
     {
         Font _defaultFont;
         static float _twipsPerPixelY = 0;
+
 
         /// <value>
         /// The scaled, regular version of the base font

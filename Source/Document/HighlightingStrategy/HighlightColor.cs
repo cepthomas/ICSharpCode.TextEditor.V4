@@ -17,26 +17,29 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// A color used for highlighting
     /// </summary>
-    public class HighlightColor //TODO0 fix this
+    public class HighlightColor //TODO0 fix this syntax
     {
         #region Properties
-        public bool HasForeground { get; } = false;
+        public bool HasForeground { get { return Color != Color.Transparent; } }
 
-        public bool HasBackground { get; } = false;
+        public bool HasBackground { get { return BackgroundColor != Color.Transparent; } }
 
         public bool Bold { get; } = false;
 
         public bool Italic { get; } = false;
 
-        public Color BackgroundColor { get; } = Color.WhiteSmoke;
+        public Color BackgroundColor { get; } = Color.Transparent;
 
-        public Color Color { get; } = Color.Black;
+        public Color Color { get; } = Color.Transparent;
         #endregion
+
+
+        static HighlightColor DEF_HL_COL = new HighlightColor(Color.Transparent);
+
 
         #region Lifecycle
         public HighlightColor(XmlElement el, HighlightColor defaultColor)
         {
-            //Debug.Assert(el != null, "ICSharpCode.TextEditor.Document.SyntaxColor(XmlElement el) : el == null");
             if (el.Attributes["bold"] != null)
             {
                 Bold = bool.Parse(el.Attributes["bold"].InnerText);
@@ -48,7 +51,7 @@ namespace ICSharpCode.TextEditor.Document
 
             if (el.Attributes["italic"] != null)
             {
-                Italic = Boolean.Parse(el.Attributes["italic"].InnerText);
+                Italic = bool.Parse(el.Attributes["italic"].InnerText);
             }
             else
             {
@@ -68,9 +71,10 @@ namespace ICSharpCode.TextEditor.Document
                 }
                 else
                 {
-                    Color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+ //?                   ColorX = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+                    Color = defaultColor.Color;
                 }
-                HasForeground = true;
+                //HasForeground = true;
             }
             else
             {
@@ -90,9 +94,10 @@ namespace ICSharpCode.TextEditor.Document
                 }
                 else
                 {
-                    BackgroundColor = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+//?                    BackgroundColorX = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
+                    BackgroundColor = defaultColor.BackgroundColor;
                 }
-                HasBackground = true;
+        //        HasBackground = true;
             }
             else
             {
@@ -100,7 +105,7 @@ namespace ICSharpCode.TextEditor.Document
             }
         }
 
-        public HighlightColor(XmlElement el)
+        public HighlightColor(XmlElement el)// : this(el, DEF_HL_COL)
         {
             if (el.Attributes["bold"] != null)
             {
@@ -127,7 +132,7 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     Color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
                 }
-                HasForeground = true;
+  //              HasForeground = true;
             }
             else
             {
@@ -149,49 +154,49 @@ namespace ICSharpCode.TextEditor.Document
                 {
                     BackgroundColor = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
                 }
-                HasBackground = true;
+//                HasBackground = true;
             }
         }
 
-        public HighlightColor(Color color, bool bold, bool italic)
+        public HighlightColor(Color color, bool bold = false, bool italic = false)
         {
-            HasForeground = true;
+            //HasForeground = true;
             Color = color;
             Bold = bold;
             Italic = italic;
         }
 
-        public HighlightColor(Color color, Color backgroundcolor, bool bold, bool italic)
+        public HighlightColor(Color color, Color backgroundcolor, bool bold = false, bool italic = false)
         {
-            HasForeground = true;
-            HasBackground = true;
+            //HasForeground = true;
+            //HasBackground = true;
             Color = color;
             BackgroundColor = backgroundcolor;
             Bold = bold;
             Italic = italic;
         }
 
-        public HighlightColor(string systemColor, string systemBackgroundColor, bool bold, bool italic)
-        {
-            HasForeground = true;
-            HasBackground = true;
+        //public HighlightColor(string systemColor, string systemBackgroundColor, bool bold, bool italic)
+        //{
+        //    HasForeground = true;
+        //    HasBackground = true;
 
-            Color = ParseColorString(systemColor);
-            BackgroundColor = ParseColorString(systemBackgroundColor);
+        //    Color = ParseColorString(systemColor);
+        //    BackgroundColor = ParseColorString(systemBackgroundColor);
 
-            Bold = bold;
-            Italic = italic;
-        }
+        //    Bold = bold;
+        //    Italic = italic;
+        //}
 
-        public HighlightColor(string systemColor, bool bold, bool italic)
-        {
-            HasForeground = true;
+        //public HighlightColor(string systemColor, bool bold, bool italic)
+        //{
+        //    HasForeground = true;
 
-            Color = ParseColorString(systemColor);
+        //    Color = ParseColorString(systemColor);
 
-            Bold = bold;
-            Italic = italic;
-        }
+        //    Bold = bold;
+        //    Italic = italic;
+        //}
 
         public HighlightColor()
         {
@@ -200,7 +205,7 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Public functions
-        public Font GetFont(FontContainer fontContainer)//TODOsyntax clean this up.
+        public Font GetFont(FontContainer fontContainer)//TODO0 syntax clean this up.
         {
             if (Bold)
             {
@@ -211,7 +216,7 @@ namespace ICSharpCode.TextEditor.Document
         #endregion
 
         #region Private functions
-        Color ParseColorString(string colorName)//TODOsyntax??
+        Color ParseColorString(string colorName)
         {
             string[] cNames = colorName.Split('*');
             PropertyInfo myPropInfo = typeof(SystemColors).GetProperty(cNames[0], BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);

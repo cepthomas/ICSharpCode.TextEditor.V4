@@ -56,7 +56,7 @@ namespace ICSharpCode.TextEditor.Document
         #region Lifecycle
         public Span(XmlElement span)
         {
-            Color   = new HighlightColor(span);
+            Color = new HighlightColor(span);
 
             if (span.HasAttribute("rule"))
             {
@@ -74,7 +74,7 @@ namespace ICSharpCode.TextEditor.Document
                 StopEOL = Boolean.Parse(span.GetAttribute("stopateol"));
             }
 
-            Begin   = span["Begin"].InnerText.ToCharArray();
+            Begin = span["Begin"].InnerText.ToCharArray();
             _beginColor = new HighlightColor(span["Begin"], Color);
 
             if (span["Begin"].HasAttribute("singleword"))
@@ -88,7 +88,7 @@ namespace ICSharpCode.TextEditor.Document
 
             if (span["End"] != null)
             {
-                End  = span["End"].InnerText.ToCharArray();
+                End = span["End"].InnerText.ToCharArray();
                 _endColor = new HighlightColor(span["End"], Color);
                 if (span["End"].HasAttribute("singleword"))
                 {

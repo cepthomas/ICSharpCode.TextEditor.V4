@@ -33,7 +33,7 @@ namespace ICSharpCode.TextEditor
 
         int _physicalColumn = 0; // used for calculating physical column during paint
 
-        Font _lastFont; //TODO1 only monospace fonts
+        Font _lastFont;
 
         readonly Dictionary<Font, Dictionary<char, int>> _fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
 

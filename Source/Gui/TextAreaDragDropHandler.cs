@@ -96,7 +96,7 @@ namespace ICSharpCode.TextEditor
                         return;
                     }
 
-                    //TODO1 drag/drop - all this:
+                    //TODO2 drag/drop - all this:
                     //if (e.Data.GetDataPresent(typeof(Selection)))
                     //{
                     //    Selection sel = (Selection)e.Data.GetData(typeof(Selection));

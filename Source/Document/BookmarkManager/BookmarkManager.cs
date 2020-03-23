@@ -12,11 +12,6 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public interface IBookmarkFactory
-    {
-        Bookmark CreateBookmark(Document document, TextLocation location);
-    }
-
     /// <summary>
     /// This class handles the bookmarks for a buffer
     /// </summary>
@@ -47,25 +42,12 @@ namespace ICSharpCode.TextEditor.Document
         }
 
         /// <summary>
-        /// Gets/Sets the bookmark factory used to create bookmarks for "ToggleMarkAt".
-        /// </summary>
-        public IBookmarkFactory Factory { get; set; } //TODO1 fix this mess.
-
-        /// <summary>
         /// Sets the mark at the line <code>location.Line</code> if it is not set, if the
         /// line is already marked the mark is cleared.
         /// </summary>
         public void ToggleMarkAt(TextLocation location)
         {
-            Bookmark newMark;
-            if (Factory != null)
-            {
-                newMark = Factory.CreateBookmark(Document, location);
-            }
-            else
-            {
-                newMark = new Bookmark(Document, location);
-            }
+            Bookmark newMark = new Bookmark(Document, location);
 
             Type newMarkType = newMark.GetType();
 

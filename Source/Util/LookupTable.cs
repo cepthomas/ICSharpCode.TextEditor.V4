@@ -13,7 +13,7 @@ namespace ICSharpCode.TextEditor.Util
     /// <summary>
     /// This class implements a keyword map. It implements a digital search trees (tries) to find a word.
     /// </summary>
-    public class LookupTable //TODO2 used only by HighlightRuleSet
+    public class LookupTable //TODOsyntax used only by HighlightRuleSet
     {
         Node root = new Node(null, null);
         bool casesensitive;

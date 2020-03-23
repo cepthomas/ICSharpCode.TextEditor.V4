@@ -16,8 +16,10 @@ namespace ICSharpCode.TextEditor.Document
     /// This class handles the auto and smart indenting in the textbuffer while
     /// you type.
     /// </summary>
-    public class DefaultFormattingStrategy : IFormattingStrategy //TODO0 not needed
+    public class DefaultFormattingStrategy : IFormattingStrategy
     {
+        static readonly char[] WS_CHARS = { ' ', '\t' }; //TODO1 also a lot of hard-coded char constants.
+
         /// <summary>
         /// Creates a new instance off <see cref="DefaultFormattingStrategy"/>
         /// </summary>
@@ -68,8 +70,6 @@ namespace ICSharpCode.TextEditor.Document
             return indentation.Length;
         }
 
-        static readonly char[] whitespaceChars = {' ', '\t'};
-
         /// <summary>
         /// Replaces the text in a line.
         /// If only whitespace at the beginning and end of the line was changed, this method
@@ -83,10 +83,12 @@ namespace ICSharpCode.TextEditor.Document
                 throw new ArgumentNullException("line");
             if (newLineText == null)
                 throw new ArgumentNullException("newLineText");
-            string newLineTextTrim = newLineText.Trim(whitespaceChars);
+
+            string newLineTextTrim = newLineText.Trim(WS_CHARS);
             string oldLineText = document.GetText(line);
             if (oldLineText == newLineText)
                 return;
+
             int pos = oldLineText.IndexOf(newLineTextTrim);
             if (newLineTextTrim.Length > 0 && pos >= 0)
             {
@@ -155,20 +157,22 @@ namespace ICSharpCode.TextEditor.Document
         {
             textArea.Document.UndoStack.StartUndoGroup();
             int result;
+
             switch (Shared.TEP.IndentStyle)
             {
-            case IndentStyle.None:
-                result = 0;
-                break;
-            case IndentStyle.Auto:
-                result = AutoIndentLine(textArea, line);
-                break;
-            case IndentStyle.Smart:
-                result = SmartIndentLine(textArea, line);
-                break;
-            default:
-                throw new NotSupportedException("Unsupported value for IndentStyle: " + Shared.TEP.IndentStyle);
+                case IndentStyle.None:
+                    result = 0;
+                    break;
+                case IndentStyle.Auto:
+                    result = AutoIndentLine(textArea, line);
+                    break;
+                case IndentStyle.Smart:
+                    result = SmartIndentLine(textArea, line);
+                    break;
+                default:
+                    throw new NotSupportedException("Unsupported value for IndentStyle: " + Shared.TEP.IndentStyle);
             }
+
             textArea.Document.UndoStack.EndUndoGroup();
             return result;
         }
