@@ -17,7 +17,7 @@ using ICSharpCode.TextEditor.Common;
 namespace ICSharpCode.TextEditor
 {
     /// <summary>This class paints the textarea.</summary>
-    public class TextView : IMargin, IDisposable
+    public class TextView : /*IMargin,*/ IDisposable
     {
         // split words after 1000 characters. Fixes GDI+ crash on very longs words, for example a 100 KB Base64-file without any line breaks.
         const int MAX_WORD_LEN = 1000;
@@ -1213,11 +1213,11 @@ namespace ICSharpCode.TextEditor
 
         public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
         {
-            MouseDown?.Invoke(this, mousepos, mouseButtons);
+//TODO1?            MouseDown?.Invoke(this, mousepos, mouseButtons);
         }
         public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
         {
-            MouseMove?.Invoke(this, mousepos, mouseButtons);
+//TODO1?            MouseMove?.Invoke(this, mousepos, mouseButtons);
         }
         public void HandleMouseLeave(EventArgs e)
         {

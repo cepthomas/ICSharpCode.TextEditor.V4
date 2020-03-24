@@ -42,11 +42,7 @@ namespace ICSharpCode.TextEditor
 
         Document.Document _document;
 
-        /// <summary>
-        /// This hashtable contains all editor keys, where
-        /// the key is the key combination and the value the
-        /// action.
-        /// </summary>
+        /// <summary>This hashtable contains all editor keys, where the key is the key combination and the value the action. </summary>
         protected Dictionary<Keys, IEditAction> _editActions = new Dictionary<Keys, IEditAction>();
 
         bool _dirty = false;
@@ -245,7 +241,7 @@ namespace ICSharpCode.TextEditor
             InitializeTextAreaControl(_primaryTextAreaControl);
             Controls.Add(_textAreaPanel);
             ResizeRedraw = true;
-            Document.UpdateCommited += new EventHandler(CommitUpdateRequested);
+            Document.UpdateCommited += CommitUpdateRequested;
             OptionsChanged();
         }
         #endregion
@@ -391,7 +387,7 @@ namespace ICSharpCode.TextEditor
                 {
                     _document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
 
-                    // TODO0 this doesn't belong here. I did it.
+                    // TODOsyntax this doesn't belong here. I did it because it needed a file/home.
                     IFoldingStrategy fs = null;
 
                     if (_document.HighlightingStrategy != null)
@@ -423,7 +419,7 @@ namespace ICSharpCode.TextEditor
             if (autodetectEncoding)
             {
                 Encoding encoding = Encoding;
-                Document.TextContent = Util.FileReader.ReadFileContent(stream, ref encoding);
+                Document.TextContent = Util.FileReader.ReadFileContent(stream, encoding);
                 Encoding = encoding;
             }
             else
@@ -431,7 +427,7 @@ namespace ICSharpCode.TextEditor
                 using (StreamReader reader = new StreamReader(fileName, Encoding))
                 {
                     string s = reader.ReadToEnd();
-                    Document.TextContent = s; // takes 6 seconds...
+                    Document.TextContent = s; // TODO2*** 50Mb takes 6 seconds...
                 }
             }
 
@@ -656,7 +652,7 @@ namespace ICSharpCode.TextEditor
             if (disposing)
             {
                 Document.UndoStack.ClearAll();
-                Document.UpdateCommited -= new EventHandler(CommitUpdateRequested);
+                Document.UpdateCommited -= CommitUpdateRequested;
 
                 if (_textAreaPanel != null)
                 {

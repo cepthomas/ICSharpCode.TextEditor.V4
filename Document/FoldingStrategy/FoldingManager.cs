@@ -32,8 +32,8 @@ namespace ICSharpCode.TextEditor.Document
 
         internal FoldingManager(Document document, LineManager lineTracker)
         {
-            this._document = document;
-            document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
+            _document = document;
+            document.DocumentChanged += DocumentChanged; // new DocumentEventHandler(DocumentChanged);
 
 //			lineTracker.LineCountChanged  += new LineManagerEventHandler(LineManagerLineCountChanged);
 //			lineTracker.LineLengthChanged += new LineLengthEventHandler(LineManagerLineLengthChanged);
@@ -52,6 +52,7 @@ namespace ICSharpCode.TextEditor.Document
 //			foldMarker.Add(fm2);
 //			foldMarker.Sort();
         }
+
 
         void DocumentChanged(object sender, DocumentEventArgs e)
         {

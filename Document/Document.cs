@@ -92,14 +92,6 @@ namespace ICSharpCode.TextEditor.Document
     }
     #endregion
 
-    /// <summary>
-    /// This delegate is used for document events.
-    /// </summary>
-    public delegate void DocumentEventHandler(object sender, DocumentEventArgs e);
-
-    // TODO1 update events
-    //public event EventHandler<DocumentEventArgs> DocumentEventHandler;
-
     public class DocumentEventArgs : EventArgs
     {
         /// <returns>always a valid Document which is related to the Event.</returns>
@@ -170,19 +162,33 @@ namespace ICSharpCode.TextEditor.Document
             }
             set
             {
-                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Text = value } );
+                DocumentEventArgs args = new DocumentEventArgs() { Document = this };
+
+                DocumentAboutToBeChanged?.Invoke(this, args);
                 TextBuffer.SetContent(value);
                 LineManager.SetContent(value); // TODO2*** 50Mb takes 6 seconds
                 UndoStack.ClearAll();
-                OnDocumentChanged(new DocumentEventArgs() { Document = this, Text = value } );
-                OnTextContentChanged(EventArgs.Empty);
+                // Notify.
+                DocumentChanged?.Invoke(this, args);
+                TextContentChanged?.Invoke(this, args);
 
-                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... se TE-doc.docx
+                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... se DesDoc.docx
             }
         }
         #endregion
 
-        #region Events TODO1 these?
+        #region Events
+        public event EventHandler<DocumentEventArgs> UpdateCommited;
+
+        public event EventHandler<DocumentEventArgs> TextContentChanged;
+
+        public event EventHandler<DocumentEventArgs> DocumentAboutToBeChanged;
+
+        public event EventHandler<DocumentEventArgs> DocumentChanged;
+
+        // TODO2 these events?
+        //public event EventHandler<DocumentEventArgs> DocumentEventHandler;
+
         //public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
         //{
         //    add { LineManager.LineLengthChanged += value; }
@@ -200,14 +206,6 @@ namespace ICSharpCode.TextEditor.Document
         //    add { LineManager.LineDeleted += value; }
         //    remove { LineManager.LineDeleted -= value; }
         //}
-
-        public event EventHandler UpdateCommited;
-
-        public event EventHandler TextContentChanged;
-
-        public event DocumentEventHandler DocumentAboutToBeChanged;
-
-        public event DocumentEventHandler DocumentChanged;
         #endregion
 
         #region Lifecycle
@@ -227,14 +225,14 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (!ReadOnly)
             {
-                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
+                DocumentAboutToBeChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
 
                 TextBuffer.Insert(offset, text);
                 LineManager.Insert(offset, text);
 
                 UndoStack.Push(new UndoableInsert(this, offset, text));
 
-                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
+                DocumentChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = -1, Text = text });
             }
         }
 
@@ -242,13 +240,13 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (!ReadOnly)
             {
-                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
+                DocumentAboutToBeChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
                 UndoStack.Push(new UndoableDelete(this, offset, GetText(offset, length)));
 
                 TextBuffer.Remove(offset, length);
                 LineManager.Remove(offset, length);
 
-                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
+                DocumentChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = length });
             }
         }
 
@@ -256,13 +254,13 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (!ReadOnly)
             {
-                OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
+                DocumentAboutToBeChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
                 UndoStack.Push(new UndoableReplace(this, offset, GetText(offset, length), text));
 
                 TextBuffer.Replace(offset, length, text);
                 LineManager.Replace(offset, length, text);
 
-                OnDocumentChanged(new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
+                DocumentChanged?.Invoke(this, new DocumentEventArgs() { Document = this, Offset = offset, Length = length, Text = text });
             }
         }
 
@@ -409,24 +407,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public void CommitUpdate()
         {
-            UpdateCommited?.Invoke(this, EventArgs.Empty);
-        }
-        #endregion
-
-        #region Private functions
-        void OnTextContentChanged(EventArgs e)
-        {
-            TextContentChanged?.Invoke(this, e);
-        }
-
-        void OnDocumentAboutToBeChanged(DocumentEventArgs e)
-        {
-            DocumentAboutToBeChanged?.Invoke(this, e);
-        }
-
-        void OnDocumentChanged(DocumentEventArgs e)
-        {
-            DocumentChanged?.Invoke(this, e);
+            UpdateCommited?.Invoke(this, new DocumentEventArgs());
         }
         #endregion
     }

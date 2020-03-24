@@ -16,9 +16,11 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor
 {
-    public class TextAreaClipboardHandler //TODO0 What is all this? Use System.Windows.Forms.Clipboard
+    public class TextAreaClipboardHandler //TODO1 What is all this? Use System.Windows.Forms.Clipboard
     {
         readonly TextArea textArea;
+
+        public delegate bool ClipboardContainsTextDelegate();
 
         public bool EnableCut
         {
@@ -30,7 +32,6 @@ namespace ICSharpCode.TextEditor
             get { return true; } //textArea.SelectionManager.HasSomethingSelected;       }
         }
 
-        public delegate bool ClipboardContainsTextDelegate();
 
         /// <summary>
         /// Is called when CachedClipboardContainsText should be updated.

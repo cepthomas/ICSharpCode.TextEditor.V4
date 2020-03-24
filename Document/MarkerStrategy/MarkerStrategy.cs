@@ -105,7 +105,7 @@ namespace ICSharpCode.TextEditor.Document
         public MarkerStrategy(Document document)
         {
             Document = document;
-            document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
+            document.DocumentChanged += DocumentChanged;
         }
 
         public List<TextMarker> GetMarkers(int offset)

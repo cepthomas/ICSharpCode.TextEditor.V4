@@ -1,4 +1,6 @@
-GNU Lesser General Public License version 2.1
+MIT License
 
-TODO1 a) The modified work must itself be a software library.
-b) You must cause the files modified to carry prominent notices stating that you changed the files and the date of any change.
+The original was LGPL 2.1 but since this is abandonware, and all new OSS from ICSharpCode
+is MIT, I figure this is in keeping with the spirit. I will change that in the even of
+lawyers, guns, or money.
+

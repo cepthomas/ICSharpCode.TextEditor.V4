@@ -21,6 +21,8 @@ namespace ICSharpCode.TextEditor.Actions
         /// </value>
         //Keys[] Keys { get; set; }
 
+        //public string Name { get; set; } = "";
+
         /// <remarks>
         /// When the key which is defined per XML is pressed, this method will be launched.
         /// </remarks>

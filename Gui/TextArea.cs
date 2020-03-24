@@ -149,15 +149,15 @@ namespace ICSharpCode.TextEditor
             OptionsChanged();
 
 
-            new TextAreaMouseHandler(this).Attach();
+            new TextAreaMouseHandler(this).Attach(); //TODO1 refactor all these
             new TextAreaDragDropHandler().Attach(this);
 
-            _bracketSchemes.Add(new BracketHighlightingSheme('{', '}'));
+            _bracketSchemes.Add(new BracketHighlightingSheme('{', '}')); //TODO1 hardcoded
             _bracketSchemes.Add(new BracketHighlightingSheme('(', ')'));
             _bracketSchemes.Add(new BracketHighlightingSheme('[', ']'));
 
             Caret.PositionChanged += new EventHandler(SearchMatchingBracket);
-            Document.TextContentChanged += new EventHandler(TextContentChanged);
+            Document.TextContentChanged += TextContentChanged;
             Document.FoldingManager.FoldingsChanged += new EventHandler(DocumentFoldingsChanged);
         }
 
@@ -928,8 +928,8 @@ namespace ICSharpCode.TextEditor
                         SelectionManager.Dispose();
                     }
 
-                    Document.TextContentChanged -= new EventHandler(TextContentChanged);
-                    Document.FoldingManager.FoldingsChanged -= new EventHandler(DocumentFoldingsChanged);
+                    Document.TextContentChanged -= TextContentChanged;
+                    Document.FoldingManager.FoldingsChanged -= DocumentFoldingsChanged;
                     MotherTextAreaControl = null;
                     MotherTextEditorControl = null;
 

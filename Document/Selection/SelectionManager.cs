@@ -91,7 +91,7 @@ namespace ICSharpCode.TextEditor.Document
             _isRect = false;
             StartPosition = new TextLocation();
             EndPosition = new TextLocation();
-            document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
+            document.DocumentChanged += DocumentChanged;
         }
 
         public bool ContainsPosition(TextLocation position)
@@ -113,7 +113,7 @@ namespace ICSharpCode.TextEditor.Document
         {
             if (_document != null)
             {
-                _document.DocumentChanged -= new DocumentEventHandler(DocumentChanged);
+                _document.DocumentChanged -= DocumentChanged;
                 _document = null;
             }
         }

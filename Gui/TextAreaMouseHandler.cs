@@ -21,7 +21,7 @@ namespace ICSharpCode.TextEditor
         TextLocation _minSelection;
         TextLocation _maxSelection;
         bool _doubleclick = false;
-        bool _clickedOnSelectedText = false; //TODO0 this is still a bit messed up.
+        bool _clickedOnSelectedText = false; //TODO1 this is still a bit messed up.
         MouseButtons _button;
         static readonly Point NIL_POINT = new Point(-1, -1);
         Point _mousedownpos = NIL_POINT;
