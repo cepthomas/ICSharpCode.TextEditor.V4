@@ -14,7 +14,7 @@ namespace ICSharpCode.TextEditor.Util
     /// <summary>
     /// Class that can open text files with auto-detection of the encoding.
     /// </summary>
-    public static class FileReader //TODO1 useful?
+    public static class FileReader //TODO0 useful?
     {
         public static bool IsUnicode(Encoding encoding)
         {

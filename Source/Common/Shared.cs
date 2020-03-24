@@ -16,8 +16,6 @@ namespace ICSharpCode.TextEditor.Common
     {
         public static TextEditorProperties TEP { get; set; } = new TextEditorProperties();
 
-      //  public static FontContainer FontContainer { get; set; } = new FontContainer();
-
         public static void Init(string appDir)
         {
             DirectoryInfo di = new DirectoryInfo(appDir);

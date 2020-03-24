@@ -168,7 +168,7 @@ namespace ICSharpCode.TextEditor
         public TextAreaControl ActiveTextAreaControl { get; private set; } = null;
         #endregion
 
-        #region Document Properties TODO0 initialize from TEP when creating control
+        #region Document Properties TODOsettings initialize from TEP when creating control - needs UI for changes
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ShowSpaces { get; set; } = false;
@@ -265,7 +265,7 @@ namespace ICSharpCode.TextEditor
             return _editActions[keyData];
         }
 
-        void GenerateDefaultActions() //TODO1 get from file/config
+        void GenerateDefaultActions() //TODO1 get from file/config - implement with UI
         {
             _editActions[Keys.Left] = new CaretLeft();
             _editActions[Keys.Left | Keys.Shift] = new ShiftCaretLeft();
@@ -333,7 +333,7 @@ namespace ICSharpCode.TextEditor
         /// <summary>Set the dirty flag.</summary>
         /// <param name="value">New value.</param>
         /// <returns>True if changed.</returns>
-        public bool SetDirty(bool value) //TODO1 make this a property?
+        public bool SetDirty(bool value)
         {
             bool changed = value != _dirty;
             _dirty = value;
@@ -391,7 +391,7 @@ namespace ICSharpCode.TextEditor
                 {
                     _document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
 
-                    // TODO1 this doesn't belong here. I did it.
+                    // TODO0 this doesn't belong here. I did it.
                     IFoldingStrategy fs = null;
 
                     if (_document.HighlightingStrategy != null)

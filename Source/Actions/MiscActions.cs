@@ -440,7 +440,7 @@ namespace ICSharpCode.TextEditor.Actions
             if (textArea.SelectionManager.HasSomethingSelected)
             {
                 selectionStartOffset = textArea.SelectionManager.StartOffset;
-                selectionEndOffset = selectionStartOffset; // TODO1 broken-orig? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
+                selectionEndOffset = selectionStartOffset; // TODO2 broken-orig? textArea.SelectionManager.CurrentSelection[textArea.SelectionManager.CurrentSelection.Count - 1].EndOffset;
             }
             else
             {

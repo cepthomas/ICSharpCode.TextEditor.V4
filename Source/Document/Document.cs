@@ -172,7 +172,7 @@ namespace ICSharpCode.TextEditor.Document
             {
                 OnDocumentAboutToBeChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 TextBuffer.SetContent(value);
-                LineManager.SetContent(value); // TODO1*** 50Mb takes 6 seconds
+                LineManager.SetContent(value); // TODO2*** 50Mb takes 6 seconds
                 UndoStack.ClearAll();
                 OnDocumentChanged(new DocumentEventArgs() { Document = this, Text = value } );
                 OnTextContentChanged(EventArgs.Empty);

@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Common
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
         #endregion
 
-        #region TODO1 These?
+        #region TODOsettings These?
         public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
 
         public int VerticalRulerRow { get; set; } = 80;
@@ -110,13 +110,13 @@ namespace ICSharpCode.TextEditor.Common
         public bool MouseWheelTextZoom { get; set; } = true;
 
         public string LineTerminator { get; set; } = Environment.NewLine;
-        
+
         //public bool AutoInsertCurlyBracket { get; set; } = true;
         #endregion
 
-        #region Stuff json or serialization can't handle TODO1
+        #region Stuff json or serialization can't handle TODOsettings
         [JsonIgnore]
-        // TODO1   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
+        // TODOsettings   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         //public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
         #endregion

@@ -111,7 +111,7 @@ namespace ICSharpCode.TextEditor.Document
             int numberOfLinesAfterRemoving = TotalNumberOfLines;
 
             InsertInternal(offset, text ?? "");
-            //TODO1*** 50 Mb takes 1.5 sec
+            //TODO2*** 50 Mb takes 1.5 sec
 
 #if DEBUG_EX
 			Console.WriteLine("New line collection:");
@@ -123,7 +123,7 @@ namespace ICSharpCode.TextEditor.Document
             // Otherwise we would expose inconsistent state to the event handlers.
             RunHighlighter(lineStart, 1 + Math.Max(0, TotalNumberOfLines - numberOfLinesAfterRemoving));
 
-            //TODO1*** 50 Mb takes 5 sec
+            //TODO2*** 50 Mb takes 5 sec
 
             if (deferredEventList.removedLines != null)
             {
@@ -214,7 +214,7 @@ namespace ICSharpCode.TextEditor.Document
             return GetFirstLogicalLine(visibleLineNumber + 1) - 1;
         }
 
-        // TODO1-orig : speedup the next/prev visible line search
+        // TODO2-orig : speedup the next/prev visible line search
         // HOW? : save the foldings in a sorted list and lookup the line numbers in this list
         public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
         {

@@ -19,7 +19,7 @@ namespace ICSharpCode.TextEditor
     /// <summary>
     /// This class views the line numbers and folding markers.
     /// </summary>
-    public interface IMargin //TODO0 refactor? Not sure this is needed. and the text view is one also, not a margin.
+    public interface IMargin //TODO0 refactor? Not sure this is needed. and the text view is one also, not a margin. Rename to XXvertical?
     {
         event MarginPaintEventHandler Painted;
         event MarginMouseEventHandler MouseDown;
