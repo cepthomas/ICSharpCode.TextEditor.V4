@@ -33,4 +33,5 @@ Things that have changed from the original (so far):
 - Upped to .NET 4.7.2, VS2019.
 - Removed some hierarchy and abstraction. Because.
 - Removed code tools, like completion etc.
+- Removed/refactored lots more dodgy architecture.
 
