@@ -15,7 +15,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// This class handles the bookmarks for a buffer
     /// </summary>
-    public class BookmarkManager
+    public class BookmarkManager //TODO1 another disaster.
     {
 #if DEBUG_EX
         IList<Bookmark> bookmark = new CheckedList<Bookmark>();

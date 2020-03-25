@@ -24,6 +24,8 @@ namespace ICSharpCode.TextEditor.Actions
     {
         Predicate<Bookmark> _predicate = null;
 
+        public GotoPrevBookmark() { }
+
         public GotoPrevBookmark(Predicate<Bookmark> predicate)
         {
             _predicate = predicate;

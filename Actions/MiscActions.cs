@@ -17,12 +17,12 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class Tab : IEditAction
     {
-        public static string GetIndentationString(Document.Document document)
+        public string GetIndentationString(Document.Document document)
         {
             return GetIndentationString(document, null);
         }
 
-        public static string GetIndentationString(Document.Document document, TextArea textArea)
+        public string GetIndentationString(Document.Document document, TextArea textArea)
         {
             StringBuilder indent = new StringBuilder();
 
