@@ -43,6 +43,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ControlMap.cs" />
     <Compile Include="Common\Shared.cs" />
     <Compile Include="Common\TextEditorProperties.cs" />
     <Compile Include="Document\HighlightingStrategy\AdjacentMarker.cs" />
@@ -142,6 +143,9 @@
     <None Include="LICENSE" />
     <None Include="packages.config" />
     <None Include="README.md" />
+    <None Include="Resources\ctlmap.default">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="SyntaxDefinition\BAT-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -189,8 +193,9 @@
     </None>
     <None Include="Top.cd" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <None Include="Resources\junk.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

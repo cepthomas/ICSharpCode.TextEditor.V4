@@ -16,13 +16,6 @@ namespace ICSharpCode.TextEditor.Actions
     /// </summary>
     public interface IEditAction
     {
-        /// <value>
-        /// An array of keys on which this edit action occurs.
-        /// </value>
-        //Keys[] Keys { get; set; }
-
-        //public string Name { get; set; } = "";
-
         /// <remarks>
         /// When the key which is defined per XML is pressed, this method will be launched.
         /// </remarks>

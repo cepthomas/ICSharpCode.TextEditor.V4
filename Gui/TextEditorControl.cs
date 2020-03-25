@@ -218,7 +218,7 @@ namespace ICSharpCode.TextEditor
         {
             //base:
             //Font = new Font("Consolas", 10);
-            GenerateDefaultActions();
+            //GenerateDefaultActions();
 
             SetStyle(ControlStyles.ContainerControl, true);
 
@@ -243,85 +243,6 @@ namespace ICSharpCode.TextEditor
             ResizeRedraw = true;
             Document.UpdateCommited += CommitUpdateRequested;
             OptionsChanged();
-        }
-        #endregion
-
-        #region Actions
-        public bool IsEditAction(Keys keyData)
-        {
-            return _editActions.ContainsKey(keyData);
-        }
-
-        internal IEditAction GetEditAction(Keys keyData)
-        {
-            if (!IsEditAction(keyData))
-            {
-                return null;
-            }
-            return _editActions[keyData];
-        }
-
-        void GenerateDefaultActions() //TODO1 get from file/config - implement with UI
-        {
-            _editActions[Keys.Left] = new CaretLeft();
-            _editActions[Keys.Left | Keys.Shift] = new ShiftCaretLeft();
-            _editActions[Keys.Left | Keys.Control] = new WordLeft();
-            _editActions[Keys.Left | Keys.Control | Keys.Shift] = new ShiftWordLeft();
-            _editActions[Keys.Right] = new CaretRight();
-            _editActions[Keys.Right | Keys.Shift] = new ShiftCaretRight();
-            _editActions[Keys.Right | Keys.Control] = new WordRight();
-            _editActions[Keys.Right | Keys.Control | Keys.Shift] = new ShiftWordRight();
-            _editActions[Keys.Up] = new CaretUp();
-            _editActions[Keys.Up | Keys.Shift] = new ShiftCaretUp();
-            _editActions[Keys.Up | Keys.Control] = new ScrollLineUp();
-            _editActions[Keys.Down] = new CaretDown();
-            _editActions[Keys.Down | Keys.Shift] = new ShiftCaretDown();
-            _editActions[Keys.Down | Keys.Control] = new ScrollLineDown();
-
-            _editActions[Keys.Insert] = new ToggleEditMode();
-            _editActions[Keys.Insert | Keys.Control] = new Copy();
-            _editActions[Keys.Insert | Keys.Shift] = new Paste();
-            _editActions[Keys.Delete] = new Delete();
-            _editActions[Keys.Delete | Keys.Shift] = new Cut();
-            _editActions[Keys.Home] = new Home();
-            _editActions[Keys.Home | Keys.Shift] = new ShiftHome();
-            _editActions[Keys.Home | Keys.Control] = new MoveToStart();
-            _editActions[Keys.Home | Keys.Control | Keys.Shift] = new ShiftMoveToStart();
-            _editActions[Keys.End] = new End();
-            _editActions[Keys.End | Keys.Shift] = new ShiftEnd();
-            _editActions[Keys.End | Keys.Control] = new MoveToEnd();
-            _editActions[Keys.End | Keys.Control | Keys.Shift] = new ShiftMoveToEnd();
-            _editActions[Keys.PageUp] = new MovePageUp();
-            _editActions[Keys.PageUp | Keys.Shift] = new ShiftMovePageUp();
-            _editActions[Keys.PageDown] = new MovePageDown();
-            _editActions[Keys.PageDown | Keys.Shift] = new ShiftMovePageDown();
-
-            _editActions[Keys.Return] = new Return();
-            _editActions[Keys.Tab] = new Tab();
-            _editActions[Keys.Tab | Keys.Shift] = new ShiftTab();
-            _editActions[Keys.Back] = new Backspace();
-            _editActions[Keys.Back | Keys.Shift] = new Backspace();
-
-            _editActions[Keys.X | Keys.Control] = new Cut();
-            _editActions[Keys.C | Keys.Control] = new Copy();
-            _editActions[Keys.V | Keys.Control] = new Paste();
-
-            _editActions[Keys.A | Keys.Control] = new SelectWholeDocument();
-            _editActions[Keys.Escape] = new ClearSelection();
-
-            _editActions[Keys.Divide | Keys.Control] = new ToggleComment();
-            _editActions[Keys.OemQuestion | Keys.Control] = new ToggleComment();
-
-            _editActions[Keys.Back | Keys.Alt] = new Actions.Undo();
-            _editActions[Keys.Z | Keys.Control] = new Actions.Undo();
-            _editActions[Keys.Y | Keys.Control] = new Redo();
-
-            _editActions[Keys.Delete | Keys.Control] = new DeleteWord();
-            _editActions[Keys.Back | Keys.Control] = new WordBackspace();
-            _editActions[Keys.D | Keys.Control] = new DeleteLine();
-            _editActions[Keys.D | Keys.Shift | Keys.Control] = new DeleteToLineEnd();
-
-            _editActions[Keys.B | Keys.Control] = new GotoMatchingBrace();
         }
         #endregion
 

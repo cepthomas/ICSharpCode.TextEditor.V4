@@ -23,8 +23,12 @@ namespace ICSharpCode.TextEditor.Common
 
             TEP = TextEditorProperties.Load(appDir);
 
+            CMM.LoadMaps(Path.Combine(appDir, "ctlmap.settings"), new List<string>());
+
             FontRegistry.SetFont(TEP.Font);
         }
+
+        public static ControlMapManager CMM { get; set; } = new ControlMapManager();
     }
 
     public class FontRegistry
