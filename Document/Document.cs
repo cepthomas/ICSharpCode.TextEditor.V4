@@ -172,7 +172,7 @@ namespace ICSharpCode.TextEditor.Document
                 DocumentChanged?.Invoke(this, args);
                 TextContentChanged?.Invoke(this, args);
 
-                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... se DesDoc.docx
+                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... see DesDoc.docx
             }
         }
         #endregion

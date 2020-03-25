@@ -118,7 +118,7 @@ namespace ICSharpCode.TextEditor
         [Browsable(false)]
         public Document.Document Document { get { return MotherTextEditorControl.Document; } }
 
-        public TextAreaClipboardHandler ClipboardHandler { get; }
+        //public TextAreaClipboardHandler ClipboardHandler { get; }
 
         public TextArea(TextEditorControl motherTextEditorControl, TextAreaControl motherTextAreaControl)
         {
@@ -129,7 +129,7 @@ namespace ICSharpCode.TextEditor
             SelectionManager = new SelectionManager(Document, this);
             MousePos = new Point(0, 0);
 
-            ClipboardHandler = new TextAreaClipboardHandler(this);
+           // ClipboardHandler = new TextAreaClipboardHandler(this);
 
             ResizeRedraw = true;
 
@@ -759,7 +759,7 @@ namespace ICSharpCode.TextEditor
 
         string GenerateWhitespaceString(int length)
         {
-            return new String(' ', length);
+            return new string(' ', length);
         }
 
         /// <remarks>

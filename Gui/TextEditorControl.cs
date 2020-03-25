@@ -216,10 +216,6 @@ namespace ICSharpCode.TextEditor
         #region Lifecycle
         public TextEditorControl()
         {
-            //base:
-            //Font = new Font("Consolas", 10);
-            //GenerateDefaultActions();
-
             SetStyle(ControlStyles.ContainerControl, true);
 
             _textAreaPanel.Dock = DockStyle.Fill;

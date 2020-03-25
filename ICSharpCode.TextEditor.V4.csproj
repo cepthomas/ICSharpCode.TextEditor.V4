@@ -105,7 +105,6 @@
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\TextAreaClipboardHandler.cs" />
     <Compile Include="Gui\TextView.cs" />
     <Compile Include="Gui\GutterMargin.cs" />
     <Compile Include="Gui\IMargin.cs" />
