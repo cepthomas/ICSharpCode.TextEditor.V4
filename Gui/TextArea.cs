@@ -29,10 +29,7 @@ namespace ICSharpCode.TextEditor
     [ToolboxItem(false)]
     public class TextArea : Control
     {
-        public event ToolTipRequestEventHandler ToolTipRequest;
-        public event KeyEventHandler KeyEventHandler;
-        public event DialogKeyProcessor DoProcessDialogKey;
-
+        #region Fields
         bool _hiddenMouseCursor = false;
 
         /// <summary>
@@ -49,11 +46,6 @@ namespace ICSharpCode.TextEditor
 
         bool _disposed;
 
-        // static because the mouse can only be in one text area and we don't want to have
-        // tooltips of text areas from inactive tabs floating around.
-        //static DeclarationViewWindow toolTip;
-        //static readonly string oldToolTip;
-
         IMargin _lastMouseInMargin;
 
         bool _toolTipActive;
@@ -66,9 +58,9 @@ namespace ICSharpCode.TextEditor
         Rectangle _toolTipRectangle;
 
         IMargin _updateMargin = null;
+        #endregion
 
-
-
+        #region Properties
         public Point MousePos { get; set; }
 
         [Browsable(false)]
@@ -118,8 +110,28 @@ namespace ICSharpCode.TextEditor
         [Browsable(false)]
         public Document.Document Document { get { return MotherTextEditorControl.Document; } }
 
-        //public TextAreaClipboardHandler ClipboardHandler { get; }
+        public bool EnableCutOrPaste
+        {
+            get
+            {
+                if (MotherTextAreaControl == null)
+                    return false;
+                if (SelectionManager.HasSomethingSelected)
+                    return !SelectionManager.SelectionIsReadonly;
+                else
+                    return !IsReadOnly(Caret.Offset);
+            }
+        }
 
+        #endregion
+
+        #region Events
+        public event ToolTipRequestEventHandler ToolTipRequest;
+        public event KeyEventHandler KeyEventHandler;
+        public event DialogKeyProcessor DoProcessDialogKey;
+        #endregion
+
+        #region Lifecycle
         public TextArea(TextEditorControl motherTextEditorControl, TextAreaControl motherTextAreaControl)
         {
             MotherTextAreaControl = motherTextAreaControl;
@@ -128,8 +140,6 @@ namespace ICSharpCode.TextEditor
             Caret = new Caret(this);
             SelectionManager = new SelectionManager(Document, this);
             MousePos = new Point(0, 0);
-
-           // ClipboardHandler = new TextAreaClipboardHandler(this);
 
             ResizeRedraw = true;
 
@@ -161,6 +171,9 @@ namespace ICSharpCode.TextEditor
             Document.FoldingManager.FoldingsChanged += new EventHandler(DocumentFoldingsChanged);
         }
 
+        #endregion
+
+        #region Public functions
         public void UpdateMatchingBracket()
         {
             SearchMatchingBracket(null, null);
@@ -172,6 +185,220 @@ namespace ICSharpCode.TextEditor
             Refresh();
         }
 
+        public Highlight FindMatchingBracketHighlight()
+        {
+            if (Caret.Offset == 0)
+                return null;
+
+            foreach (BracketHighlightingSheme bracketsheme in _bracketSchemes)
+            {
+                Highlight highlight = bracketsheme.GetHighlight(Document, Caret.Offset - 1);
+
+                if (highlight != null)
+                {
+                    return highlight;
+                }
+            }
+            return null;
+        }
+
+        public void SetDesiredColumn()
+        {
+            Caret.DesiredColumn = TextView.GetDrawingXPos(Caret.Line, Caret.Column) + VirtualTop.X;
+        }
+
+        public void SetCaretToDesiredColumn()
+        {
+            FoldMarker dummy;
+            Caret.Position = TextView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
+        }
+
+        public void OptionsChanged()
+        {
+            UpdateMatchingBracket();
+            TextView.OptionsChanged();
+            Caret.RecreateCaret();
+            Caret.UpdateCaretPosition();
+            Refresh();
+        }
+
+        public void Refresh(IMargin margin)
+        {
+            _updateMargin = margin;
+            Invalidate(_updateMargin.DrawingPosition);
+            Update();
+            _updateMargin = null;
+        }
+
+        public void ScrollToCaret()
+        {
+            MotherTextAreaControl.ScrollToCaret();
+        }
+
+        public void ScrollTo(int line)
+        {
+            MotherTextAreaControl.ScrollTo(line);
+        }
+
+        public void BeginUpdate()
+        {
+            MotherTextEditorControl.BeginUpdate();
+        }
+
+        public void EndUpdate()
+        {
+            MotherTextEditorControl.EndUpdate();
+        }
+
+        /// <remarks>
+        /// Inserts a single character at the caret position
+        /// </remarks>
+        public void InsertChar(char ch)
+        {
+            bool updating = MotherTextEditorControl.IsInUpdate;
+            if (!updating)
+            {
+                BeginUpdate();
+            }
+
+            // filter out forgein whitespace chars and replace them with standard space (ASCII 32)
+            if (char.IsWhiteSpace(ch) && ch != '\t' && ch != '\n')
+            {
+                ch = ' ';
+            }
+
+            Document.UndoStack.StartUndoGroup();
+            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+            {
+                Caret.Position = SelectionManager.StartPosition;
+                SelectionManager.RemoveSelectedText();
+            }
+
+            LineSegment caretLine = Document.GetLineSegment(Caret.Line);
+            int offset = Caret.Offset;
+            // use desired column for generated whitespaces
+            int dc = Caret.Column;
+
+            if (caretLine.Length < dc && ch != '\n')
+            {
+                Document.Insert(offset, GenerateWhitespaceString(dc - caretLine.Length) + ch);
+            }
+            else
+            {
+                Document.Insert(offset, ch.ToString());
+            }
+
+            Document.UndoStack.EndUndoGroup();
+            ++Caret.Column;
+
+            if (!updating)
+            {
+                EndUpdate();
+                UpdateLineToEnd(Caret.Line, Caret.Column);
+            }
+
+            // I prefer to set NOT the standard column, if you type something
+            //			++Caret.DesiredColumn;
+        }
+
+        /// <remarks>
+        /// Inserts a whole string at the caret position
+        /// </remarks>
+        public void InsertString(string str)
+        {
+            bool updating = MotherTextEditorControl.IsInUpdate;
+            if (!updating)
+            {
+                BeginUpdate();
+            }
+
+            try
+            {
+                Document.UndoStack.StartUndoGroup();
+                if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+                {
+                    Caret.Position = SelectionManager.StartPosition;
+                    SelectionManager.RemoveSelectedText();
+                }
+
+                int oldOffset = Document.PositionToOffset(Caret.Position);
+                int oldLine = Caret.Line;
+                LineSegment caretLine = Document.GetLineSegment(Caret.Line);
+
+                if (caretLine.Length < Caret.Column)
+                {
+                    int whiteSpaceLength = Caret.Column - caretLine.Length;
+                    Document.Insert(oldOffset, GenerateWhitespaceString(whiteSpaceLength) + str);
+                    Caret.Position = Document.OffsetToPosition(oldOffset + str.Length + whiteSpaceLength);
+                }
+                else
+                {
+                    Document.Insert(oldOffset, str);
+                    Caret.Position = Document.OffsetToPosition(oldOffset + str.Length);
+                }
+
+                Document.UndoStack.EndUndoGroup();
+
+                if (oldLine != Caret.Line)
+                {
+                    UpdateToEnd(oldLine);
+                }
+                else
+                {
+                    UpdateLineToEnd(Caret.Line, Caret.Column);
+                }
+            }
+            finally
+            {
+                if (!updating)
+                {
+                    EndUpdate();
+                }
+            }
+        }
+
+        /// <remarks>
+        /// Replaces a char at the caret position
+        /// </remarks>
+        public void ReplaceChar(char ch)
+        {
+            bool updating = MotherTextEditorControl.IsInUpdate;
+            if (!updating)
+            {
+                BeginUpdate();
+            }
+
+            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
+            {
+                Caret.Position = SelectionManager.StartPosition;
+                SelectionManager.RemoveSelectedText();
+            }
+
+            int lineNr = Caret.Line;
+            LineSegment line = Document.GetLineSegment(lineNr);
+            int offset = Document.PositionToOffset(Caret.Position);
+
+            if (offset < line.Offset + line.Length)
+            {
+                Document.Replace(offset, 1, ch.ToString());
+            }
+            else
+            {
+                Document.Insert(offset, ch.ToString());
+            }
+
+            if (!updating)
+            {
+                EndUpdate();
+                UpdateLineToEnd(lineNr, Caret.Column);
+            }
+
+            ++Caret.Column;
+            //			++Caret.DesiredColumn;
+        }
+        #endregion
+
+        #region Private functions
         void TextContentChanged(object sender, EventArgs e)
         {
             Caret.Position = new TextLocation(0, 0);
@@ -218,74 +445,6 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        public Highlight FindMatchingBracketHighlight()
-        {
-            if (Caret.Offset == 0)
-                return null;
-            foreach (BracketHighlightingSheme bracketsheme in _bracketSchemes)
-            {
-                Highlight highlight = bracketsheme.GetHighlight(Document, Caret.Offset - 1);
-
-                if (highlight != null)
-                {
-                    return highlight;
-                }
-            }
-            return null;
-        }
-
-        public void SetDesiredColumn()
-        {
-            Caret.DesiredColumn = TextView.GetDrawingXPos(Caret.Line, Caret.Column) + VirtualTop.X;
-        }
-
-        public void SetCaretToDesiredColumn()
-        {
-            FoldMarker dummy;
-            Caret.Position = TextView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
-        }
-
-        public void OptionsChanged()
-        {
-            UpdateMatchingBracket();
-            TextView.OptionsChanged();
-            Caret.RecreateCaret();
-            Caret.UpdateCaretPosition();
-            Refresh();
-        }
-
-        protected override void OnMouseLeave(System.EventArgs e)
-        {
-            base.OnMouseLeave(e);
-            Cursor = Cursors.Default;
-            if (_lastMouseInMargin != null)
-            {
-                _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
-                _lastMouseInMargin = null;
-            }
-            CloseToolTip();
-        }
-
-        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
-        {
-            // this corrects weird problems when text is selected,
-            // then a menu item is selected, then the text is
-            // clicked again - it correctly synchronises the
-            // click position
-            MousePos = new Point(e.X, e.Y);
-
-            base.OnMouseDown(e);
-            CloseToolTip();
-
-            foreach (IMargin margin in _leftMargins)
-            {
-                if (margin.DrawingPosition.Contains(e.X, e.Y))
-                {
-                    margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
-                }
-            }
-        }
-
         /// <summary>
         /// Shows the mouse cursor if it has been hidden.
         /// </summary>
@@ -301,7 +460,6 @@ namespace ICSharpCode.TextEditor
                 }
             }
         }
-
 
         void SetToolTip(string text, int lineNumber)
         {
@@ -332,11 +490,6 @@ namespace ICSharpCode.TextEditor
             //oldToolTip = text;
         }
 
-        protected virtual void OnToolTipRequest(ToolTipRequestEventArgs e)
-        {
-            ToolTipRequest?.Invoke(this, e);
-        }
-
         void CloseToolTip()
         {
             if (_toolTipActive)
@@ -348,18 +501,11 @@ namespace ICSharpCode.TextEditor
             ResetMouseEventArgs();
         }
 
-        protected override void OnMouseHover(EventArgs e)
+        void DocumentFoldingsChanged(object sender, EventArgs e)
         {
-            base.OnMouseHover(e);
-            //Console.WriteLine("Hover raised at " + PointToClient(Control.MousePosition));
-            if (MouseButtons == MouseButtons.None)
-            {
-                RequestToolTip(PointToClient(Control.MousePosition));
-            }
-            else
-            {
-                CloseToolTip();
-            }
+            Caret.UpdateCaretPosition();
+            Invalidate();
+            MotherTextAreaControl.AdjustScrollBars();
         }
 
         protected void RequestToolTip(Point mousePos)
@@ -395,74 +541,6 @@ namespace ICSharpCode.TextEditor
         internal void RaiseMouseMove(MouseEventArgs e)
         {
             OnMouseMove(e);
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            if (!_toolTipRectangle.Contains(e.Location))
-            {
-                _toolTipRectangle = Rectangle.Empty;
-
-                if (_toolTipActive)
-                    RequestToolTip(e.Location);
-            }
-
-            foreach (IMargin margin in _leftMargins)
-            {
-                if (margin.DrawingPosition.Contains(e.X, e.Y))
-                {
-                    Cursor = margin.Cursor;
-                    margin.HandleMouseMove(new Point(e.X, e.Y), e.Button);
-
-                    if (_lastMouseInMargin != margin)
-                    {
-                        if (_lastMouseInMargin != null)
-                        {
-                            _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
-                        }
-                        _lastMouseInMargin = margin;
-                    }
-                    return;
-                }
-            }
-
-            if (_lastMouseInMargin != null)
-            {
-                _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
-                _lastMouseInMargin = null;
-            }
-
-            if (TextView.DrawingPosition.Contains(e.X, e.Y))
-            {
-                TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
-                if (SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None)
-                {
-                    // mouse is hovering over a selection, so show default mouse
-                    Cursor = Cursors.Default;
-                }
-                else
-                {
-                    // mouse is hovering over text area, not a selection, so show the textView cursor
-                    Cursor = TextView.Cursor;
-                }
-                return;
-            }
-
-            Cursor = Cursors.Default;
-        }
-
-        public void Refresh(IMargin margin)
-        {
-            _updateMargin = margin;
-            Invalidate(_updateMargin.DrawingPosition);
-            Update();
-            _updateMargin = null;
-        }
-
-        protected override void OnPaintBackground(System.Windows.Forms.PaintEventArgs pevent)
-        {
         }
 
         protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
@@ -545,14 +623,128 @@ namespace ICSharpCode.TextEditor
             base.OnPaint(e);
         }
 
-        void DocumentFoldingsChanged(object sender, EventArgs e)
+        string GenerateWhitespaceString(int length)
         {
-            Caret.UpdateCaretPosition();
-            Invalidate();
-            MotherTextAreaControl.AdjustScrollBars();
+            return new string(' ', length);
         }
 
-        #region keyboard handling methods
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                if (!_disposed)
+                {
+                    _disposed = true;
+                    if (Caret != null)
+                    {
+                        Caret.PositionChanged -= new EventHandler(SearchMatchingBracket);
+                        Caret.Dispose();
+                    }
+
+                    if (SelectionManager != null)
+                    {
+                        SelectionManager.Dispose();
+                    }
+
+                    Document.TextContentChanged -= TextContentChanged;
+                    Document.FoldingManager.FoldingsChanged -= DocumentFoldingsChanged;
+                    MotherTextAreaControl = null;
+                    MotherTextEditorControl = null;
+
+                    foreach (IMargin margin in _leftMargins)
+                    {
+                        if (margin is IDisposable)
+                            (margin as IDisposable).Dispose();
+                    }
+
+                    TextView.Dispose();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Event handlers
+        protected virtual void OnToolTipRequest(ToolTipRequestEventArgs e)
+        {
+            ToolTipRequest?.Invoke(this, e);
+        }
+
+
+        protected override void OnMouseHover(EventArgs e)
+        {
+            base.OnMouseHover(e);
+            //Console.WriteLine("Hover raised at " + PointToClient(Control.MousePosition));
+            if (MouseButtons == MouseButtons.None)
+            {
+                RequestToolTip(PointToClient(Control.MousePosition));
+            }
+            else
+            {
+                CloseToolTip();
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (!_toolTipRectangle.Contains(e.Location))
+            {
+                _toolTipRectangle = Rectangle.Empty;
+
+                if (_toolTipActive)
+                    RequestToolTip(e.Location);
+            }
+
+            foreach (IMargin margin in _leftMargins)
+            {
+                if (margin.DrawingPosition.Contains(e.X, e.Y))
+                {
+                    Cursor = margin.Cursor;
+                    margin.HandleMouseMove(new Point(e.X, e.Y), e.Button);
+
+                    if (_lastMouseInMargin != margin)
+                    {
+                        if (_lastMouseInMargin != null)
+                        {
+                            _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+                        }
+                        _lastMouseInMargin = margin;
+                    }
+                    return;
+                }
+            }
+
+            if (_lastMouseInMargin != null)
+            {
+                _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+                _lastMouseInMargin = null;
+            }
+
+            if (TextView.DrawingPosition.Contains(e.X, e.Y))
+            {
+                TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
+                if (SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None)
+                {
+                    // mouse is hovering over a selection, so show default mouse
+                    Cursor = Cursors.Default;
+                }
+                else
+                {
+                    // mouse is hovering over text area, not a selection, so show the textView cursor
+                    Cursor = TextView.Cursor;
+                }
+                return;
+            }
+
+            Cursor = Cursors.Default;
+        }
+        #endregion
+
+        #region Keyboard handling
         /// <summary>
         /// This method is called on each Keypress
         /// </summary>
@@ -724,228 +916,7 @@ namespace ICSharpCode.TextEditor
         }
         #endregion
 
-        public void ScrollToCaret()
-        {
-            MotherTextAreaControl.ScrollToCaret();
-        }
-
-        public void ScrollTo(int line)
-        {
-            MotherTextAreaControl.ScrollTo(line);
-        }
-
-        public void BeginUpdate()
-        {
-            MotherTextEditorControl.BeginUpdate();
-        }
-
-        public void EndUpdate()
-        {
-            MotherTextEditorControl.EndUpdate();
-        }
-
-        public bool EnableCutOrPaste
-        {
-            get
-            {
-                if (MotherTextAreaControl == null)
-                    return false;
-                if (SelectionManager.HasSomethingSelected)
-                    return !SelectionManager.SelectionIsReadonly;
-                else
-                    return !IsReadOnly(Caret.Offset);
-            }
-        }
-
-        string GenerateWhitespaceString(int length)
-        {
-            return new string(' ', length);
-        }
-
-        /// <remarks>
-        /// Inserts a single character at the caret position
-        /// </remarks>
-        public void InsertChar(char ch)
-        {
-            bool updating = MotherTextEditorControl.IsInUpdate;
-            if (!updating)
-            {
-                BeginUpdate();
-            }
-
-            // filter out forgein whitespace chars and replace them with standard space (ASCII 32)
-            if (char.IsWhiteSpace(ch) && ch != '\t' && ch != '\n')
-            {
-                ch = ' ';
-            }
-
-            Document.UndoStack.StartUndoGroup();
-            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
-            {
-                Caret.Position = SelectionManager.StartPosition;
-                SelectionManager.RemoveSelectedText();
-            }
-
-            LineSegment caretLine = Document.GetLineSegment(Caret.Line);
-            int offset = Caret.Offset;
-            // use desired column for generated whitespaces
-            int dc = Caret.Column;
-
-            if (caretLine.Length < dc && ch != '\n')
-            {
-                Document.Insert(offset, GenerateWhitespaceString(dc - caretLine.Length) + ch);
-            }
-            else
-            {
-                Document.Insert(offset, ch.ToString());
-            }
-
-            Document.UndoStack.EndUndoGroup();
-            ++Caret.Column;
-
-            if (!updating)
-            {
-                EndUpdate();
-                UpdateLineToEnd(Caret.Line, Caret.Column);
-            }
-
-            // I prefer to set NOT the standard column, if you type something
-            //			++Caret.DesiredColumn;
-        }
-
-        /// <remarks>
-        /// Inserts a whole string at the caret position
-        /// </remarks>
-        public void InsertString(string str)
-        {
-            bool updating = MotherTextEditorControl.IsInUpdate;
-            if (!updating)
-            {
-                BeginUpdate();
-            }
-
-            try
-            {
-                Document.UndoStack.StartUndoGroup();
-                if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
-                {
-                    Caret.Position = SelectionManager.StartPosition;
-                    SelectionManager.RemoveSelectedText();
-                }
-
-                int oldOffset = Document.PositionToOffset(Caret.Position);
-                int oldLine = Caret.Line;
-                LineSegment caretLine = Document.GetLineSegment(Caret.Line);
-
-                if (caretLine.Length < Caret.Column)
-                {
-                    int whiteSpaceLength = Caret.Column - caretLine.Length;
-                    Document.Insert(oldOffset, GenerateWhitespaceString(whiteSpaceLength) + str);
-                    Caret.Position = Document.OffsetToPosition(oldOffset + str.Length + whiteSpaceLength);
-                }
-                else
-                {
-                    Document.Insert(oldOffset, str);
-                    Caret.Position = Document.OffsetToPosition(oldOffset + str.Length);
-                }
-
-                Document.UndoStack.EndUndoGroup();
-
-                if (oldLine != Caret.Line)
-                {
-                    UpdateToEnd(oldLine);
-                }
-                else
-                {
-                    UpdateLineToEnd(Caret.Line, Caret.Column);
-                }
-            }
-            finally
-            {
-                if (!updating)
-                {
-                    EndUpdate();
-                }
-            }
-        }
-
-        /// <remarks>
-        /// Replaces a char at the caret position
-        /// </remarks>
-        public void ReplaceChar(char ch)
-        {
-            bool updating = MotherTextEditorControl.IsInUpdate;
-            if (!updating)
-            {
-                BeginUpdate();
-            }
-
-            if (Shared.TEP.DocumentSelectionMode == DocumentSelectionMode.Normal && SelectionManager.IsValid)
-            {
-                Caret.Position = SelectionManager.StartPosition;
-                SelectionManager.RemoveSelectedText();
-            }
-
-            int lineNr = Caret.Line;
-            LineSegment line = Document.GetLineSegment(lineNr);
-            int offset = Document.PositionToOffset(Caret.Position);
-
-            if (offset < line.Offset + line.Length)
-            {
-                Document.Replace(offset, 1, ch.ToString());
-            }
-            else
-            {
-                Document.Insert(offset, ch.ToString());
-            }
-
-            if (!updating)
-            {
-                EndUpdate();
-                UpdateLineToEnd(lineNr, Caret.Column);
-            }
-
-            ++Caret.Column;
-            //			++Caret.DesiredColumn;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                if (!_disposed)
-                {
-                    _disposed = true;
-                    if (Caret != null)
-                    {
-                        Caret.PositionChanged -= new EventHandler(SearchMatchingBracket);
-                        Caret.Dispose();
-                    }
-
-                    if (SelectionManager != null)
-                    {
-                        SelectionManager.Dispose();
-                    }
-
-                    Document.TextContentChanged -= TextContentChanged;
-                    Document.FoldingManager.FoldingsChanged -= DocumentFoldingsChanged;
-                    MotherTextAreaControl = null;
-                    MotherTextEditorControl = null;
-
-                    foreach (IMargin margin in _leftMargins)
-                    {
-                        if (margin is IDisposable)
-                            (margin as IDisposable).Dispose();
-                    }
-
-                    TextView.Dispose();
-                }
-            }
-        }
-
-        #region UPDATE Commands
+        #region Update Commands
         internal void UpdateLine(int line)
         {
             UpdateLines(0, line, line);
@@ -1003,6 +974,41 @@ namespace ICSharpCode.TextEditor
             Rectangle r = new Rectangle(0, y - 1 - _virtualTop.Y, Width, height + 3);
             Invalidate(r);
         }
+        #endregion
+
+        #region Unused
+        //protected override void OnMouseLeave(System.EventArgs e)
+        //{
+        //    base.OnMouseLeave(e);
+        //    Cursor = Cursors.Default;
+        //    if (_lastMouseInMargin != null)
+        //    {
+        //        _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+        //        _lastMouseInMargin = null;
+        //    }
+        //    CloseToolTip();
+        //}
+
+        //protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+        //{
+        //    // this corrects weird problems when text is selected,
+        //    // then a menu item is selected, then the text is
+        //    // clicked again - it correctly synchronises the
+        //    // click position
+        //    MousePos = new Point(e.X, e.Y);
+
+        //    base.OnMouseDown(e);
+        //    CloseToolTip();
+
+        //    foreach (IMargin margin in _leftMargins)
+        //    {
+        //        if (margin.DrawingPosition.Contains(e.X, e.Y))
+        //        {
+        //            margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
+        //        }
+        //    }
+        //}
+
         #endregion
     }
 }

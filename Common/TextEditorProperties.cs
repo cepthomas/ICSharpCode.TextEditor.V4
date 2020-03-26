@@ -187,7 +187,7 @@ namespace ICSharpCode.TextEditor.Common
         /// <summary>Create object from file.</summary>
         public static TextEditorProperties Load(string appDir)
         {
-            string fn = Path.Combine(appDir, "editor.settings");
+            string fn = Path.Combine(appDir, "Settings", "editor.settings");
 
             TextEditorProperties tep;
             if (File.Exists(fn))

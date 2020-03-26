@@ -50,7 +50,7 @@ namespace ICSharpCode.TextEditor
         Encoding _encoding;
         #endregion
 
-        #region Properties - internal
+        #region Properties
         /// <value>
         /// Current file's character encoding
         /// </value>

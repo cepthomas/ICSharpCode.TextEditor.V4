@@ -1213,11 +1213,11 @@ namespace ICSharpCode.TextEditor
 
         public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
         {
-//TODO1?            MouseDown?.Invoke(this, mousepos, mouseButtons);
+//TODO2?            MouseDown?.Invoke(this, mousepos, mouseButtons);
         }
         public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
         {
-//TODO1?            MouseMove?.Invoke(this, mousepos, mouseButtons);
+//TODO2?            MouseMove?.Invoke(this, mousepos, mouseButtons);
         }
         public void HandleMouseLeave(EventArgs e)
         {

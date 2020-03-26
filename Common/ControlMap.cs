@@ -1,6 +1,4 @@
-﻿using ICSharpCode.TextEditor.Actions;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +7,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Newtonsoft.Json;
+using ICSharpCode.TextEditor.Actions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 
 namespace ICSharpCode.TextEditor.Common
 {
@@ -30,26 +34,6 @@ namespace ICSharpCode.TextEditor.Common
     [Serializable]
     public class ControlSpec
     {
-
-        // { "keys": ["shift+left"], "command": "move", "args": {"by": "characters", "forward": false, "extend": true} },
-        // { "keys": ["ctrl+k", "ctrl+v"], "command": "paste_from_history" },
-
-        // {
-        //     "keys": ["alt+shift+5"],
-        //     "command": "set_layout",
-        //     "args":
-        //     {
-        //         "cols": [0.0, 0.5, 1.0],
-        //         "rows": [0.0, 0.5, 1.0],
-        //         "cells":
-        //         [
-        //             [0, 0, 1, 1], [1, 0, 2, 1],
-        //             [0, 1, 1, 2], [1, 1, 2, 2]
-        //         ]
-        //     }
-        // },
-
-
         public Keys Chord1 { get; set; } = Keys.None;
 
         public Keys Chord2 { get; set; } = Keys.None;
@@ -172,8 +156,7 @@ namespace ICSharpCode.TextEditor.Common
             // Now the user actions.
             foreach(string uaf in userActionFiles)
             {
-                // TODO1 need to compile source. Add to _actions. Overwrite?
-
+                CompileUserAction(uaf);
             }
 
             ///////////// Load mappings /////////////////
@@ -186,12 +169,12 @@ namespace ICSharpCode.TextEditor.Common
 
             if (userMap != null)
             {
-                // Copy/overlay into defMap. TODO1 Duplicates?
+                // Copy/overlay into defMap. TODO0 Duplicates?
                 userMap.ControlSpecs.ForEach(cs => ctrlMap.ControlSpecs.Add(cs));
             }
             else
             {
-                // TODO1 Error: json load failure.
+                throw new Exception($"Failed to load: {userMapFile}");
             }
 
             ///////////// Bind mappings /////////////////
@@ -238,7 +221,7 @@ namespace ICSharpCode.TextEditor.Common
                 }
                 else
                 {
-                    // TODO1 invalid spec
+                    throw new Exception($"Missing action to bind: {asp.ActionName}");
                 }
             }
         }
@@ -248,6 +231,125 @@ namespace ICSharpCode.TextEditor.Common
             var key = (chord1, chord2);
 
             return _keyActions.ContainsKey(key) ? _keyActions[key].EditAction : null;
+        }
+
+        void CompileUserAction(string fn)
+        {
+            string sc = File.ReadAllText(fn);
+
+
+            var syntaxTree = CSharpSyntaxTree.ParseText(sc);
+
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                "assemblyName",
+                new[] { syntaxTree },
+                new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) },
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using (var dllStream = new MemoryStream())
+            using (var pdbStream = new MemoryStream())
+            {
+                var emitResult = compilation.Emit(dllStream, pdbStream);
+                if (!emitResult.Success)
+                {
+                    // emitResult.Diagnostics
+                }
+            }
+
+
+
+            //var syntaxTree = CSharpSyntaxTree.ParseText(sc);
+
+            //CSharpCompilation compilation = CSharpCompilation.Create(
+            //    "assemblyName",
+            //    new[] { syntaxTree },
+            //    new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) },
+            //    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            //using (var dllStream = new MemoryStream())
+            //using (var pdbStream = new MemoryStream())
+            //{
+            //    var emitResult = compilation.Emit(dllStream, pdbStream);
+            //    if (!emitResult.Success)
+            //    {
+            //        // emitResult.Diagnostics
+            //    }
+            //}
+
+
+
+
+
+
+            ScriptOptions sopt = ScriptOptions.Default;
+            sopt = sopt.AddReferences("ICSharpCode.TextEditor.Document", "ICSharpCode.TextEditor.Common", "ICSharpCode.TextEditor.Actions");
+
+            var scr = CSharpScript.Create(sc, sopt);
+
+            string sret;
+            var compErrs = scr.Compile();
+
+            if (compErrs.Length > 0)
+            {
+                sret = string.Join(Environment.NewLine, compErrs);
+                throw new Exception($"User action errors in {fn}: {sret}");
+            }
+            else
+            {
+                // Get the interface and add to _actions.
+
+                Type t = scr.GetType();
+                Type ti = typeof(IEditAction);
+
+                if (ti.IsAssignableFrom(t) && !t.IsAbstract)
+                {
+                    var inst = FormatterServices.GetUninitializedObject(t);
+                    _actions.Add(t.Name, inst as IEditAction);
+                }
+                else
+                {
+                    throw new Exception($"IEditAction not implemented in {fn}");
+                }
+            }
+        }
+
+        void CompileUserAction_orig(string fileName)
+        {
+            string sc =
+            @"
+            public class ScriptedClass
+            {
+                public string HelloWorld {get;set;}
+                public ScriptedClass()
+                {
+                    HelloWorld = ""Hello Roslyn!"";
+                }
+            }";
+
+            ScriptState<object> scriptState = null;
+
+            ScriptOptions sopt = ScriptOptions.Default;
+            //sopt = sopt.AddReferences("System", "System.Linq");
+
+            var scr = CSharpScript.Create(sc, sopt);
+
+            string sret;
+            var compErrs = scr.Compile();
+            if (compErrs.Length > 0)
+            {
+                sret = string.Join(Environment.NewLine, compErrs);
+            }
+            else
+            {
+                var task = scr.RunAsync();
+                scriptState = task.Result;
+
+                task = scriptState.ContinueWithAsync("new ScriptedClass().HelloWorld");
+
+                sret = task.Result.ReturnValue.ToString();
+            }
+
+            Console.WriteLine(sret);
         }
     }
 }
