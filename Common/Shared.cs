@@ -16,8 +16,9 @@ namespace ICSharpCode.TextEditor.Common
     {
         public static TextEditorProperties TEP { get; set; } = new TextEditorProperties();
 
-        public static void Init(string appDir)
+        public static List<string> Init(string appDir)
         {
+            List<string> errors = new List<string>();
             DirectoryInfo di = new DirectoryInfo(appDir);
             di.Create();
 
@@ -25,11 +26,12 @@ namespace ICSharpCode.TextEditor.Common
 
             List<string> userActions = new List<string>();
 
-
-            CMM.LoadMaps(Path.Combine(appDir, "Settings", "ctlmap.settings"),
-                Directory.GetFiles(Path.Combine(appDir, "Actions"), "*.cs").ToList());
+            errors.AddRange(CMM.LoadMaps(Path.Combine(appDir, "Settings", "ctlmap.settings"),
+                Directory.GetFiles(Path.Combine(appDir, "Actions"), "*.cs").ToList()));
 
             FontRegistry.SetFont(TEP.Font);
+
+            return errors;
         }
 
         public static ControlMapManager CMM { get; set; } = new ControlMapManager();
@@ -60,7 +62,5 @@ namespace ICSharpCode.TextEditor.Common
             _boldItalicFont = new Font(_regularFont, FontStyle.Bold | FontStyle.Italic);
         }
         #endregion
-
-
     }
 }
