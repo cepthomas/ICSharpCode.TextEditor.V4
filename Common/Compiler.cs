@@ -92,7 +92,7 @@ namespace ICSharpCode.TextEditor.Common
         }
 
         /// <summary>
-        /// Create a script. TODO1 needs more work.
+        /// Create a script. TODO1 needs more work. Or usefulness?
         /// </summary>
         /// <param name="fn"></param>
         public void GenScript(string fn)

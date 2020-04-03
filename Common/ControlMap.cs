@@ -36,20 +36,23 @@ namespace ICSharpCode.TextEditor.Common
     [Serializable]
     public class ControlSpec
     {
-        public Keys Chord1 { get; set; } = Keys.None;
-
-        public Keys Chord2 { get; set; } = Keys.None;
-
-        public string Menu { get; set; } = "";
-
-        public string SubMenu { get; set; } = "";
-
-        public bool ContextMenu { get; set; } = false;
-
-        // TODO2 Toolbar icons.
-
         /// <summary>Any derived from IEditAction incl scripts.</summary>
         public string ActionName { get; set; }
+
+        /// <summary>First key combo.</summary>
+        public Keys Chord1 { get; set; } = Keys.None;
+
+        /// <summary>Second key combo or if None, it's just the first one.</summary>
+        public Keys Chord2 { get; set; } = Keys.None;
+
+        /// <summary>Main menu to add to.</summary>
+        public string Menu { get; set; } = "";
+
+        /// <summary>Drop down item name.</summary>
+        public string SubMenu { get; set; } = "";
+
+        /// <summary>True if it goes in a context menu, else main menu.</summary>
+        public bool ContextMenu { get; set; } = false;
 
         public ControlSpec()
         {
@@ -160,6 +163,7 @@ namespace ICSharpCode.TextEditor.Common
             // Now the user actions.
             foreach(string uaf in userActionFiles)
             {
+                // This adds to _actions.
                 errors.AddRange(CompileUserAction(uaf));
             }
 
@@ -173,7 +177,7 @@ namespace ICSharpCode.TextEditor.Common
 
             if (userMap != null)
             {
-                // Copy/overlay into defMap. TODO0 Duplicates?
+                // Copy into ctrlMap. If overlay is intended it will be dealt with next.
                 userMap.ControlSpecs.ForEach(cs => ctrlMap.ControlSpecs.Add(cs));
             }
             else
@@ -198,7 +202,6 @@ namespace ICSharpCode.TextEditor.Common
                     // Key binding?
                     if (asp.Chord1 != Keys.None)
                     {
-                        //act.
                         var key = (asp.Chord1, asp.Chord2);
                         if(!_keyActions.ContainsKey(key))
                         {
@@ -206,7 +209,7 @@ namespace ICSharpCode.TextEditor.Common
                         }
                         else
                         {
-                            // TODO1 overwrite - notify user?
+                            // Presumably a user overwrite. TODO2 notify user?
                             _keyActions[key] = act;
                         }
                     }
