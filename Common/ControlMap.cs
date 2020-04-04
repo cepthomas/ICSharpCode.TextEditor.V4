@@ -12,9 +12,11 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using System.Diagnostics;
+
 using Newtonsoft.Json;
 using ICSharpCode.TextEditor.Actions;
-using System.Diagnostics;
+using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor.Common
 {
@@ -40,10 +42,18 @@ namespace ICSharpCode.TextEditor.Common
         public string ActionName { get; set; }
 
         /// <summary>First key combo.</summary>
-        public Keys Chord1 { get; set; } = Keys.None;
+        [JsonIgnore]
+        public Keys Key { get; set; } = Keys.None;
 
-        /// <summary>Second key combo or if None, it's just the first one.</summary>
-        public Keys Chord2 { get; set; } = Keys.None;
+        /// <summary>Second key combo or if None, just use the first one.</summary>
+        [JsonIgnore]
+        public Keys Key2 { get; set; } = Keys.None;
+
+        [JsonProperty("Key")]
+        public string KeySerializable { get { return Utils.SerializeKey(Key); } set { Key = Utils.DeserializeKey(value); } }
+
+        [JsonProperty("Key2")]
+        public string Key2Serializable { get { return Utils.SerializeKey(Key2); } set { Key2 = Utils.DeserializeKey(value); } }
 
         /// <summary>Main menu to add to.</summary>
         public string Menu { get; set; } = "";
@@ -53,18 +63,6 @@ namespace ICSharpCode.TextEditor.Common
 
         /// <summary>True if it goes in a context menu, else main menu.</summary>
         public bool ContextMenu { get; set; } = false;
-
-        public ControlSpec()
-        {
-            Chord1 = Keys.A & Keys.Control;
-            Chord2 = Keys.B;
-
-            Menu = "file";// ToolStripMenuItem";
-            SubMenu = "justATest";// ToolStripMenuItem";
-            ContextMenu = false;
-
-            ActionName = "ShiftTab";
-        }
     }
 
 
@@ -94,15 +92,6 @@ namespace ICSharpCode.TextEditor.Common
         {
             ControlMap ctlmap;
 
-            //// Create dummy.
-            //ctlmap = new ControlMap();
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    ctlmap.ControlSpecs.Add(new ControlSpec());
-            //}
-            //ctlmap._fn = fname;
-            //ctlmap.Save();
-
             if (File.Exists(fname))
             {
                 string json = File.ReadAllText(fname);
@@ -123,9 +112,17 @@ namespace ICSharpCode.TextEditor.Common
         #endregion
     }
 
-    public class ControlMapManager
+    public class ControlMapManager //TODO0 should be in Dex9 project?
     {
+        #region Properties
+        /// <summary>Contents of the file.</summary>
+        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } }
+        #endregion
+
         #region Fields
+        /// <summary>The encapsulated data.</summary>
+        ControlMap _ctrlMap = new ControlMap();
+
         /// <summary>Mapping between keystrokes and actions.</summary>
         Dictionary<(Keys, Keys), Action> _keyActions = new Dictionary<(Keys, Keys), Action>();
 
@@ -138,7 +135,7 @@ namespace ICSharpCode.TextEditor.Common
         /// </summary>
         /// <param name="userMapFile"></param>
         /// <param name="userActionFiles">aka scripts/plugins/etc</param>
-        public List<string> LoadMaps(string userMapFile, List<string> userActionFiles)
+        public List<string> LoadMaps(string defaultMapFile, string userMapFile, List<string> userActionFiles)
         {
             List<string> errors = new List<string>();
 
@@ -170,7 +167,7 @@ namespace ICSharpCode.TextEditor.Common
             ///////////// Load mappings /////////////////
 
             // Load the default control map definitions.
-            ControlMap ctrlMap = ControlMap.Load(@".\Resources\ctlmap.default");
+            _ctrlMap = ControlMap.Load(defaultMapFile);
 
             // Load the user control map definitions.
             ControlMap userMap = ControlMap.Load(userMapFile);
@@ -178,7 +175,7 @@ namespace ICSharpCode.TextEditor.Common
             if (userMap != null)
             {
                 // Copy into ctrlMap. If overlay is intended it will be dealt with next.
-                userMap.ControlSpecs.ForEach(cs => ctrlMap.ControlSpecs.Add(cs));
+                userMap.ControlSpecs.ForEach(cs => _ctrlMap.ControlSpecs.Add(cs));
             }
             else
             {
@@ -188,7 +185,7 @@ namespace ICSharpCode.TextEditor.Common
             ///////////// Bind mappings /////////////////
 
             // Bind the action implementations to the input configs.
-            foreach (ControlSpec asp in ctrlMap.ControlSpecs)
+            foreach (ControlSpec asp in _ctrlMap.ControlSpecs)
             {
                 if(_actions.ContainsKey(asp.ActionName))
                 {
@@ -200,9 +197,9 @@ namespace ICSharpCode.TextEditor.Common
                     };
 
                     // Key binding?
-                    if (asp.Chord1 != Keys.None)
+                    if (asp.Key != Keys.None)
                     {
-                        var key = (asp.Chord1, asp.Chord2);
+                        var key = (asp.Key, asp.Key2);
                         if(!_keyActions.ContainsKey(key))
                         {
                             _keyActions.Add(key, act);
@@ -214,7 +211,7 @@ namespace ICSharpCode.TextEditor.Common
                         }
                     }
 
-                    // Menu binding? TODO1
+                    // Menu binding? TODO0
                     if (asp.Menu != "")
                     {
                         if (asp.SubMenu != "")
@@ -241,7 +238,7 @@ namespace ICSharpCode.TextEditor.Common
         /// <param name="chord1"></param>
         /// <param name="chord2"></param>
         /// <returns></returns>
-        public IEditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None)
+        public IEditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None) //TODO0 should this return a string?
         {
             var key = (chord1, chord2);
 
@@ -263,7 +260,7 @@ namespace ICSharpCode.TextEditor.Common
                 // Locate our interface.
                 Type tif = typeof(IEditAction);
 
-                // Load the resulting assembly into the domain. ??
+                // Load the resulting assembly into the domain?
                 //Assembly assembly = Assembly.Load(result);
 
                 // Find our interface.

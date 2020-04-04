@@ -88,6 +88,7 @@
     <Compile Include="Common\ControlMap.cs" />
     <Compile Include="Common\Shared.cs" />
     <Compile Include="Common\TextEditorProperties.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Document\HighlightingStrategy\AdjacentMarker.cs" />
     <Compile Include="Document\TextBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -175,6 +176,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Util\FileReader.cs" />
     <Compile Include="Gui\ToolTipRequestEventArgs.cs" />
@@ -184,9 +186,6 @@
     <None Include="LICENSE" />
     <None Include="packages.config" />
     <None Include="README.md" />
-    <None Include="Resources\ctlmap.default">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="SyntaxDefinition\BAT-Mode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -235,11 +234,11 @@
     <None Include="Top.cd" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\junk.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Analyzer Include="..\Dex9\packages\Microsoft.CodeAnalysis.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\Dex9\packages\Microsoft.CodeAnalysis.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

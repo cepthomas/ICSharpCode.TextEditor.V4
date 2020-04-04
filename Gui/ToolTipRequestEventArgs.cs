@@ -10,7 +10,7 @@ using System.Drawing;
 
 namespace ICSharpCode.TextEditor
 {
-    public delegate void ToolTipRequestEventHandler(object sender, ToolTipRequestEventArgs e); //TODO1 complicated...
+    public delegate void ToolTipRequestEventHandler(object sender, ToolTipRequestEventArgs e); //TODO1 complicated... useful?
 
     public class ToolTipRequestEventArgs
     {

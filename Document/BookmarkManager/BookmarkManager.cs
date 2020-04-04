@@ -15,7 +15,7 @@ namespace ICSharpCode.TextEditor.Document
     /// <summary>
     /// This class handles the bookmarks for a buffer
     /// </summary>
-    public class BookmarkManager //TODO1 another disaster.
+    public class BookmarkManager //TODO1 another disaster. Also icon doesn't appear. Maybe should be general icon gutter thing. Need to persist in project.
     {
 #if DEBUG_EX
         IList<Bookmark> bookmark = new CheckedList<Bookmark>();
