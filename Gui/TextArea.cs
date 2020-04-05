@@ -880,7 +880,7 @@ namespace ICSharpCode.TextEditor
 
             // if not (or the process was 'silent', use the standard edit actions
             //IEditAction action = MotherTextEditorControl.GetEditAction(keyData);
-            IEditAction action = Shared.CMM.GetEditAction(keyData);
+            EditAction action = Shared.CMM.GetEditAction(keyData);
             AutoClearSelection = true;
 
             if (action != null)

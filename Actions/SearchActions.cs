@@ -8,41 +8,33 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class Find : IEditAction
+    public class Find : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
 
         }
     }
 
-    public class FindAgain : IEditAction
+    public class FindAgain : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
 
         }
     }
 
-    public class FindAgainReverse : IEditAction
+    public class FindAgainReverse : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
 
         }
     }
 
-    public class FindAndReplace : IEditAction
+    public class FindAndReplace : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
 
         }

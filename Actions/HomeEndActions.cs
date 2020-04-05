@@ -13,11 +13,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class Home : IEditAction
+    public class Home : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             LineSegment curLine;
             TextLocation newPos = textArea.Caret.Position;
@@ -75,11 +73,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class End : IEditAction
+    public class End : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             LineSegment curLine;
             TextLocation newPos = textArea.Caret.Position;
@@ -112,11 +108,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class MoveToStart : IEditAction
+    public class MoveToStart : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             if (textArea.Caret.Line != 0 || textArea.Caret.Column != 0)
             {
@@ -127,11 +121,9 @@ namespace ICSharpCode.TextEditor.Actions
     }
 
 
-    public class MoveToEnd : IEditAction
+    public class MoveToEnd : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             TextLocation endPos = textArea.Document.OffsetToPosition(textArea.Document.TextLength);
             if (textArea.Caret.Position != endPos)

@@ -27,7 +27,7 @@ namespace ICSharpCode.TextEditor.Common
         public string ActionName { get; set; }
 
         [JsonIgnore]
-        public IEditAction EditAction { get; set; } = null;
+        public EditAction EditAction { get; set; } = null;
 
         /// <summary>First key combo.</summary>
         [JsonIgnore]
@@ -117,7 +117,7 @@ namespace ICSharpCode.TextEditor.Common
         Dictionary<(Keys, Keys), ControlSpec> _keyMap = new Dictionary<(Keys, Keys), ControlSpec>();
 
         /// <summary>All the loaded actions, with key = name.</summary>
-        Dictionary<string, IEditAction> _actions = new Dictionary<string, IEditAction>();
+        Dictionary<string, EditAction> _actions = new Dictionary<string, EditAction>();
         #endregion
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace ICSharpCode.TextEditor.Common
             /////// Load actions //////////
 
             // First the builtin actions.
-            Type ti = typeof(IEditAction);
+            Type ti = typeof(EditAction);
             Assembly assy = Assembly.GetAssembly(ti);
 
             foreach (Type t in assy.GetTypes())
@@ -141,7 +141,7 @@ namespace ICSharpCode.TextEditor.Common
                 {
                     //var inst = Activator.CreateInstance(i);
                     // Actions don't have default constructors so use this:
-                    var inst = FormatterServices.GetUninitializedObject(t) as IEditAction;
+                    var inst = FormatterServices.GetUninitializedObject(t) as EditAction;
                     inst.UserAction = false;
 
                     _actions.Add(t.Name, inst);
@@ -213,7 +213,7 @@ namespace ICSharpCode.TextEditor.Common
         /// <param name="chord1"></param>
         /// <param name="chord2"></param>
         /// <returns></returns>
-        public IEditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None)
+        public EditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None)
         {
             var key = (chord1, chord2);
 
@@ -233,7 +233,7 @@ namespace ICSharpCode.TextEditor.Common
             if(comp.Compile(fn))
             {
                 // Locate our interface.
-                Type tif = typeof(IEditAction);
+                Type tif = typeof(EditAction);
 
                 // Load the resulting assembly into the domain?
                 //Assembly assembly = Assembly.Load(result);
@@ -245,7 +245,7 @@ namespace ICSharpCode.TextEditor.Common
                     if (tif.IsAssignableFrom(t) && !t.IsAbstract)
                     {
                         // Actions don't have default constructors so we can't use Activator.CreateInstance(i). Use this instead:
-                        var inst = FormatterServices.GetUninitializedObject(t) as IEditAction;
+                        var inst = FormatterServices.GetUninitializedObject(t) as EditAction;
                         inst.UserAction = true;
                         _actions.Add(t.Name, inst);
                         found = true;

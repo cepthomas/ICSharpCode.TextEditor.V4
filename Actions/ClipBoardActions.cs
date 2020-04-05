@@ -17,11 +17,9 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class Cut : IEditAction
+    public class Cut : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {
@@ -43,11 +41,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Copy : IEditAction
+    public class Copy : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
             if (textArea.SelectionManager.HasSomethingSelected)
@@ -57,11 +53,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class Paste : IEditAction
+    public class Paste : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
             {

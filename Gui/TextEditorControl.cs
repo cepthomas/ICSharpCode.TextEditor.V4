@@ -43,7 +43,7 @@ namespace ICSharpCode.TextEditor
         Document.Document _document;
 
         /// <summary>This hashtable contains all editor keys, where the key is the key combination and the value the action. </summary>
-        protected Dictionary<Keys, IEditAction> _editActions = new Dictionary<Keys, IEditAction>();
+        protected Dictionary<Keys, EditAction> _editActions = new Dictionary<Keys, EditAction>();
 
         bool _dirty = false;
 

@@ -11,11 +11,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor.Actions
 {
-    public class ToggleFolding : IEditAction
+    public class ToggleFolding : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             List<FoldMarker> foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(textArea.Caret.Line);
             if (foldMarkers.Count != 0)
@@ -45,11 +43,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ToggleAllFoldings : IEditAction
+    public class ToggleAllFoldings : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             bool doFold = true;
 
@@ -71,11 +67,9 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ShowDefinitionsOnly : IEditAction
+    public class ShowDefinitionsOnly : EditAction
     {
-        public bool UserAction { get; set; } = false;
-
-        public void Execute(TextArea textArea)
+        public override void Execute(TextArea textArea)
         {
             foreach (FoldMarker fm in  textArea.Document.FoldingManager.FoldMarker)
             {

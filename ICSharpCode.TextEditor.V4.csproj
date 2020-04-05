@@ -132,7 +132,7 @@
     <Compile Include="Actions\ClipBoardActions.cs" />
     <Compile Include="Actions\CaretActions.cs" />
     <Compile Include="Actions\HomeEndActions.cs" />
-    <Compile Include="Actions\IEditAction.cs" />
+    <Compile Include="Actions\EditAction.cs" />
     <Compile Include="Actions\MiscActions.cs" />
     <Compile Include="Actions\SelectionActions.cs" />
     <Compile Include="Document\FoldingStrategy\IFoldingStrategy.cs" />
