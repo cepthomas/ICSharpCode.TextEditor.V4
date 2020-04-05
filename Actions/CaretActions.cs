@@ -17,6 +17,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class CaretLeft : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
@@ -57,6 +59,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class CaretRight : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             LineSegment curLine = textArea.Document.GetLineSegment(textArea.Caret.Line);
@@ -98,6 +102,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class CaretUp : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
@@ -118,6 +124,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class CaretDown : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             TextLocation position = textArea.Caret.Position;
@@ -221,6 +229,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ScrollLineUp : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
@@ -232,6 +242,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ScrollLineDown : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;

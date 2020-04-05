@@ -18,6 +18,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public abstract class AbstractLineFormatAction : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int startLine, int endLine);
 
@@ -48,6 +50,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public abstract class AbstractSelectionFormatAction : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         protected TextArea _textArea;
         abstract protected void Convert(Document.Document document, int offset, int length);
 

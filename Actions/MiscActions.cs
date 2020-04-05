@@ -17,6 +17,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class Tab : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public string GetIndentationString(Document.Document document)
         {
             return GetIndentationString(document, null);
@@ -130,6 +132,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShiftTab : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         void RemoveTabs(Document.Document document, SelectionManager selmgr, int y1, int y2)
         {
             document.UndoStack.StartUndoGroup();
@@ -249,6 +253,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToggleComment : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -273,6 +279,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToggleLineComment : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         int firstLine;
         int lastLine;
 
@@ -406,6 +414,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToggleBlockComment : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -607,6 +617,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Backspace : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -651,6 +663,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Delete : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         internal static void DeleteSelection(TextArea textArea)
         {
             //Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
@@ -709,6 +723,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class MovePageDown : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -728,6 +744,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class MovePageUp : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -746,6 +764,8 @@ namespace ICSharpCode.TextEditor.Actions
     }
     public class Return : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -781,6 +801,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToggleEditMode : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -805,6 +827,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Undo : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -817,6 +841,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Redo : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -835,6 +861,8 @@ namespace ICSharpCode.TextEditor.Actions
     /// </summary>
     public class WordBackspace : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -899,6 +927,8 @@ namespace ICSharpCode.TextEditor.Actions
     /// </summary>
     public class DeleteWord : Delete
     {
+        public bool UserAction { get; set; } = false;
+
         /// <remarks>
         /// Executes this edit action
         /// </remarks>
@@ -943,6 +973,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class DeleteLine : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             int lineNr = textArea.Caret.Line;
@@ -960,6 +992,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class DeleteToLineEnd : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             int lineNr = textArea.Caret.Line;
@@ -977,6 +1011,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class GotoMatchingBrace : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             Highlight highlight = textArea.FindMatchingBracketHighlight();

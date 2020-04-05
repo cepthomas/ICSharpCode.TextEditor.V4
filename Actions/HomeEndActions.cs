@@ -15,6 +15,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class Home : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             LineSegment curLine;
@@ -75,6 +77,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class End : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             LineSegment curLine;
@@ -110,6 +114,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class MoveToStart : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             if (textArea.Caret.Line != 0 || textArea.Caret.Column != 0)
@@ -123,6 +129,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class MoveToEnd : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             TextLocation endPos = textArea.Document.OffsetToPosition(textArea.Document.TextLength);

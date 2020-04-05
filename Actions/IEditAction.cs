@@ -6,7 +6,6 @@
 // </file>
 
 using System;
-using System.Windows.Forms;
 
 
 namespace ICSharpCode.TextEditor.Actions
@@ -14,11 +13,13 @@ namespace ICSharpCode.TextEditor.Actions
     /// <summary>
     /// To define a new key for the textarea, you must write a class which implements this interface.
     /// </summary>
-    public interface IEditAction
+    public interface IEditAction //TODO0 should this be a base class instead?
     {
         /// <remarks>
         /// When the key which is defined per XML is pressed, this method will be launched.
         /// </remarks>
         void Execute(TextArea textArea);
+
+        bool UserAction { get; set; }
     }
 }

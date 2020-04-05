@@ -19,6 +19,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class Cut : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)
@@ -43,6 +45,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Copy : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
@@ -55,6 +59,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class Paste : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             if (!textArea.Document.ReadOnly)

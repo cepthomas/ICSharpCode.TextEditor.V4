@@ -13,6 +13,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class ToggleFolding : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             List<FoldMarker> foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(textArea.Caret.Line);
@@ -45,6 +47,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ToggleAllFoldings : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             bool doFold = true;
@@ -69,6 +73,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ShowDefinitionsOnly : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             foreach (FoldMarker fm in  textArea.Document.FoldingManager.FoldMarker)

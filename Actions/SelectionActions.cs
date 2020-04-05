@@ -134,6 +134,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class SelectWholeDocument : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.AutoClearSelection = false;
@@ -150,6 +152,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ClearSelection : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.SelectionManager.ClearSelection();

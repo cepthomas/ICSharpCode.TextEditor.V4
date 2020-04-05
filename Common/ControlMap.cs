@@ -20,26 +20,14 @@ using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor.Common
 {
-    /// <summary>
-    /// Dynamic aspect.
-    /// </summary>
-    public class Action
-    {
-        public IEditAction EditAction { get; set; } = null;
-
-        public string Name { get; set; } = "???";
-
-        // otherwise builtin.
-        public bool UserAction { get; set; } = false;
-
-        public List<(string, object)> Arguments { get; set; } = new List<(string, object)>();
-    }
-
     [Serializable]
     public class ControlSpec
     {
         /// <summary>Any derived from IEditAction incl scripts.</summary>
         public string ActionName { get; set; }
+
+        [JsonIgnore]
+        public IEditAction EditAction { get; set; } = null;
 
         /// <summary>First key combo.</summary>
         [JsonIgnore]
@@ -49,9 +37,11 @@ namespace ICSharpCode.TextEditor.Common
         [JsonIgnore]
         public Keys Key2 { get; set; } = Keys.None;
 
+        /// <summary>Make it readable/editable.</summary>
         [JsonProperty("Key")]
         public string KeySerializable { get { return Utils.SerializeKey(Key); } set { Key = Utils.DeserializeKey(value); } }
 
+        /// <summary>Make it readable/editable.</summary>
         [JsonProperty("Key2")]
         public string Key2Serializable { get { return Utils.SerializeKey(Key2); } set { Key2 = Utils.DeserializeKey(value); } }
 
@@ -116,7 +106,7 @@ namespace ICSharpCode.TextEditor.Common
     {
         #region Properties
         /// <summary>Contents of the file.</summary>
-        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } }
+        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } } // TODO0 better way?
         #endregion
 
         #region Fields
@@ -124,7 +114,7 @@ namespace ICSharpCode.TextEditor.Common
         ControlMap _ctrlMap = new ControlMap();
 
         /// <summary>Mapping between keystrokes and actions.</summary>
-        Dictionary<(Keys, Keys), Action> _keyActions = new Dictionary<(Keys, Keys), Action>();
+        Dictionary<(Keys, Keys), ControlSpec> _keyMap = new Dictionary<(Keys, Keys), ControlSpec>();
 
         /// <summary>All the loaded actions, with key = name.</summary>
         Dictionary<string, IEditAction> _actions = new Dictionary<string, IEditAction>();
@@ -151,9 +141,10 @@ namespace ICSharpCode.TextEditor.Common
                 {
                     //var inst = Activator.CreateInstance(i);
                     // Actions don't have default constructors so use this:
-                    var inst = FormatterServices.GetUninitializedObject(t);
+                    var inst = FormatterServices.GetUninitializedObject(t) as IEditAction;
+                    inst.UserAction = false;
 
-                    _actions.Add(t.Name, inst as IEditAction);
+                    _actions.Add(t.Name, inst);
                 }
             }
 
@@ -161,7 +152,8 @@ namespace ICSharpCode.TextEditor.Common
             foreach(string uaf in userActionFiles)
             {
                 // This adds to _actions.
-                errors.AddRange(CompileUserAction(uaf));
+                var uerrs = CompileUserAction(uaf);
+                errors.AddRange(uerrs);
             }
 
             ///////////// Load mappings /////////////////
@@ -189,37 +181,20 @@ namespace ICSharpCode.TextEditor.Common
             {
                 if(_actions.ContainsKey(asp.ActionName))
                 {
-                    Action act = new Action
-                    {
-                        Name = asp.ActionName,
-                        UserAction = false,
-                        EditAction = _actions[asp.ActionName]
-                    };
+                    asp.EditAction = _actions[asp.ActionName];
 
                     // Key binding?
                     if (asp.Key != Keys.None)
                     {
                         var key = (asp.Key, asp.Key2);
-                        if(!_keyActions.ContainsKey(key))
+                        if(!_keyMap.ContainsKey(key))
                         {
-                            _keyActions.Add(key, act);
+                            _keyMap.Add(key, asp);
                         }
                         else
                         {
                             // Presumably a user overwrite. TODO2 notify user?
-                            _keyActions[key] = act;
-                        }
-                    }
-
-                    // Menu binding? TODO0
-                    if (asp.Menu != "")
-                    {
-                        if (asp.SubMenu != "")
-                        {
-                        }
-
-                        if (asp.ContextMenu)
-                        {
+                            _keyMap[key] = asp;
                         }
                     }
                 }
@@ -238,11 +213,11 @@ namespace ICSharpCode.TextEditor.Common
         /// <param name="chord1"></param>
         /// <param name="chord2"></param>
         /// <returns></returns>
-        public IEditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None) //TODO0 should this return a string?
+        public IEditAction GetEditAction(Keys chord1, Keys chord2 = Keys.None)
         {
             var key = (chord1, chord2);
 
-            return _keyActions.ContainsKey(key) ? _keyActions[key].EditAction : null;
+            return _keyMap.ContainsKey(key) ? _keyMap[key].EditAction : null;
         }
 
         /// <summary>
@@ -270,8 +245,9 @@ namespace ICSharpCode.TextEditor.Common
                     if (tif.IsAssignableFrom(t) && !t.IsAbstract)
                     {
                         // Actions don't have default constructors so we can't use Activator.CreateInstance(i). Use this instead:
-                        var inst = FormatterServices.GetUninitializedObject(t);
-                        _actions.Add(t.Name, inst as IEditAction);
+                        var inst = FormatterServices.GetUninitializedObject(t) as IEditAction;
+                        inst.UserAction = true;
+                        _actions.Add(t.Name, inst);
                         found = true;
                     }
                 }

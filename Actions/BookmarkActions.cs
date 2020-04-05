@@ -12,6 +12,8 @@ namespace ICSharpCode.TextEditor.Actions
 {
     public class ToggleBookmark : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         public void Execute(TextArea textArea)
         {
             textArea.Document.BookmarkManager.ToggleMarkAt(textArea.Caret.Position);
@@ -20,13 +22,15 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class GotoPrevBookmark : IEditAction
+    public class GoToPreviousBookmark : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         Predicate<Bookmark> _predicate = null;
 
-        public GotoPrevBookmark() { }
+        public GoToPreviousBookmark() { }
 
-        public GotoPrevBookmark(Predicate<Bookmark> predicate)
+        public GoToPreviousBookmark(Predicate<Bookmark> predicate)
         {
             _predicate = predicate;
         }
@@ -43,11 +47,13 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class GotoNextBookmark : IEditAction
+    public class GoToNextBookmark : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         Predicate<Bookmark> _predicate = null;
 
-        public GotoNextBookmark(Predicate<Bookmark> predicate)
+        public GoToNextBookmark(Predicate<Bookmark> predicate)
         {
             _predicate = predicate;
         }
@@ -66,6 +72,8 @@ namespace ICSharpCode.TextEditor.Actions
 
     public class ClearAllBookmarks : IEditAction
     {
+        public bool UserAction { get; set; } = false;
+
         Predicate<Bookmark> _predicate = null;
 
         public ClearAllBookmarks(Predicate<Bookmark> predicate)
