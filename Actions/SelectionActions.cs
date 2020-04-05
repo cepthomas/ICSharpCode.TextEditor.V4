@@ -148,7 +148,7 @@ namespace ICSharpCode.TextEditor.Actions
         }
     }
 
-    public class ClearSelection : EditAction
+    public class ClearAllSelections : EditAction
     {
         public override void Execute(TextArea textArea)
         {

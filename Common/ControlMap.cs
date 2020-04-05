@@ -50,9 +50,6 @@ namespace ICSharpCode.TextEditor.Common
 
         /// <summary>Drop down item name.</summary>
         public string SubMenu { get; set; } = "";
-
-        /// <summary>True if it goes in a context menu, else main menu.</summary>
-        public bool ContextMenu { get; set; } = false;
     }
 
 
