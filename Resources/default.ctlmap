@@ -1,0 +1,100 @@
+{
+    "ControlSpecs": [
+        {
+            "ActionName": "Cut",
+            "Key": "X C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Cut",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "Copy",
+            "Key": "C C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Copy",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "Paste",
+            "Key": "V C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Paste",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "Delete",
+            "Key": "None",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Delete",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "Find",
+            "Key": "F C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Find...",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "FindAndReplace",
+            "Key": "H C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Find and replace...",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "FindAgain",
+            "Key": "F3",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Find again",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "FindAgainReverse",
+            "Key": "F3 S",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Find again (reverse)",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "ToggleBookmark",
+            "Key": "F2 C",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Toggle bookmark",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "GoToNextBookmark",
+            "Key": "F2",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Go to next bookmark",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "GoToPreviousBookmark",
+            "Key": "F2 S",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Go to previous bookmark",
+            "ContextMenu": false
+        },
+        {
+            "ActionName": "ClearAllBookmarks",
+            "Key": "None",
+            "Key2": "None",
+            "Menu": "Edit",
+            "SubMenu": "Clear all bookmarks",
+            "ContextMenu": false
+        }
+    ]
+}

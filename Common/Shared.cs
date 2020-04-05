@@ -26,7 +26,7 @@ namespace ICSharpCode.TextEditor.Common
 
             List<string> userActions = new List<string>();
 
-            errors.AddRange(CMM.LoadMaps(@".\Resources\ctlmap.default", Path.Combine(appDir, "Settings", "ctlmap.settings"),
+            errors.AddRange(CMM.LoadMaps(@".\Resources\default.ctlmap", Path.Combine(appDir, "Settings", "custom.ctlmap"),
                 Directory.GetFiles(Path.Combine(appDir, "Actions"), "*.cs").ToList()));
 
             FontRegistry.SetFont(TEP.Font);
