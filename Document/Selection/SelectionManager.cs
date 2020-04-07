@@ -63,19 +63,19 @@ namespace ICSharpCode.TextEditor.Document
         /// <value>true if the <see cref="CurrentSelection"/> is not empty, false otherwise.</value>
         public bool HasSomethingSelected { get { return IsValid && !IsEmpty; } }
 
-        public bool SelectionIsReadonly
-        {
-            get
-            {
-                if (_document.ReadOnly)
-                    return true;
+        //public bool SelectionIsReadonly
+        //{
+        //    get
+        //    {
+        //        if (_document.ReadOnly)
+        //            return true;
 
-                if (Shared.TEP.SupportReadOnlySegments)
-                    return _document.MarkerStrategy.GetMarkers(StartOffset, Length).Exists(m => m.IsReadOnly);
+        //        if (Shared.TEP.SupportReadOnlySegments)
+        //            return _document.MarkerStrategy.GetMarkers(StartOffset, Length).Exists(m => m.IsReadOnly);
 
-                return false;
-            }
-        }
+        //        return false;
+        //    }
+        //}
 
         /// <summary>Converts a <see cref="Selection"/> instance to string (for debug purposes)</summary>
         public override string ToString()
@@ -234,7 +234,7 @@ namespace ICSharpCode.TextEditor.Document
         /// <remarks>Removes the selected text from the buffer and clears the selection.</remarks>
         public void RemoveSelectedText()
         {
-            if (SelectionIsReadonly)
+            if (_document.ReadOnly)
             {
                 ClearSelection();
                 return;

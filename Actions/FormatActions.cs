@@ -23,7 +23,7 @@ namespace ICSharpCode.TextEditor.Actions
 
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.ReadOnly)
             {
                 _textArea = textArea;
                 textArea.BeginUpdate();
@@ -53,7 +53,7 @@ namespace ICSharpCode.TextEditor.Actions
 
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.ReadOnly)
             {
                 _textArea = textArea;
                 textArea.BeginUpdate();

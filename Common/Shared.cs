@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ICSharpCode.TextEditor.Common
 {
     /// <summary>
-    /// Temp class to hold glue stuff. TODO1
+    /// Temp class to hold global and glue stuff. TODO1
     /// </summary>
     public class Shared
     {

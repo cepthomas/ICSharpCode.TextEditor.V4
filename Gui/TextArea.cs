@@ -27,6 +27,7 @@ namespace ICSharpCode.TextEditor
     /// This class paints the textarea.
     /// </summary>
     [ToolboxItem(false)]
+    [Browsable(false)]
     public class TextArea : Control
     {
         #region Fields
@@ -42,25 +43,32 @@ namespace ICSharpCode.TextEditor
 
         readonly List<BracketHighlightingSheme> _bracketSchemes = new List<BracketHighlightingSheme>();
 
-        List<IMargin> _leftMargins = new List<IMargin>();
+        readonly List<IMargin> _leftMargins = new List<IMargin>();
 
-        bool _disposed;
+        bool _disposed = false;
 
-        IMargin _lastMouseInMargin;
-
-        /// <summary>
-        /// Rectangle in text area that caused the current tool tip.
-        /// Prevents tooltip from re-showing when it was closed because of a click or keyboard
-        /// input and the mouse was not used.
-        /// </summary>
-        //Rectangle _toolTipRectangle;
-        //bool _toolTipActive;
+        IMargin _lastMouseInMargin = null;
 
         IMargin _updateMargin = null;
+
+
+        ////////////////////// From TextAreaMouseHandler////////////////////////////
+        TextLocation _minSelection = new TextLocation();
+        TextLocation _maxSelection = new TextLocation();
+        bool _doubleClick = false;
+        bool _clickedOnSelectedText = false;
+        MouseButtons _button = MouseButtons.None;
+        static readonly Point NIL_POINT = new Point(-1, -1); //TODO0 not really used?
+        Point _mouseDownPos = NIL_POINT;
+        Point _lastMouseDownPos = NIL_POINT;
+        bool _gotMouseDown = false;
+
         #endregion
 
         #region Properties
         public Point MousePos { get; set; }
+
+        public bool ReadOnly { get {  return Document == null || Document.ReadOnly; } }
 
         [Browsable(false)]
         public IList<IMargin> LeftMargins { get { return _leftMargins.AsReadOnly(); } }
@@ -115,10 +123,7 @@ namespace ICSharpCode.TextEditor
             {
                 if (MotherTextAreaControl == null)
                     return false;
-                if (SelectionManager.HasSomethingSelected)
-                    return !SelectionManager.SelectionIsReadonly;
-                else
-                    return !IsReadOnly(Caret.Offset);
+                return !ReadOnly;
             }
         }
 
@@ -158,13 +163,13 @@ namespace ICSharpCode.TextEditor
             OptionsChanged();
 
             // From old mouse handlers:
-            Click += MH_TextAreaClick;
-            MouseMove += MH_TextAreaMouseMove;
-            MouseDown += MH_OnMouseDown;
-            DoubleClick += MH_OnDoubleClick;
-            MouseLeave += MH_OnMouseLeave;
-            MouseUp += MH_OnMouseUp;
-            LostFocus += MH_TextAreaLostFocus;
+            Click += MH_Click;
+            MouseMove += MH_MouseMove;
+            MouseDown += MH_MouseDown;
+            DoubleClick += MH_DoubleClick;
+            MouseLeave += MH_MouseLeave;
+            MouseUp += MH_MouseUp;
+            LostFocus += MH_LostFocus;
 
             _bracketSchemes.Add(new BracketHighlightingSheme('{', '}')); //TODO1 hardcoded
             _bracketSchemes.Add(new BracketHighlightingSheme('(', ')'));
@@ -174,7 +179,6 @@ namespace ICSharpCode.TextEditor
             Document.TextContentChanged += TextContentChanged;
             Document.FoldingManager.FoldingsChanged += DocumentFoldingsChanged;
         }
-
         #endregion
 
         #region Public functions
@@ -311,8 +315,7 @@ namespace ICSharpCode.TextEditor
                 UpdateLineToEnd(Caret.Line, Caret.Column);
             }
 
-            // I prefer to set NOT the standard column, if you type something
-            //			++Caret.DesiredColumn;
+            // TODO0 ?? I prefer to set NOT the standard column, if you type something ++Caret.DesiredColumn;
         }
 
         /// <remarks>
@@ -681,11 +684,6 @@ namespace ICSharpCode.TextEditor
         #endregion
 
         #region Event handlers
-        //protected virtual void OnToolTipRequest(ToolTipRequestEventArgs e)
-        //{
-        //    ToolTipRequest?.Invoke(this, e);
-        //}
-
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
@@ -698,8 +696,10 @@ namespace ICSharpCode.TextEditor
             //CloseToolTip();
         }
 
-        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
+            //Debug.WriteLine("OnMouseDown");
+
             // this corrects weird problems when text is selected,
             // then a menu item is selected, then the text is
             // clicked again - it correctly synchronises the
@@ -717,7 +717,6 @@ namespace ICSharpCode.TextEditor
                 }
             }
         }
-
 
         protected override void OnMouseHover(EventArgs e)
         {
@@ -791,132 +790,226 @@ namespace ICSharpCode.TextEditor
             Cursor = Cursors.Default;
         }
 
-        #endregion
 
-        #region Keyboard handling
-        /// <summary>
-        /// This method is called on each Keypress
-        /// </summary>
-        /// <returns>
-        /// True, if the key is handled by this method and should NOT be
-        /// inserted in the textarea.
-        /// </returns>
-        protected internal virtual bool HandleKeyPress(char ch)
+        void MH_MouseLeave(object sender, EventArgs e)
         {
-            //if (KeyEventHandler != null)
-            //{
-            //    return KeyEventHandler(ch);
-            //}
-
-            return false;
+            ShowHiddenCursorIfMovedOrLeft();
+            _gotMouseDown = false;
+            _mouseDownPos = NIL_POINT;
         }
 
-        // Fixes SD2-747: Form containing the text editor and a button with a shortcut
-        protected override bool IsInputChar(char charCode)
+        void MH_MouseUp(object sender, MouseEventArgs e)
         {
-            return true;
+            SelectionManager.WhereFrom = SelSource.None;
+            _gotMouseDown = false;
+            _mouseDownPos = NIL_POINT;
         }
 
-        internal bool IsReadOnly(int offset)
+        void MH_LostFocus(object sender, EventArgs e)
         {
-            if (Document.ReadOnly)
+            // The call to ShowHiddenCursorIfMovedOrLeft is delayed until pending messages have been processed
+            // so that it can properly detect whether the TextArea has really lost focus.
+            // For example, the CodeCompletionWindow gets focus when it is shown, but immediately gives back focus to the TextArea.
+            BeginInvoke(new MethodInvoker(ShowHiddenCursorIfMovedOrLeft));
+        }
+
+        void MH_Click(object sender, EventArgs e)
+        {
+            Point mousepos;
+            mousepos = MousePos;
+
+            if (_clickedOnSelectedText && TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
-                return true;
-            }
-            if (Shared.TEP.SupportReadOnlySegments)
-            {
-                return Document.MarkerStrategy.GetMarkers(offset).Exists(m => m.IsReadOnly);
-            }
-            else
-            {
-                return false;
+                SelectionManager.ClearSelection();
+                TextLocation clickPosition = TextView.GetLogicalPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
+                Caret.Position = clickPosition;
+                SetDesiredColumn();
             }
         }
 
-        internal bool IsReadOnly(int offset, int length)
+        void MH_MouseMove(object sender, MouseEventArgs e)
         {
-            if (Document.ReadOnly)
-            {
-                return true;
-            }
-            if (Shared.TEP.SupportReadOnlySegments)
-            {
-                return Document.MarkerStrategy.GetMarkers(offset, length).Exists(m => m.IsReadOnly);
-            }
-            else
-            {
-                return false;
-            }
-        }
+            MousePos = e.Location;
 
-        public void SimulateKeyPress(char ch)
-        {
-            if (SelectionManager.HasSomethingSelected)
+            // honour the starting selection strategy
+            switch (SelectionManager.WhereFrom)
             {
-                if (SelectionManager.SelectionIsReadonly)
+                case SelSource.Gutter:
+                    ExtendSelectionToMouse();
                     return;
-            }
-            else if (IsReadOnly(Caret.Offset))
-            {
-                return;
+
+                case SelSource.TArea:
+                    break;
             }
 
-            if (ch < ' ')
-            {
-                return;
-            }
+            ShowHiddenCursor(false);
 
-            if (!_hiddenMouseCursor && Shared.TEP.HideMouseCursor)
+            _doubleClick = false;
+            MousePos = new Point(e.X, e.Y);
+
+            if (_clickedOnSelectedText)
             {
-                if (ClientRectangle.Contains(PointToClient(Cursor.Position)))
+                if (Math.Abs(_mouseDownPos.X - e.X) >= SystemInformation.DragSize.Width / 2 || Math.Abs(_mouseDownPos.Y - e.Y) >= SystemInformation.DragSize.Height / 2)
                 {
-                    _mouseCursorHidePosition = Cursor.Position;
-                    _hiddenMouseCursor = true;
-                    Cursor.Hide();
-                }
-            }
-            //CloseToolTip();
+                    _clickedOnSelectedText = false;
+                    //Selection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
 
-            BeginUpdate();
-            Document.UndoStack.StartUndoGroup();
-
-            try
-            {
-                // INSERT char
-                if (!HandleKeyPress(ch))
-                {
-                    switch (Caret.CaretMode)
+                    if (SelectionManager.IsSelected(Caret.Offset))
                     {
-                        case CaretMode.InsertMode:
-                            InsertChar(ch);
-                            break;
-                        case CaretMode.OverwriteMode:
-                            ReplaceChar(ch);
-                            break;
-                        default:
-                            //Debug.Assert(false, "Unknown caret mode " + Caret.CaretMode);
-                            break;
+                        string text = SelectionManager.SelectedText;
+                        //bool isReadOnly = SelectionManager.SelectionIsReadonly;
+
+                        if (text != null && text.Length > 0)
+                        {
+                            DataObject dataObject = new DataObject();
+                            dataObject.SetData(DataFormats.UnicodeText, true, text);
+                            dataObject.SetData(SelectionManager.SelectedText);
+                            //_dodragdrop = true;
+                            //DoDragDrop(dataObject, isReadOnly ? DragDropEffects.All & ~DragDropEffects.Move : DragDropEffects.All);
+                        }
                     }
                 }
 
-                int currentLineNr = Caret.Line;
-                Document.FormattingStrategy.FormatLine(this, currentLineNr, Document.PositionToOffset(Caret.Position), ch);
-
-                EndUpdate();
+                return;
             }
-            finally
+
+            if (e.Button == MouseButtons.Left)
             {
-                Document.UndoStack.EndUndoGroup();
+                if (_gotMouseDown && SelectionManager.WhereFrom == SelSource.TArea)
+                {
+                    ExtendSelectionToMouse();
+                }
             }
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
+        void MH_MouseDown(object sender, MouseEventArgs e)
         {
-            base.OnKeyPress(e);
-            SimulateKeyPress(e.KeyChar);
-            e.Handled = true;
+            //Debug.WriteLine("MH_OnMouseDown");
+            MousePos = e.Location;
+
+            if (_doubleClick)
+            {
+                _doubleClick = false;
+                return;
+            }
+
+            if (TextView.DrawingPosition.Contains(MousePos.X, MousePos.Y))
+            {
+                _gotMouseDown = true;
+                SelectionManager.WhereFrom = SelSource.TArea;
+                _button = e.Button;
+
+                // double-click
+                if (_button == MouseButtons.Left && e.Clicks == 2)
+                {
+                    int deltaX = Math.Abs(_lastMouseDownPos.X - e.X);
+                    int deltaY = Math.Abs(_lastMouseDownPos.Y - e.Y);
+
+                    if (deltaX <= SystemInformation.DoubleClickSize.Width && deltaY <= SystemInformation.DoubleClickSize.Height)
+                    {
+                        DoubleClickSelectionExtend();
+                        _lastMouseDownPos = new Point(e.X, e.Y);
+
+                        if (SelectionManager.WhereFrom == SelSource.Gutter)
+                        {
+                            if (_minSelection.IsValid && _maxSelection.IsValid && SelectionManager.IsValid)
+                            {
+                                SelectionManager.StartPosition = _minSelection;
+                                SelectionManager.EndPosition = _maxSelection;
+
+                                _minSelection = new TextLocation();
+                                _maxSelection = new TextLocation();
+                            }
+                        }
+                        return;
+                    }
+                }
+
+                _minSelection = new TextLocation();
+                _maxSelection = new TextLocation();
+
+                _lastMouseDownPos = _mouseDownPos = new Point(e.X, e.Y);
+                bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
+
+                if (_button == MouseButtons.Left)
+                {
+                    FoldMarker marker = TextView.GetFoldMarkerFromPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                    if (marker != null && marker.IsFolded)
+                    {
+                        if (SelectionManager.HasSomethingSelected)
+                        {
+                            _clickedOnSelectedText = true;
+                        }
+
+                        TextLocation startLocation = new TextLocation(marker.StartColumn, marker.StartLine);
+                        TextLocation endLocation = new TextLocation(marker.EndColumn, marker.EndLine);
+                        SelectionManager.SetSelection(startLocation, endLocation, isRect);
+                        Caret.Position = startLocation;
+                        SetDesiredColumn();
+                        Focus();
+                        return;
+                    }
+
+                    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) // Shift while selecting end point.
+                    {
+                        ExtendSelectionToMouse();
+                    }
+                    else
+                    {
+                        TextLocation realmousepos = TextView.GetLogicalPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                        _clickedOnSelectedText = false;
+
+                        int offset = Document.PositionToOffset(realmousepos);
+
+                        if (SelectionManager.HasSomethingSelected && SelectionManager.IsSelected(offset))
+                        {
+                            _clickedOnSelectedText = true;
+                        }
+                        else
+                        {
+                            SelectionManager.ClearSelection();
+                            if (MousePos.Y > 0 && MousePos.Y < TextView.DrawingPosition.Height)
+                            {
+                                TextLocation pos = new TextLocation();
+                                pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
+                                pos.X = realmousepos.X;
+                                Caret.Position = pos;
+                                SelectionManager.SetSelection(pos, pos, isRect);
+                                SetDesiredColumn();
+                            }
+                        }
+                    }
+                }
+                else if (_button == MouseButtons.Right)
+                {
+                    // Rightclick sets the cursor to the click position unless the previous selection was clicked
+                    TextLocation realmousepos = TextView.GetLogicalPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                    int offset = Document.PositionToOffset(realmousepos);
+                    if (!SelectionManager.HasSomethingSelected || !SelectionManager.IsSelected(offset))
+                    {
+                        SelectionManager.ClearSelection();
+                        if (MousePos.Y > 0 && MousePos.Y < TextView.DrawingPosition.Height)
+                        {
+                            TextLocation pos = new TextLocation();
+                            pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
+                            pos.X = realmousepos.X;
+                            Caret.Position = pos;
+                            SetDesiredColumn();
+                        }
+                    }
+                }
+            }
+            Focus();
         }
 
+        void MH_DoubleClick(object sender, System.EventArgs e)
+        {
+            SelectionManager.WhereFrom = SelSource.TArea;
+            _doubleClick = true;
+        }
+
+
+        #endregion
 
         public bool ExecuteAction(EditAction action)
         {
@@ -946,6 +1039,114 @@ namespace ICSharpCode.TextEditor
             return ok;
         }
 
+
+        #region Keyboard handling
+        ///// <summary>
+        ///// This method is called on each Keypress
+        ///// </summary>
+        ///// <returns>
+        ///// True, if the key is handled by this method and should NOT be
+        ///// inserted in the textarea.
+        ///// </returns>
+        //protected internal virtual bool HandleKeyPress(char ch)
+        //{
+        //    //if (KeyEventHandler != null)
+        //    //{
+        //    //    return KeyEventHandler(ch);
+        //    //}
+
+        //    return false;
+        //}
+
+        //// Fixes SD2-747: Form containing the text editor and a button with a shortcut
+        //protected override bool IsInputChar(char charCode)
+        //{
+        //    return true;
+        //}
+
+        //internal bool IsReadOnly(int offset)
+        //{
+        //    if (Document.ReadOnly)
+        //    {
+        //        return true;
+        //    }
+        //    if (Shared.TEP.SupportReadOnlySegments)
+        //    {
+        //        return Document.MarkerStrategy.GetMarkers(offset).Exists(m => m.IsReadOnly);
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        //internal bool IsReadOnly(int offset, int length)
+        //{
+        //    if (Document.ReadOnly)
+        //    {
+        //        return true;
+        //    }
+        //    if (Shared.TEP.SupportReadOnlySegments)
+        //    {
+        //        return Document.MarkerStrategy.GetMarkers(offset, length).Exists(m => m.IsReadOnly);
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+
+            //was SimulateKeyPress(e.KeyChar);
+            if (!ReadOnly && e.KeyChar >= ' ')
+            {
+                // Good to go.
+                if (!_hiddenMouseCursor && Shared.TEP.HideMouseCursor)
+                {
+                    if (ClientRectangle.Contains(PointToClient(Cursor.Position)))
+                    {
+                        _mouseCursorHidePosition = Cursor.Position;
+                        _hiddenMouseCursor = true;
+                        Cursor.Hide();
+                    }
+                }
+
+                BeginUpdate();
+
+                Document.UndoStack.StartUndoGroup();
+
+                try // TODO0 really need this?
+                {
+                    // INSERT char
+                    switch (Caret.CaretMode)
+                    {
+                        case CaretMode.InsertMode:
+                            InsertChar(e.KeyChar); //TODO0 doesn't work for empty docs. Caret goes beyond eol.
+                            break;
+                        case CaretMode.OverwriteMode:
+                            ReplaceChar(e.KeyChar);
+                            break;
+                    }
+
+                    int currentLineNr = Caret.Line;
+                    Document.FormattingStrategy.FormatLine(this, currentLineNr, Document.PositionToOffset(Caret.Position), e.KeyChar);
+
+                    EndUpdate();
+                }
+                finally
+                {
+                    Document.UndoStack.EndUndoGroup();
+                }
+            }
+
+            e.Handled = true;
+        }
+
+
+
         /// <summary>
         /// This method executes a dialog key
         /// </summary>
@@ -954,17 +1155,7 @@ namespace ICSharpCode.TextEditor
             bool ok = true;
 
             AutoClearSelection = true;
-
-            //// try, if a dialog key processor was set to use this
-            //if (DoProcessDialogKey != null && DoProcessDialogKey(keyData))
-            //{
-            //    return true;
-            //}
-
-            // if not (or the process was 'silent', use the standard edit actions
-            //IEditAction action = MotherTextEditorControl.GetEditAction(keyData);
             EditAction action = Shared.CMM.GetEditAction(keyData);
-
 
             if (action != null)
             {
@@ -983,7 +1174,22 @@ namespace ICSharpCode.TextEditor
         /// <returns></returns>
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            return ExecuteDialogKey(keyData) || base.ProcessDialogKey(keyData);
+            //return ExecuteDialogKey(keyData) || base.ProcessDialogKey(keyData);
+
+            bool ok = false;
+
+            AutoClearSelection = true;
+            EditAction action = Shared.CMM.GetEditAction(keyData);
+
+            if (action != null)
+            {
+                ok = ExecuteAction(action);
+            }
+            // else not in map
+
+            ok |= base.ProcessDialogKey(keyData);
+
+            return ok;
         }
         #endregion
 
@@ -1053,18 +1259,7 @@ namespace ICSharpCode.TextEditor
         ////////////////////// TextAreaMouseHandler////////////////////////////
         ////////////////////// TextAreaMouseHandler////////////////////////////
         ////////////////////// TextAreaMouseHandler////////////////////////////
-        ////////////////////// TextAreaMouseHandler////////////////////////////
 
-
-        TextLocation _minSelection = new TextLocation();
-        TextLocation _maxSelection = new TextLocation();
-        bool _doubleclick = false;
-        bool _clickedOnSelectedText = false;
-        MouseButtons _button;
-        static readonly Point NIL_POINT = new Point(-1, -1);
-        Point _mousedownpos = NIL_POINT;
-        Point _lastmousedownpos = NIL_POINT;
-        bool _gotmousedown = false;
 
 
 
@@ -1072,97 +1267,6 @@ namespace ICSharpCode.TextEditor
         void ShowHiddenCursorIfMovedOrLeft()
         {
             ShowHiddenCursor(!Focused || !ClientRectangle.Contains(PointToClient(Cursor.Position)));
-        }
-
-        void MH_TextAreaLostFocus(object sender, EventArgs e)
-        {
-            // The call to ShowHiddenCursorIfMovedOrLeft is delayed until pending messages have been processed
-            // so that it can properly detect whether the TextArea has really lost focus.
-            // For example, the CodeCompletionWindow gets focus when it is shown, but immediately gives back focus to the TextArea.
-            BeginInvoke(new MethodInvoker(ShowHiddenCursorIfMovedOrLeft));
-        }
-
-        void MH_OnMouseLeave(object sender, EventArgs e)
-        {
-            ShowHiddenCursorIfMovedOrLeft();
-            _gotmousedown = false;
-            _mousedownpos = NIL_POINT;
-        }
-
-        void MH_OnMouseUp(object sender, MouseEventArgs e)
-        {
-            SelectionManager.WhereFrom = SelSource.None;
-            _gotmousedown = false;
-            _mousedownpos = NIL_POINT;
-        }
-
-        void MH_TextAreaClick(object sender, EventArgs e)
-        {
-            Point mousepos;
-            mousepos = MousePos;
-
-            if (_clickedOnSelectedText && TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
-            {
-                SelectionManager.ClearSelection();
-                TextLocation clickPosition = TextView.GetLogicalPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
-                Caret.Position = clickPosition;
-                SetDesiredColumn();
-            }
-        }
-
-        void MH_TextAreaMouseMove(object sender, MouseEventArgs e)
-        {
-            MousePos = e.Location;
-
-            // honour the starting selection strategy
-            switch (SelectionManager.WhereFrom)
-            {
-                case SelSource.Gutter:
-                    ExtendSelectionToMouse();
-                    return;
-
-                case SelSource.TArea:
-                    break;
-            }
-
-            ShowHiddenCursor(false);
-
-            _doubleclick = false;
-            MousePos = new Point(e.X, e.Y);
-
-            if (_clickedOnSelectedText)
-            {
-                if (Math.Abs(_mousedownpos.X - e.X) >= SystemInformation.DragSize.Width / 2 || Math.Abs(_mousedownpos.Y - e.Y) >= SystemInformation.DragSize.Height / 2)
-                {
-                    _clickedOnSelectedText = false;
-                    //Selection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
-
-                    if (SelectionManager.IsSelected(Caret.Offset))
-                    {
-                        string text = SelectionManager.SelectedText;
-                        bool isReadOnly = SelectionManager.SelectionIsReadonly;
-
-                        if (text != null && text.Length > 0)
-                        {
-                            DataObject dataObject = new DataObject();
-                            dataObject.SetData(DataFormats.UnicodeText, true, text);
-                            dataObject.SetData(SelectionManager.SelectedText);
-                            //_dodragdrop = true;
-                            //DoDragDrop(dataObject, isReadOnly ? DragDropEffects.All & ~DragDropEffects.Move : DragDropEffects.All);
-                        }
-                    }
-                }
-
-                return;
-            }
-
-            if (e.Button == MouseButtons.Left)
-            {
-                if (_gotmousedown && SelectionManager.WhereFrom == SelSource.TArea)
-                {
-                    ExtendSelectionToMouse();
-                }
-            }
         }
 
         void ExtendSelectionToMouse()
@@ -1252,127 +1356,9 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void MH_OnMouseDown(object sender, MouseEventArgs e)
-        {
-            Point mousepos;
-            MousePos = e.Location;
-            mousepos = e.Location;
 
-            if (_doubleclick)
-            {
-                _doubleclick = false;
-                return;
-            }
 
-            if (TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
-            {
-                _gotmousedown = true;
-                SelectionManager.WhereFrom = SelSource.TArea;
-                _button = e.Button;
-
-                // double-click
-                if (_button == MouseButtons.Left && e.Clicks == 2)
-                {
-                    int deltaX = Math.Abs(_lastmousedownpos.X - e.X);
-                    int deltaY = Math.Abs(_lastmousedownpos.Y - e.Y);
-
-                    if (deltaX <= SystemInformation.DoubleClickSize.Width && deltaY <= SystemInformation.DoubleClickSize.Height)
-                    {
-                        DoubleClickSelectionExtend();
-                        _lastmousedownpos = new Point(e.X, e.Y);
-
-                        if (SelectionManager.WhereFrom == SelSource.Gutter)
-                        {
-                            if (_minSelection.IsValid && _maxSelection.IsValid && SelectionManager.IsValid)
-                            {
-                                SelectionManager.StartPosition = _minSelection;
-                                SelectionManager.EndPosition = _maxSelection;
-
-                                _minSelection = new TextLocation();
-                                _maxSelection = new TextLocation();
-                            }
-                        }
-                        return;
-                    }
-                }
-
-                _minSelection = new TextLocation();
-                _maxSelection = new TextLocation();
-
-                _lastmousedownpos = _mousedownpos = new Point(e.X, e.Y);
-                bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
-
-                if (_button == MouseButtons.Left)
-                {
-                    FoldMarker marker = TextView.GetFoldMarkerFromPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
-                    if (marker != null && marker.IsFolded)
-                    {
-                        if (SelectionManager.HasSomethingSelected)
-                        {
-                            _clickedOnSelectedText = true;
-                        }
-
-                        TextLocation startLocation = new TextLocation(marker.StartColumn, marker.StartLine);
-                        TextLocation endLocation = new TextLocation(marker.EndColumn, marker.EndLine);
-                        SelectionManager.SetSelection(startLocation, endLocation, isRect);
-                        Caret.Position = startLocation;
-                        SetDesiredColumn();
-                        Focus();
-                        return;
-                    }
-
-                    if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) // Shift while selecting end point.
-                    {
-                        ExtendSelectionToMouse();
-                    }
-                    else
-                    {
-                        TextLocation realmousepos = TextView.GetLogicalPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
-                        _clickedOnSelectedText = false;
-
-                        int offset = Document.PositionToOffset(realmousepos);
-
-                        if (SelectionManager.HasSomethingSelected && SelectionManager.IsSelected(offset))
-                        {
-                            _clickedOnSelectedText = true;
-                        }
-                        else
-                        {
-                            SelectionManager.ClearSelection();
-                            if (mousepos.Y > 0 && mousepos.Y < TextView.DrawingPosition.Height)
-                            {
-                                TextLocation pos = new TextLocation();
-                                pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
-                                pos.X = realmousepos.X;
-                                Caret.Position = pos;
-                                SelectionManager.SetSelection(pos, pos, isRect);
-                                SetDesiredColumn();
-                            }
-                        }
-                    }
-                }
-                else if (_button == MouseButtons.Right)
-                {
-                    // Rightclick sets the cursor to the click position unless the previous selection was clicked
-                    TextLocation realmousepos = TextView.GetLogicalPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
-                    int offset = Document.PositionToOffset(realmousepos);
-                    if (!SelectionManager.HasSomethingSelected || !SelectionManager.IsSelected(offset))
-                    {
-                        SelectionManager.ClearSelection();
-                        if (mousepos.Y > 0 && mousepos.Y < TextView.DrawingPosition.Height)
-                        {
-                            TextLocation pos = new TextLocation();
-                            pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
-                            pos.X = realmousepos.X;
-                            Caret.Position = pos;
-                            SetDesiredColumn();
-                        }
-                    }
-                }
-            }
-            Focus();
-        }
-
+        // TODO0 should these be in the Document class?
         int FindNext(Document.Document document, int offset, char ch)
         {
             LineSegment line = document.GetLineSegmentForOffset(offset);
@@ -1394,14 +1380,14 @@ namespace ICSharpCode.TextEditor
         {
             LineSegment line = document.GetLineSegmentForOffset(offset);
 
-            if (offset > 0 && Char.IsWhiteSpace(document.GetCharAt(offset - 1)) && Char.IsWhiteSpace(document.GetCharAt(offset)))
+            if (offset > 0 && char.IsWhiteSpace(document.GetCharAt(offset - 1)) && char.IsWhiteSpace(document.GetCharAt(offset)))
             {
-                while (offset > line.Offset && Char.IsWhiteSpace(document.GetCharAt(offset - 1)))
+                while (offset > line.Offset && char.IsWhiteSpace(document.GetCharAt(offset - 1)))
                 {
                     --offset;
                 }
             }
-            else if (IsSelectableChar(document.GetCharAt(offset)) || (offset > 0 && Char.IsWhiteSpace(document.GetCharAt(offset)) && IsSelectableChar(document.GetCharAt(offset - 1))))
+            else if (IsSelectableChar(document.GetCharAt(offset)) || (offset > 0 && char.IsWhiteSpace(document.GetCharAt(offset)) && IsSelectableChar(document.GetCharAt(offset - 1))))
             {
                 while (offset > line.Offset && IsSelectableChar(document.GetCharAt(offset - 1)))
                 {
@@ -1410,7 +1396,7 @@ namespace ICSharpCode.TextEditor
             }
             else
             {
-                if (offset > 0 && !Char.IsWhiteSpace(document.GetCharAt(offset - 1)) && !IsSelectableChar(document.GetCharAt(offset - 1)))
+                if (offset > 0 && !char.IsWhiteSpace(document.GetCharAt(offset - 1)) && !IsSelectableChar(document.GetCharAt(offset - 1)))
                 {
                     return Math.Max(0, offset - 1);
                 }
@@ -1433,11 +1419,11 @@ namespace ICSharpCode.TextEditor
                     ++offset;
                 }
             }
-            else if (Char.IsWhiteSpace(document.GetCharAt(offset)))
+            else if (char.IsWhiteSpace(document.GetCharAt(offset)))
             {
-                if (offset > 0 && Char.IsWhiteSpace(document.GetCharAt(offset - 1)))
+                if (offset > 0 && char.IsWhiteSpace(document.GetCharAt(offset - 1)))
                 {
-                    while (offset < endPos && Char.IsWhiteSpace(document.GetCharAt(offset)))
+                    while (offset < endPos && char.IsWhiteSpace(document.GetCharAt(offset)))
                     {
                         ++offset;
                     }
@@ -1450,21 +1436,5 @@ namespace ICSharpCode.TextEditor
 
             return offset;
         }
-
-        void MH_OnDoubleClick(object sender, System.EventArgs e)
-        {
-            SelectionManager.WhereFrom = SelSource.TArea;
-            _doubleclick = true;
-        }
-
-
-
-
-
-
-
-
-
-
     }
 }

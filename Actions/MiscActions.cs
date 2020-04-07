@@ -93,38 +93,37 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.ReadOnly)
             {
-                return;
-            }
+                textArea.Document.UndoStack.StartUndoGroup();
 
-            textArea.Document.UndoStack.StartUndoGroup();
-
-            if (textArea.SelectionManager.HasSomethingSelected)
-            {
-                int startLine = textArea.SelectionManager.StartPosition.Y;
-                int endLine = textArea.SelectionManager.EndPosition.Y;
-                if (startLine != endLine)
+                if (textArea.SelectionManager.HasSomethingSelected)
                 {
-                    textArea.BeginUpdate();
-                    InsertTabs(textArea.Document, textArea.SelectionManager, startLine, endLine);
-                    textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine, endLine));
-                    textArea.EndUpdate();
+                    int startLine = textArea.SelectionManager.StartPosition.Y;
+                    int endLine = textArea.SelectionManager.EndPosition.Y;
+                    if (startLine != endLine)
+                    {
+                        textArea.BeginUpdate();
+                        InsertTabs(textArea.Document, textArea.SelectionManager, startLine, endLine);
+                        textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine, endLine));
+                        textArea.EndUpdate();
+                    }
+                    else
+                    {
+                        InsertTabAtCaretPosition(textArea);
+                    }
+
+                    textArea.Document.CommitUpdate();
+                    textArea.AutoClearSelection = false;
                 }
                 else
                 {
                     InsertTabAtCaretPosition(textArea);
                 }
 
-                textArea.Document.CommitUpdate();
-                textArea.AutoClearSelection = false;
-            }
-            else
-            {
-                InsertTabAtCaretPosition(textArea);
+                textArea.Document.UndoStack.EndUndoGroup();
             }
 
-            textArea.Document.UndoStack.EndUndoGroup();
         }
     }
 
@@ -255,7 +254,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.Document.ReadOnly)
+            if (textArea.ReadOnly)
             {
                 return;
             }
@@ -342,7 +341,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.Document.ReadOnly)
+            if (textArea.ReadOnly)
             {
                 return;
             }
@@ -412,7 +411,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (textArea.Document.ReadOnly)
+            if (textArea.ReadOnly)
             {
                 return;
             }
@@ -619,7 +618,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else
             {
-                if (textArea.Caret.Offset > 0 && !textArea.IsReadOnly(textArea.Caret.Offset - 1))
+                if (textArea.Caret.Offset > 0 && !textArea.ReadOnly)
                 {
                     textArea.BeginUpdate();
                     int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
@@ -654,7 +653,7 @@ namespace ICSharpCode.TextEditor.Actions
         internal static void DeleteSelection(TextArea textArea)
         {
             //Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
-            if (!textArea.SelectionManager.SelectionIsReadonly)
+            if (!textArea.ReadOnly)
             {
                 textArea.BeginUpdate();
                 textArea.Caret.Position = textArea.SelectionManager.StartPosition;
@@ -676,7 +675,7 @@ namespace ICSharpCode.TextEditor.Actions
             }
             else
             {
-                if (!textArea.IsReadOnly(textArea.Caret.Offset))
+                if (!textArea.ReadOnly)
                 {
                     if (textArea.Caret.Offset < textArea.Document.TextLength)
                     {
@@ -752,14 +751,14 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="TextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.Document.ReadOnly)
+            if (!textArea.ReadOnly)
             {
                 textArea.BeginUpdate();
                 textArea.Document.UndoStack.StartUndoGroup();
                 try
                 {
-                    if (textArea.HandleKeyPress('\n'))
-                        return;
+                    //if (textArea.HandleKeyPress('\n'))
+                    //    return;
 
                     textArea.InsertString(Environment.NewLine);
 
@@ -787,7 +786,7 @@ namespace ICSharpCode.TextEditor.Actions
         /// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.Document.ReadOnly)
+            if (!textArea.ReadOnly)
             {
                 switch (textArea.Caret.CaretMode)
                 {
@@ -857,11 +856,16 @@ namespace ICSharpCode.TextEditor.Actions
                 int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document, textArea.Caret.Offset);
                 if (prevWordStart < textArea.Caret.Offset)
                 {
-                    if (!textArea.IsReadOnly(prevWordStart, textArea.Caret.Offset - prevWordStart))
+                    if (!textArea.ReadOnly)
                     {
                         textArea.Document.Remove(prevWordStart, textArea.Caret.Offset - prevWordStart);
                         textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
                     }
+                    //if (!textArea.IsReadOnly(prevWordStart, textArea.Caret.Offset - prevWordStart))
+                    //{
+                    //    textArea.Document.Remove(prevWordStart, textArea.Caret.Offset - prevWordStart);
+                    //    textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
+                    //}
                 }
             }
 
@@ -876,7 +880,7 @@ namespace ICSharpCode.TextEditor.Actions
                     LineSegment lineAbove = textArea.Document.GetLineSegment(curLineNr - 1);
                     int endOfLineAbove = lineAbove.Offset + lineAbove.Length;
                     int charsToDelete = textArea.Caret.Offset - endOfLineAbove;
-                    if (!textArea.IsReadOnly(endOfLineAbove, charsToDelete))
+                    if (!textArea.ReadOnly)
                     {
                         textArea.Document.Remove(endOfLineAbove, charsToDelete);
                         textArea.Caret.Position = textArea.Document.OffsetToPosition(endOfLineAbove);
@@ -925,7 +929,7 @@ namespace ICSharpCode.TextEditor.Actions
                 int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document, textArea.Caret.Offset);
                 if (nextWordStart > textArea.Caret.Offset)
                 {
-                    if (!textArea.IsReadOnly(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset))
+                    if (!textArea.ReadOnly)
                     {
                         textArea.Document.Remove(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset);
                         // cursor never moves with this command
@@ -947,7 +951,7 @@ namespace ICSharpCode.TextEditor.Actions
         {
             int lineNr = textArea.Caret.Line;
             LineSegment line = textArea.Document.GetLineSegment(lineNr);
-            if (textArea.IsReadOnly(line.Offset, line.Length))
+            if (textArea.ReadOnly)
                 return;
             textArea.Document.Remove(line.Offset, line.TotalLength);
             textArea.Caret.Position = textArea.Document.OffsetToPosition(line.Offset);
@@ -966,7 +970,7 @@ namespace ICSharpCode.TextEditor.Actions
             LineSegment line = textArea.Document.GetLineSegment(lineNr);
 
             int numRemove = (line.Offset + line.Length) - textArea.Caret.Offset;
-            if (numRemove > 0 && !textArea.IsReadOnly(textArea.Caret.Offset, numRemove))
+            if (numRemove > 0 && !textArea.ReadOnly)
             {
                 textArea.Document.Remove(textArea.Caret.Offset, numRemove);
                 textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, new TextLocation(0, lineNr)));

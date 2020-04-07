@@ -103,7 +103,7 @@ namespace ICSharpCode.TextEditor.Common
 
         public bool ShowVerticalRuler { get; set; } = false;
         
-        public bool SupportReadOnlySegments { get; set; } = false;
+        //public bool SupportReadOnlySegments { get; set; } = false;
 
         public bool MouseWheelScrollDown { get; set; } = true;
 

@@ -21,21 +21,17 @@ namespace ICSharpCode.TextEditor.Actions
     {
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.Document.ReadOnly)
+            if (!textArea.ReadOnly)
             {
-                //textArea.ClipboardHandler.Cut(null, null);
-
                 if (textArea.SelectionManager.HasSomethingSelected)
                 {
                     Clipboard.SetText(textArea.SelectionManager.SelectedText);
-                    if (!textArea.SelectionManager.SelectionIsReadonly)
-                    {
-                        // Remove text
-                        textArea.BeginUpdate();
-                        textArea.Caret.Position = textArea.SelectionManager.StartPosition;
-                        textArea.SelectionManager.RemoveSelectedText();
-                        textArea.EndUpdate();
-                    }
+
+                    // Remove text
+                    textArea.BeginUpdate();
+                    textArea.Caret.Position = textArea.SelectionManager.StartPosition;
+                    textArea.SelectionManager.RemoveSelectedText();
+                    textArea.EndUpdate();
                 }
             }
         }
@@ -57,24 +53,21 @@ namespace ICSharpCode.TextEditor.Actions
     {
         public override void Execute(TextArea textArea)
         {
-            if (!textArea.Document.ReadOnly)
+            if (!textArea.ReadOnly && textArea.EnableCutOrPaste)
             {
-                if (textArea.EnableCutOrPaste)
+                textArea.Document.UndoStack.StartUndoGroup();
+                string s = Clipboard.GetText();
+                if (textArea.SelectionManager.HasSomethingSelected)
                 {
-                    textArea.Document.UndoStack.StartUndoGroup();
-                    string s = Clipboard.GetText();
-                    if (textArea.SelectionManager.HasSomethingSelected)
-                    {
-                        textArea.Caret.Position = textArea.SelectionManager.StartPosition;
-                        textArea.SelectionManager.RemoveSelectedText();
-                        textArea.InsertString(s);
-                    }
-                    else
-                    {
-                        textArea.InsertString(s);
-                    }
-                    textArea.Document.UndoStack.EndUndoGroup();
+                    textArea.Caret.Position = textArea.SelectionManager.StartPosition;
+                    textArea.SelectionManager.RemoveSelectedText();
+                    textArea.InsertString(s);
                 }
+                else
+                {
+                    textArea.InsertString(s);
+                }
+                textArea.Document.UndoStack.EndUndoGroup();
             }
         }
     }
