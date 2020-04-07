@@ -99,11 +99,11 @@ namespace ICSharpCode.TextEditor.Common
         #endregion
     }
 
-    public class ControlMapManager //TODO0 should be in Dex9 project?
+    public class ControlMapManager
     {
         #region Properties
         /// <summary>Contents of the file.</summary>
-        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } } // TODO0 better way?
+        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } } // TODO1 better way?
         #endregion
 
         #region Fields

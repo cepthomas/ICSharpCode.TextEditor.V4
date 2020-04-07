@@ -213,6 +213,16 @@ namespace ICSharpCode.TextEditor
             Caret.Position = TextView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
         }
 
+
+        ////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
         public void OptionsChanged()
         {
             UpdateMatchingBracket();
@@ -672,6 +682,38 @@ namespace ICSharpCode.TextEditor
             ToolTipRequest?.Invoke(this, e);
         }
 
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            Cursor = Cursors.Default;
+            if (_lastMouseInMargin != null)
+            {
+                _lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+                _lastMouseInMargin = null;
+            }
+            CloseToolTip();
+        }
+
+        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+        {
+            // this corrects weird problems when text is selected,
+            // then a menu item is selected, then the text is
+            // clicked again - it correctly synchronises the
+            // click position
+            MousePos = new Point(e.X, e.Y);
+
+            base.OnMouseDown(e);
+            CloseToolTip();
+
+            foreach (IMargin margin in _leftMargins)
+            {
+                if (margin.DrawingPosition.Contains(e.X, e.Y))
+                {
+                    margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
+                }
+            }
+        }
+
 
         protected override void OnMouseHover(EventArgs e)
         {
@@ -696,7 +738,9 @@ namespace ICSharpCode.TextEditor
                 _toolTipRectangle = Rectangle.Empty;
 
                 if (_toolTipActive)
+                {
                     RequestToolTip(e.Location);
+                }
             }
 
             foreach (IMargin margin in _leftMargins)
@@ -742,6 +786,70 @@ namespace ICSharpCode.TextEditor
 
             Cursor = Cursors.Default;
         }
+
+
+
+
+
+        /*
+        protected override void OnMouseMove(MouseEventArgs e) TODO0
+        {
+            base.OnMouseMove(e);
+            if (!toolTipRectangle.Contains(e.Location))
+            {
+                toolTipRectangle = Rectangle.Empty;
+                if (toolTipActive)
+                    RequestToolTip(e.Location);
+            }
+            foreach (AbstractMargin margin in leftMargins)
+            {
+                if (margin.DrawingPosition.Contains(e.X, e.Y))
+                {
+                    this.Cursor = margin.Cursor;
+                    margin.HandleMouseMove(new Point(e.X, e.Y), e.Button);
+                    if (lastMouseInMargin != margin)
+                    {
+                        if (lastMouseInMargin != null)
+                        {
+                            lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+                        }
+                        lastMouseInMargin = margin;
+                    }
+                    return;
+                }
+            }
+            if (lastMouseInMargin != null)
+            {
+                lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+                lastMouseInMargin = null;
+            }
+            if (textView.DrawingPosition.Contains(e.X, e.Y))
+            {
+                TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
+                if (SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None)
+                {
+                    // mouse is hovering over a selection, so show default mouse
+                    this.Cursor = Cursors.Default;
+                }
+                else
+                {
+                    // mouse is hovering over text area, not a selection, so show the textView cursor
+                    this.Cursor = textView.Cursor;
+                }
+                return;
+            }
+            this.Cursor = Cursors.Default;
+        }
+*/
+
+
+
+
+
+
+
+
+
         #endregion
 
         #region Keyboard handling
