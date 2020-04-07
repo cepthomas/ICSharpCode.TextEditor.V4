@@ -158,11 +158,9 @@
     <Compile Include="Gui\TextAreaControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\TextAreaMouseHandler.cs" />
     <Compile Include="Gui\IconBarMargin.cs" />
     <Compile Include="Gui\FoldMargin.cs" />
     <Compile Include="Document\Selection\ColumnRange.cs" />
-    <Compile Include="Gui\TextAreaDragDropHandler.cs" />
     <Compile Include="Gui\BracketHighlighter.cs" />
     <Compile Include="Actions\BookmarkActions.cs" />
     <Compile Include="Actions\FoldActions.cs" />
@@ -180,7 +178,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Util\FileReader.cs" />
-    <Compile Include="Gui\ToolTipRequestEventArgs.cs" />
     <Compile Include="Document\HighlightingStrategy\SpanStack.cs" />
     <Compile Include="Util\WeakCollection.cs" />
     <None Include="Document.cd" />

@@ -50,6 +50,11 @@ namespace ICSharpCode.TextEditor.Common
 
         /// <summary>Drop down item name.</summary>
         public string SubMenu { get; set; } = "";
+
+        public override string ToString()
+        {
+            return $"Key:{Key} Action:{ActionName}";
+        }
     }
 
 

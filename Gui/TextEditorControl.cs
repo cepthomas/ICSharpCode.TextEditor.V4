@@ -22,6 +22,14 @@ using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Common;
 
 
+
+// A text editor actually contains three nested controls that are closely coupled to one another:
+// At the top level is TextEditorControl, which contains either one or two TextAreaControls.It has two TextEditorControls when "split",
+// as demonstrated in the screenshot.
+// TextAreaControl encapsulates the horizontal and vertical scroll bars, and a TextArea.
+// TextArea is the control that actually gets the focus.It paints the text and handles keyboard input.
+
+
 namespace ICSharpCode.TextEditor
 {
     /// <summary>This class is used for a basic text area control</summary>

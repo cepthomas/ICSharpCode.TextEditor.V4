@@ -98,14 +98,14 @@
         },
         {
             "ActionName": "ShiftCaretLeft",
-            "Key": "LeftS",
+            "Key": "Left S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "WordLeft",
-            "Key": "LeftC",
+            "Key": "Left C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -126,21 +126,21 @@
         },
         {
             "ActionName": "ShiftCaretRight",
-            "Key": "RightS",
+            "Key": "Right S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "WordRight",
-            "Key": "RightC",
+            "Key": "Right C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "ShiftWordRight",
-            "Key": "RightCS",
+            "Key": "Right CS",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -154,14 +154,14 @@
         },
         {
             "ActionName": "ShiftCaretUp",
-            "Key": "UpS",
+            "Key": "Up S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "ScrollLineUp",
-            "Key": "UpC",
+            "Key": "Up C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -175,14 +175,14 @@
         },
         {
             "ActionName": "ShiftCaretDown",
-            "Key": "DownS",
+            "Key": "Down S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "ScrollLineDown",
-            "Key": "DownC",
+            "Key": "Down C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -203,21 +203,21 @@
         },
         {
             "ActionName": "ShiftHome",
-            "Key": "HomeS",
+            "Key": "Home S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "MoveToStart",
-            "Key": "HomeC",
+            "Key": "Home C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "ShiftMoveToStart",
-            "Key": "HomeCS",
+            "Key": "Home CS",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -231,21 +231,21 @@
         },
         {
             "ActionName": "ShiftEnd",
-            "Key": "EndS",
+            "Key": "End S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "MoveToEnd",
-            "Key": "EndC",
+            "Key": "End C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "ShiftMoveToEnd",
-            "Key": "EndCS",
+            "Key": "End CS",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -259,7 +259,7 @@
         },
         {
             "ActionName": "ShiftMovePageUp",
-            "Key": "PageUpS",
+            "Key": "PageUp S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -273,7 +273,7 @@
         },
         {
             "ActionName": "ShiftMovePageDown",
-            "Key": "PageDownS",
+            "Key": "PageDown S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -294,7 +294,7 @@
         },
         {
             "ActionName": "ShiftTab",
-            "Key": "TabS",
+            "Key": "Tab S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -308,14 +308,14 @@
         },
         {
             "ActionName": "Backspace",
-            "Key": "BackS",
+            "Key": "Back S",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "SelectWholeDocument",
-            "Key": "AC",
+            "Key": "A C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
@@ -329,56 +329,56 @@
         },
         {
             "ActionName": "ToggleComment",
-            "Key": "DivideC",
+            "Key": "Divide C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "Undo",
-            "Key": "ZC",
+            "Key": "Z C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "Redo",
-            "Key": "YC",
+            "Key": "Y C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "DeleteWord",
-            "Key": "DeleteC",
+            "Key": "Delete C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "WordBackspace",
-            "Key": "BackC",
+            "Key": "Back C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "DeleteLine",
-            "Key": "DC",
+            "Key": "D C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "DeleteToLineEnd",
-            "Key": "DCS",
+            "Key": "D CS",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
         },
         {
             "ActionName": "GotoMatchingBrace",
-            "Key": "BC",
+            "Key": "B C",
             "Key2": "None",
             "Menu": "",
             "SubMenu": ""
