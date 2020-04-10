@@ -16,7 +16,7 @@ using ICSharpCode.TextEditor.Common;
 namespace ICSharpCode.TextEditor
 {
     /// <summary>
-    /// This class views the line numbers and folding markers.
+    /// This class draws the folding markers.
     /// </summary>
     public class FoldMargin : IMargin
     {

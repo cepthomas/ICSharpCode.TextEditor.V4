@@ -58,7 +58,7 @@ namespace ICSharpCode.TextEditor
         bool _doubleClick = false;
         bool _clickedOnSelectedText = false;
         MouseButtons _button = MouseButtons.None;
-        static readonly Point NIL_POINT = new Point(-1, -1); //TODO0 not really used?
+        static readonly Point NIL_POINT = new Point(-1, -1); //TODO1 not really used?
         Point _mouseDownPos = NIL_POINT;
         Point _lastMouseDownPos = NIL_POINT;
         bool _gotMouseDown = false;
@@ -478,8 +478,8 @@ namespace ICSharpCode.TextEditor
             }
         }
 
-        void SetToolTip(string text, int lineNumber)
-        {
+        // void SetToolTip(string text, int lineNumber)
+        // {
             //if (toolTip == null || toolTip.IsDisposed)
             //    toolTip = new DeclarationViewWindow(FindForm());
             //if (oldToolTip == text)
@@ -505,7 +505,7 @@ namespace ICSharpCode.TextEditor
             //    toolTip.Show();
             //}
             //oldToolTip = text;
-        }
+        // }
 
         //void CloseToolTip()
         //{
@@ -1174,18 +1174,8 @@ namespace ICSharpCode.TextEditor
         /// <returns></returns>
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            //return ExecuteDialogKey(keyData) || base.ProcessDialogKey(keyData);
-
-            bool ok = false;
-
             AutoClearSelection = true;
-            EditAction action = Shared.CMM.GetEditAction(keyData);
-
-            if (action != null)
-            {
-                ok = ExecuteAction(action);
-            }
-            // else not in map
+            bool ok = ExecuteDialogKey(keyData);
 
             ok |= base.ProcessDialogKey(keyData);
 
@@ -1252,17 +1242,6 @@ namespace ICSharpCode.TextEditor
             Invalidate(r);
         }
         #endregion
-
-
-
-
-        ////////////////////// TextAreaMouseHandler////////////////////////////
-        ////////////////////// TextAreaMouseHandler////////////////////////////
-        ////////////////////// TextAreaMouseHandler////////////////////////////
-
-
-
-
 
         void ShowHiddenCursorIfMovedOrLeft()
         {
@@ -1358,7 +1337,7 @@ namespace ICSharpCode.TextEditor
 
 
 
-        // TODO0 should these be in the Document class?
+        //////// TODO0 should these be in the Document class?
         int FindNext(Document.Document document, int offset, char ch)
         {
             LineSegment line = document.GetLineSegmentForOffset(offset);

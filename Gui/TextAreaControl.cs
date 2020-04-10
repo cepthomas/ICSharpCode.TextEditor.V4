@@ -359,7 +359,7 @@ namespace ICSharpCode.TextEditor
         }
 
         /// <summary>
-        /// Ensure that <paramref name="line"/> is visible.
+        /// Ensure that line is visible.
         /// </summary>
         public void ScrollTo(int line)
         {
@@ -438,6 +438,7 @@ namespace ICSharpCode.TextEditor
             ScrollToCaret();
         }
 
+        //TODO2- orig commented out.
         //public event MouseEventHandler ShowContextMenu;
         //protected override void WndProc(ref Message m)
         //{

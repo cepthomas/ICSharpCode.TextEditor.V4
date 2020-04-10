@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Util
     /// Since items may disappear at any time when they are garbage collected, this class
     /// cannot provide a useful implementation for Count and thus cannot implement the ICollection interface.
     /// </summary>
-    public class WeakCollection<T> : IEnumerable<T> where T : class //TOD2??
+    public class WeakCollection<T> : IEnumerable<T> where T : class // TOD2?? Weak references are useful for objects that use a lot of memory, but can be recreated easily if they are reclaimed by garbage collection.
     {
         readonly List<WeakReference> innerList = new List<WeakReference>();
 

@@ -19,7 +19,8 @@ namespace ICSharpCode.TextEditor
     /// <summary>This class paints the textarea.</summary>
     public class TextView : /*IMargin,*/ IDisposable
     {
-        // split words after 1000 characters. Fixes GDI+ crash on very longs words, for example a 100 KB Base64-file without any line breaks.
+        // TODO1-orig  split words after 1000 characters. Fixes GDI+ crash on very longs words, for example a 
+        // 100 KB Base64-file without any line breaks.
         const int MAX_WORD_LEN = 1000;
         const int MAX_CACHE_SIZE = 2000;
 
@@ -53,9 +54,9 @@ namespace ICSharpCode.TextEditor
 
         public Cursor Cursor { get; set; } = Cursors.Default;
 
-        public Size Size { get { return new Size(-1, -1); } }
+        //public Size Size { get { return new Size(-1, -1); } }
 
-        public bool IsVisible { get { return true; } }
+        //public bool IsVisible { get { return true; } }
 
         public Document.Document Document { get { return TextArea.Document; } }
 
@@ -91,6 +92,43 @@ namespace ICSharpCode.TextEditor
         /// On monospaced fonts, this is the same value as spaceWidth.
         /// </summary>
         public int WideSpaceWidth { get; private set; }
+
+        struct MarkerToDraw
+        {
+            internal TextMarker marker;
+            internal RectangleF drawingRect;
+
+            public MarkerToDraw(TextMarker marker, RectangleF drawingRect)
+            {
+                this.marker = marker;
+                this.drawingRect = drawingRect;
+            }
+        }
+
+        struct WordFontPair
+        {
+            string word;
+            Font font;
+            public WordFontPair(string word, Font font)
+            {
+                this.word = word;
+                this.font = font;
+            }
+
+            public override bool Equals(object obj)
+            {
+                WordFontPair myWordFontPair = (WordFontPair)obj;
+                if (!word.Equals(myWordFontPair.word))
+                    return false;
+                return font.Equals(myWordFontPair.font);
+            }
+
+            //public override int GetHashCode()
+            //{
+            //    return word.GetHashCode() ^ font.GetHashCode();
+            //}
+        }
+
 
         public TextView(TextArea textArea)
         {
@@ -313,19 +351,6 @@ namespace ICSharpCode.TextEditor
 
             return physicalXPos + wordWidth + 1;
         }
-
-        struct MarkerToDraw
-        {
-            internal TextMarker marker;
-            internal RectangleF drawingRect;
-
-            public MarkerToDraw(TextMarker marker, RectangleF drawingRect)
-            {
-                this.marker = marker;
-                this.drawingRect = drawingRect;
-            }
-        }
-
 
         void DrawMarker(Graphics g, TextMarker marker, RectangleF drawingRect)
         {
@@ -649,30 +674,6 @@ namespace ICSharpCode.TextEditor
             return wordWidth;
         }
 
-        struct WordFontPair
-        {
-            string word;
-            Font font;
-            public WordFontPair(string word, Font font)
-            {
-                this.word = word;
-                this.font = font;
-            }
-
-            public override bool Equals(object obj)
-            {
-                WordFontPair myWordFontPair = (WordFontPair)obj;
-                if (!word.Equals(myWordFontPair.word))
-                    return false;
-                return font.Equals(myWordFontPair.font);
-            }
-
-            //public override int GetHashCode()
-            //{
-            //    return word.GetHashCode() ^ font.GetHashCode();
-            //}
-        }
-
         int MeasureStringWidth(Graphics g, string word, Font font)
         {
             int width;
@@ -985,7 +986,6 @@ namespace ICSharpCode.TextEditor
                 return null;
         }
 
-
         float CountColumns(ref int column, int start, int end, int logicalLine, Graphics g)
         {
             if (start > end)
@@ -1043,7 +1043,7 @@ namespace ICSharpCode.TextEditor
             // add one pixel in column calculation to account for floating point calculation errors
             column += (int)((drawingPos + 1) / WideSpaceWidth);
 
-            /* OLD Code (does not work for fonts like Verdana)
+            /* TODO2-orig OLD Code (does not work for fonts like Verdana)
             for (int j = start; j < end; ++j) {
             	char ch;
             	if (j >= line.Length) {
@@ -1211,17 +1211,20 @@ namespace ICSharpCode.TextEditor
         }
         #endregion
 
-        public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
-        {
-//TODO2?            MouseDown?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
-        {
-//TODO2?            MouseMove?.Invoke(this, mousepos, mouseButtons);
-        }
-        public void HandleMouseLeave(EventArgs e)
-        {
-            MouseLeave?.Invoke(this, e);
-        }
+
+
+        //TODO2 not used?
+        //public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseDown?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseMove?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseLeave(EventArgs e)
+        //{
+        //    MouseLeave?.Invoke(this, e);
+        //}
     }
 }
