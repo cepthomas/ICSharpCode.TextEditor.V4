@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor
 
         public Cursor Cursor { get; set; } = Cursors.Default;
 
-        public Size Size { get { return new Size(TextArea.TextView.WideSpaceWidth * Math.Max(3, (int)Math.Log10(TextArea.Document.TotalNumberOfLines) + 1), -1); } }
+        public Size Size { get { return new Size(TextArea.WideSpaceWidth * Math.Max(3, (int)Math.Log10(TextArea.Document.TotalNumberOfLines) + 1), -1); } }
 
         public bool IsVisible { get { return Shared.TEP.ShowLineNumbers; } }
 
@@ -59,18 +59,18 @@ namespace ICSharpCode.TextEditor
             }
 
             HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
-            int fontHeight = TextArea.TextView.FontHeight;
+            int fontHeight = TextArea._FontHeight;
             Brush fillBrush = TextArea.Enabled ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder;
             Brush drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
             
-            for (int y = 0; y < (DrawingPosition.Height + TextArea.TextView.VisibleLineDrawingRemainder) / fontHeight + 1; ++y)
+            for (int y = 0; y < (DrawingPosition.Height + TextArea.VisibleLineDrawingRemainder) / fontHeight + 1; ++y)
             {
-                int ypos = DrawingPosition.Y + fontHeight * y - TextArea.TextView.VisibleLineDrawingRemainder;
+                int ypos = DrawingPosition.Y + fontHeight * y - TextArea.VisibleLineDrawingRemainder;
                 Rectangle backgroundRectangle = new Rectangle(DrawingPosition.X, ypos, DrawingPosition.Width, fontHeight);
                 if (rect.IntersectsWith(backgroundRectangle))
                 {
                     g.FillRectangle(fillBrush, backgroundRectangle);
-                    int curLine = TextArea.Document.GetFirstLogicalLine(TextArea.Document.GetVisibleLine(TextArea.TextView.FirstVisibleLine) + y);
+                    int curLine = TextArea.Document.GetFirstLogicalLine(TextArea.Document.GetVisibleLine(TextArea.FirstVisibleLine) + y);
 
                     if (curLine < TextArea.Document.TotalNumberOfLines)
                     {
@@ -89,7 +89,7 @@ namespace ICSharpCode.TextEditor
             TextLocation selectionStartPos;
 
             TextArea.SelectionManager.WhereFrom = SelSource.Gutter;
-            int realline = TextArea.TextView.GetLogicalLine(mousepos.Y);
+            int realline = TextArea.GetLogicalLine(mousepos.Y);
             bool isRect = (Control.ModifierKeys & Keys.Alt) != 0;
 
             if (realline >= 0 && realline < TextArea.Document.TotalNumberOfLines)

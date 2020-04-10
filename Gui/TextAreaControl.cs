@@ -124,7 +124,7 @@ namespace ICSharpCode.TextEditor
             int h = 0;
             if (_hRuler != null)
             {
-                _hRuler.Bounds = new Rectangle(0, 0, Width - SystemInformation.HorizontalScrollBarArrowWidth, TextArea.TextView.FontHeight);
+                _hRuler.Bounds = new Rectangle(0, 0, Width - SystemInformation.HorizontalScrollBarArrowWidth, TextArea._FontHeight);
 
                 y = _hRuler.Bounds.Bottom;
                 h = _hRuler.Bounds.Height;
@@ -197,8 +197,8 @@ namespace ICSharpCode.TextEditor
             VScrollBar.Maximum = TextArea.MaxVScrollValue;
             int max = 0;
 
-            int firstLine = TextArea.TextView.FirstVisibleLine;
-            int lastLine = Document.GetFirstLogicalLine(TextArea.TextView.FirstPhysicalLine + TextArea.TextView.VisibleLineCount);
+            int firstLine = TextArea.FirstVisibleLine;
+            int lastLine = Document.GetFirstLogicalLine(TextArea.FirstPhysicalLine + TextArea.VisibleLineCount);
             if (lastLine >= Document.TotalNumberOfLines)
                 lastLine = Document.TotalNumberOfLines - 1;
 
@@ -218,20 +218,20 @@ namespace ICSharpCode.TextEditor
                     }
                     else
                     {
-                        int visualLength = TextArea.TextView.GetVisualColumnFast(lineSegment, lineSegment.Length);
+                        int visualLength = TextArea.GetVisualColumnFast(lineSegment, lineSegment.Length);
                         _lineLengthCache[lineNumber] = Math.Max(1, visualLength);
                         max = Math.Max(max, visualLength);
                     }
                 }
             }
             HScrollBar.Minimum = 0;
-            HScrollBar.Maximum = (Math.Max(max + 20, TextArea.TextView.VisibleColumnCount - 1));
+            HScrollBar.Maximum = (Math.Max(max + 20, TextArea.VisibleColumnCount - 1));
 
-            VScrollBar.LargeChange = Math.Max(0, TextArea.TextView.DrawingPosition.Height);
-            VScrollBar.SmallChange = Math.Max(0, TextArea.TextView.FontHeight);
+            VScrollBar.LargeChange = Math.Max(0, TextArea.DrawingPosition.Height);
+            VScrollBar.SmallChange = Math.Max(0, TextArea._FontHeight);
 
-            HScrollBar.LargeChange = Math.Max(0, TextArea.TextView.VisibleColumnCount - 1);
-            HScrollBar.SmallChange = Math.Max(0, TextArea.TextView.SpaceWidth);
+            HScrollBar.LargeChange = Math.Max(0, TextArea.VisibleColumnCount - 1);
+            HScrollBar.SmallChange = Math.Max(0, TextArea.SpaceWidth);
         }
 
         public void OptionsChanged()
@@ -274,7 +274,7 @@ namespace ICSharpCode.TextEditor
 
         void HScrollBarValueChanged(object sender, EventArgs e)
         {
-            TextArea.VirtualTop = new Point(HScrollBar.Value * TextArea.TextView.WideSpaceWidth, TextArea.VirtualTop.Y);
+            TextArea.VirtualTop = new Point(HScrollBar.Value * TextArea.WideSpaceWidth, TextArea.VirtualTop.Y);
             TextArea.Invalidate();
         }
 
@@ -334,11 +334,11 @@ namespace ICSharpCode.TextEditor
             ScrollTo(line);
 
             int curCharMin = HScrollBar.Value - HScrollBar.Minimum;
-            int curCharMax = curCharMin + TextArea.TextView.VisibleColumnCount;
+            int curCharMax = curCharMin + TextArea.VisibleColumnCount;
 
-            int pos = TextArea.TextView.GetVisualColumn(line, column);
+            int pos = TextArea.GetVisualColumn(line, column);
 
-            if (TextArea.TextView.VisibleColumnCount < 0)
+            if (TextArea.VisibleColumnCount < 0)
             {
                 HScrollBar.Value = 0;
             }
@@ -352,7 +352,7 @@ namespace ICSharpCode.TextEditor
                 {
                     if (pos > curCharMax)
                     {
-                        HScrollBar.Value = Math.Max(0, Math.Min(HScrollBar.Maximum, (pos - TextArea.TextView.VisibleColumnCount + _scrollMarginHeight)));
+                        HScrollBar.Value = Math.Max(0, Math.Min(HScrollBar.Maximum, (pos - TextArea.VisibleColumnCount + _scrollMarginHeight)));
                     }
                 }
             }
@@ -365,29 +365,29 @@ namespace ICSharpCode.TextEditor
         {
             line = Math.Max(0, Math.Min(Document.TotalNumberOfLines - 1, line));
             line = Document.GetVisibleLine(line);
-            int curLineMin = TextArea.TextView.FirstPhysicalLine;
-            if (TextArea.TextView.LineHeightRemainder > 0)
+            int curLineMin = TextArea.FirstPhysicalLine;
+            if (TextArea.LineHeightRemainder > 0)
             {
                 curLineMin++;
             }
 
             if (line - _scrollMarginHeight + 3 < curLineMin)
             {
-                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight + 3) * TextArea.TextView.FontHeight));
+                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight + 3) * TextArea._FontHeight));
                 VScrollBarValueChanged(this, EventArgs.Empty);
             }
             else
             {
-                int curLineMax = curLineMin + this.TextArea.TextView.VisibleLineCount;
+                int curLineMax = curLineMin + this.TextArea.VisibleLineCount;
                 if (line + _scrollMarginHeight - 1 > curLineMax)
                 {
-                    if (this.TextArea.TextView.VisibleLineCount == 1)
+                    if (this.TextArea.VisibleLineCount == 1)
                     {
-                        this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight - 1) * TextArea.TextView.FontHeight));
+                        this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight - 1) * TextArea._FontHeight));
                     }
                     else
                     {
-                        this.VScrollBar.Value = Math.Min(this.VScrollBar.Maximum, (line - this.TextArea.TextView.VisibleLineCount + _scrollMarginHeight - 1) * TextArea.TextView.FontHeight);
+                        this.VScrollBar.Value = Math.Min(this.VScrollBar.Maximum, (line - this.TextArea.VisibleLineCount + _scrollMarginHeight - 1) * TextArea._FontHeight);
                     }
                     VScrollBarValueChanged(this, EventArgs.Empty);
                 }
@@ -407,17 +407,17 @@ namespace ICSharpCode.TextEditor
             // convert line to visible line:
             line = Document.GetVisibleLine(line);
             // subtract half the visible line count
-            line -= TextArea.TextView.VisibleLineCount / 2;
+            line -= TextArea.VisibleLineCount / 2;
 
-            int curLineMin = TextArea.TextView.FirstPhysicalLine;
-            if (TextArea.TextView.LineHeightRemainder > 0)
+            int curLineMin = TextArea.FirstPhysicalLine;
+            if (TextArea.LineHeightRemainder > 0)
             {
                 curLineMin++;
             }
             if (Math.Abs(curLineMin - line) > treshold)
             {
                 // scroll:
-                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight + 3) * TextArea.TextView.FontHeight));
+                this.VScrollBar.Value = Math.Max(0, Math.Min(this.VScrollBar.Maximum, (line - _scrollMarginHeight + 3) * TextArea._FontHeight));
                 VScrollBarValueChanged(this, EventArgs.Empty);
             }
         }
@@ -452,7 +452,7 @@ namespace ICSharpCode.TextEditor
         //            if (x == -1 && y == -1)
         //            {
         //                Point pos = Caret.ScreenPosition;
-        //                ShowContextMenu(this, new MouseEventArgs(MouseButtons.None, 0, pos.X, pos.Y + TextArea.TextView.FontHeight, 0));
+        //                ShowContextMenu(this, new MouseEventArgs(MouseButtons.None, 0, pos.X, pos.Y + TextArea.FontHeight, 0));
         //            }
         //            else
         //            {

@@ -31,7 +31,7 @@ namespace ICSharpCode.TextEditor.Actions
                 int tabIndent = Shared.TEP.IndentationSize;
                 if (textArea != null)
                 {
-                    int column = textArea.TextView.GetVisualColumn(textArea.Caret.Line, textArea.Caret.Column);
+                    int column = textArea.GetVisualColumn(textArea.Caret.Line, textArea.Caret.Column);
                     indent.Append(new string(' ', tabIndent - column % tabIndent));
                 }
                 else
@@ -715,7 +715,7 @@ namespace ICSharpCode.TextEditor.Actions
         public override void Execute(TextArea textArea)
         {
             int curLineNr = textArea.Caret.Line;
-            int requestedLineNumber = Math.Min(textArea.Document.GetNextVisibleLineAbove(curLineNr, textArea.TextView.VisibleLineCount), textArea.Document.TotalNumberOfLines - 1);
+            int requestedLineNumber = Math.Min(textArea.Document.GetNextVisibleLineAbove(curLineNr, textArea.VisibleLineCount), textArea.Document.TotalNumberOfLines - 1);
 
             if (curLineNr != requestedLineNumber)
             {
@@ -734,7 +734,7 @@ namespace ICSharpCode.TextEditor.Actions
         public override void Execute(TextArea textArea)
         {
             int curLineNr = textArea.Caret.Line;
-            int requestedLineNumber = Math.Max(textArea.Document.GetNextVisibleLineBelow(curLineNr, textArea.TextView.VisibleLineCount), 0);
+            int requestedLineNumber = Math.Max(textArea.Document.GetNextVisibleLineBelow(curLineNr, textArea.VisibleLineCount), 0);
 
             if (curLineNr != requestedLineNumber)
             {

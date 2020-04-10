@@ -210,7 +210,7 @@ namespace ICSharpCode.TextEditor.Document
             mousepos = _textArea.MousePos;
 
             // this is the most logical place to reset selection starting positions because it is always called before a new selection
-            TextLocation newSelectionStart = _textArea.TextView.GetLogicalPosition(mousepos.X - _textArea.TextView.DrawingPosition.X, mousepos.Y - _textArea.TextView.DrawingPosition.Y);
+            TextLocation newSelectionStart = _textArea.GetLogicalPosition(mousepos.X - _textArea.DrawingPosition.X, mousepos.Y - _textArea.DrawingPosition.Y);
 
             if (WhereFrom == SelSource.Gutter)
             {

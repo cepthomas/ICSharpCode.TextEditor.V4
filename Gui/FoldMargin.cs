@@ -33,7 +33,7 @@ namespace ICSharpCode.TextEditor
 
         public Cursor Cursor { get; set; } = Cursors.Default;
 
-        public Size Size { get { return new Size(TextArea.TextView.FontHeight, -1); } }
+        public Size Size { get { return new Size(TextArea._FontHeight, -1); } }
 
         public bool IsVisible { get { return Shared.TEP.EnableFolding; } }
 
@@ -50,12 +50,12 @@ namespace ICSharpCode.TextEditor
             }
             HighlightColor lineNumberPainterColor = Shared.TEP.LineNumbersColor;
 
-            for (int y = 0; y < (DrawingPosition.Height + TextArea.TextView.VisibleLineDrawingRemainder) / TextArea.TextView.FontHeight + 1; ++y)
+            for (int y = 0; y < (DrawingPosition.Height + TextArea.VisibleLineDrawingRemainder) / TextArea._FontHeight + 1; ++y)
             {
                 Rectangle markerRectangle = new Rectangle(DrawingPosition.X,
-                        DrawingPosition.Top + y * TextArea.TextView.FontHeight - TextArea.TextView.VisibleLineDrawingRemainder,
+                        DrawingPosition.Top + y * TextArea._FontHeight - TextArea.VisibleLineDrawingRemainder,
                         DrawingPosition.Width,
-                        TextArea.TextView.FontHeight);
+                        TextArea._FontHeight);
 
                 if (rect.IntersectsWith(markerRectangle))
                 {
@@ -71,7 +71,7 @@ namespace ICSharpCode.TextEditor
                         g.FillRectangle(BrushRegistry.GetBrush(TextArea.Enabled ? lineNumberPainterColor.BackgroundColor : SystemColors.InactiveBorder), markerRectangle);
                     }
 
-                    int currentLine = TextArea.Document.GetFirstLogicalLine(TextArea.TextView.FirstPhysicalLine + y);
+                    int currentLine = TextArea.Document.GetFirstLogicalLine(TextArea.FirstPhysicalLine + y);
                     if (currentLine < TextArea.Document.TotalNumberOfLines)
                     {
                         PaintFoldMarker(g, currentLine, markerRectangle);
@@ -112,7 +112,7 @@ namespace ICSharpCode.TextEditor
             bool isBetweenSelected = SelectedFoldingFrom(foldingsBetween);
             bool isEndSelected = SelectedFoldingFrom(foldingsWithEnd);
 
-            int foldMarkerSize = (int)Math.Round(TextArea.TextView.FontHeight * 0.57f);
+            int foldMarkerSize = (int)Math.Round(TextArea._FontHeight * 0.57f);
             foldMarkerSize -= (foldMarkerSize) % 2;
             int foldMarkerYPos = drawingRectangle.Y + (int)((drawingRectangle.Height - foldMarkerSize) / 2);
             int xPos = drawingRectangle.X + (drawingRectangle.Width - foldMarkerSize) / 2 + foldMarkerSize / 2;
@@ -205,7 +205,7 @@ namespace ICSharpCode.TextEditor
         public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
         {
             bool showFolding = Shared.TEP.EnableFolding;
-            int physicalLine = +(int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight);
+            int physicalLine = +(int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea._FontHeight);
             int realline = TextArea.Document.GetFirstLogicalLine(physicalLine);
 
             if (!showFolding || realline < 0 || realline + 1 >= TextArea.Document.TotalNumberOfLines)
@@ -233,7 +233,7 @@ namespace ICSharpCode.TextEditor
         public void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
         {
             bool showFolding = Shared.TEP.EnableFolding;
-            int physicalLine = +(int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight);
+            int physicalLine = +(int)((mousepos.Y + TextArea.VirtualTop.Y) / TextArea._FontHeight);
             int realline = TextArea.Document.GetFirstLogicalLine(physicalLine);
 
             // focus the textarea if the user clicks on the line number view

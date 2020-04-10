@@ -192,10 +192,10 @@ namespace ICSharpCode.TextEditor
                 switch (_caretMode)
                 {
                     case CaretMode.InsertMode:
-                        _caretCreated = _caretImplementation.Create(2, _textArea.TextView.FontHeight);
+                        _caretCreated = _caretImplementation.Create(2, _textArea._FontHeight);
                         break;
                     case CaretMode.OverwriteMode:
-                        _caretCreated = _caretImplementation.Create((int)_textArea.TextView.SpaceWidth, _textArea.TextView.FontHeight);
+                        _caretCreated = _caretImplementation.Create((int)_textArea.SpaceWidth, _textArea._FontHeight);
                         break;
                 }
             }
@@ -247,11 +247,11 @@ namespace ICSharpCode.TextEditor
         {
             get
             {
-                int xpos = _textArea.TextView.GetDrawingXPos(_line, _column);
-                return new Point(_textArea.TextView.DrawingPosition.X + xpos,
-                                 _textArea.TextView.DrawingPosition.Y
-                                 + _textArea.Document.GetVisibleLine(_line) * _textArea.TextView.FontHeight
-                                 - _textArea.TextView.TextArea.VirtualTop.Y);
+                int xpos = _textArea.GetDrawingXPos(_line, _column);
+                return new Point(_textArea.DrawingPosition.X + xpos,
+                                 _textArea.DrawingPosition.Y
+                                 + _textArea.Document.GetVisibleLine(_line) * _textArea._FontHeight
+                                 - _textArea.VirtualTop.Y);
             }
         }
 
@@ -312,7 +312,7 @@ namespace ICSharpCode.TextEditor
 
             ValidateCaretPos();
             int lineNr = _line;
-            int xpos = _textArea.TextView.GetDrawingXPos(lineNr, this._column);
+            int xpos = _textArea.GetDrawingXPos(lineNr, this._column);
             //LineSegment lineSegment = textArea.Document.GetLineSegment(lineNr);
             Point pos = ScreenPosition;
 

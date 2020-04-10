@@ -61,7 +61,7 @@ namespace ICSharpCode.TextEditor
             foreach (Bookmark mark in TextArea.Document.BookmarkManager.Marks)
             {
                 int lineNumber = TextArea.Document.GetVisibleLine(mark.LineNumber);
-                int lineHeight = TextArea.TextView.FontHeight;
+                int lineHeight = TextArea._FontHeight;
                 int yPos = lineNumber * lineHeight - TextArea.VirtualTop.Y;
                 if (IsLineInsideRegion(yPos, yPos + lineHeight, rect.Y, rect.Bottom))
                 {
@@ -79,7 +79,7 @@ namespace ICSharpCode.TextEditor
 
         public void HandleMouseDown(Point mousePos, MouseButtons mouseButtons)
         {
-            int clickedVisibleLine = (mousePos.Y + TextArea.VirtualTop.Y) / TextArea.TextView.FontHeight;
+            int clickedVisibleLine = (mousePos.Y + TextArea.VirtualTop.Y) / TextArea._FontHeight;
             int lineNumber = TextArea.Document.GetFirstLogicalLine(clickedVisibleLine);
 
             if ((mouseButtons & MouseButtons.Right) == MouseButtons.Right)
@@ -132,8 +132,8 @@ namespace ICSharpCode.TextEditor
         #region Drawing functions
         public void DrawBreakpoint(Graphics g, int y, bool isEnabled, bool isHealthy)
         {
-            int diameter = Math.Min(ICON_BAR_WIDTH - 2, TextArea.TextView.FontHeight);
-            Rectangle rect = new Rectangle(1, y + (TextArea.TextView.FontHeight - diameter) / 2, diameter, diameter);
+            int diameter = Math.Min(ICON_BAR_WIDTH - 2, TextArea._FontHeight);
+            Rectangle rect = new Rectangle(1, y + (TextArea._FontHeight - diameter) / 2, diameter, diameter);
 
             using (GraphicsPath path = new GraphicsPath())
             {
@@ -163,8 +163,8 @@ namespace ICSharpCode.TextEditor
 
         public void DrawBookmark(Graphics g, int y, bool isEnabled)
         {
-            int delta = TextArea.TextView.FontHeight / 8;
-            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea.TextView.FontHeight - delta * 2);
+            int delta = TextArea._FontHeight / 8;
+            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea._FontHeight - delta * 2);
 
             if (isEnabled)
             {
@@ -188,8 +188,8 @@ namespace ICSharpCode.TextEditor
 
         public void DrawArrow(Graphics g, int y)
         {
-            int delta = TextArea.TextView.FontHeight / 8;
-            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea.TextView.FontHeight - delta * 2);
+            int delta = TextArea._FontHeight / 8;
+            Rectangle rect = new Rectangle(1, y + delta, DrawingPosition.Width - 4, TextArea._FontHeight - delta * 2);
             using (Brush brush = new LinearGradientBrush(new Point(rect.Left, rect.Top), new Point(rect.Right, rect.Bottom), Color.LightYellow, Color.Yellow))
             {
                 FillArrow(g, brush, rect);

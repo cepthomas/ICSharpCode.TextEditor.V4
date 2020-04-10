@@ -62,6 +62,123 @@ namespace ICSharpCode.TextEditor
         Point _mouseDownPos = NIL_POINT;
         Point _lastMouseDownPos = NIL_POINT;
         bool _gotMouseDown = false;
+        ////////////////////// end From TextAreaMouseHandler////////////////////////////
+
+        ////////////////////// From TextView////////////////////////////
+        // TODO1-orig  split words after 1000 characters. Fixes GDI+ crash on very longs words, for example a 
+        // 100 KB Base64-file without any line breaks.
+        const int MAX_WORD_LEN = 1000;
+        const int MAX_CACHE_SIZE = 2000;
+
+        const int ADDITIONAL_FOLD_TEXT_SIZE = 1;
+
+        const int MIN_TAB_WIDTH = 4;
+
+        // Important: Some flags combinations work on WinXP, but not on Win2000.
+        // Make sure to test changes here on all operating systems.
+        const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.PreserveGraphicsClipping;
+
+        int _physicalColumn = 0; // used for calculating physical column during paint
+
+        Font _lastFont;
+
+        readonly Dictionary<Font, Dictionary<char, int>> _fontBoundCharWidth = new Dictionary<Font, Dictionary<char, int>>();
+
+        readonly Dictionary<WordFontPair, int> _measureCache = new Dictionary<WordFontPair, int>();
+
+        readonly List<MarkerToDraw> _markersToDraw = new List<MarkerToDraw>();
+
+
+        //public event MarginPaintEventHandler Painted;
+        //public event MarginMouseEventHandler MouseDown;
+        //public event MarginMouseEventHandler MouseMove;
+        //public event EventHandler MouseLeave;
+
+        public Rectangle DrawingPosition { get; set; }
+
+//        public TextArea TextArea { get; }
+
+//        public Cursor Cursor { get; set; } = Cursors.Default;
+
+        //public Size Size { get { return new Size(-1, -1); } }
+
+        //public bool IsVisible { get { return true; } }
+
+        //public Document.Document Document { get { return /*TextArea.*/Document; } }
+
+        public Highlight Highlight { get; set; }
+
+        public int FirstPhysicalLine { get { return /*TextArea.*/VirtualTop.Y / _FontHeight; } }
+
+        public int LineHeightRemainder { get { return /*TextArea.*/VirtualTop.Y % _FontHeight; } }
+
+        /// <summary>Gets the first visible <b>logical</b> line.</summary>
+        public int FirstVisibleLine
+        {
+            get { return /*TextArea.*/Document.GetFirstLogicalLine(/*TextArea.*/VirtualTop.Y / _FontHeight); }
+            set { if (FirstVisibleLine != value) /*TextArea.*/VirtualTop = new Point(/*TextArea.*/VirtualTop.X, /*TextArea.*/Document.GetVisibleLine(value) * _FontHeight); }
+        }
+
+        public int VisibleLineDrawingRemainder { get { return /*TextArea.*/VirtualTop.Y % _FontHeight; } }
+
+        public int _FontHeight { get; private set; }
+
+        public int VisibleLineCount { get { return 1 + DrawingPosition.Height / _FontHeight; } }
+
+        public int VisibleColumnCount { get { return DrawingPosition.Width / WideSpaceWidth - 1; } }
+
+        /// <summary>
+        /// Gets the width of a space character.
+        /// This value can be quite small in some fonts - consider using WideSpaceWidth instead.
+        /// </summary>
+        public int SpaceWidth { get; private set; }
+
+        /// <summary>
+        /// Gets the width of a 'wide space' (=one quarter of a tab, if tab is set to 4 spaces).
+        /// On monospaced fonts, this is the same value as spaceWidth.
+        /// </summary>
+        public int WideSpaceWidth { get; private set; }
+
+        struct MarkerToDraw
+        {
+            internal TextMarker marker;
+            internal RectangleF drawingRect;
+
+            public MarkerToDraw(TextMarker marker, RectangleF drawingRect)
+            {
+                this.marker = marker;
+                this.drawingRect = drawingRect;
+            }
+        }
+
+        struct WordFontPair
+        {
+            string word;
+            Font font;
+            public WordFontPair(string word, Font font)
+            {
+                this.word = word;
+                this.font = font;
+            }
+
+            public override bool Equals(object obj)
+            {
+                WordFontPair myWordFontPair = (WordFontPair)obj;
+                if (!word.Equals(myWordFontPair.word))
+                    return false;
+                return font.Equals(myWordFontPair.font);
+            }
+
+            //public override int GetHashCode()
+            //{
+            //    return word.GetHashCode() ^ font.GetHashCode();
+            //}
+        }
+
+
+        ////////////////////// end From TextView////////////////////////////
+
+
 
         #endregion
 
@@ -81,7 +198,7 @@ namespace ICSharpCode.TextEditor
 
         public Caret Caret { get; }
 
-        public TextView TextView { get; }
+//        public TextView TextView { get; }
 
         public GutterMargin GutterMargin { get; }
 
@@ -91,7 +208,7 @@ namespace ICSharpCode.TextEditor
 
         public Encoding Encoding { get { return MotherTextEditorControl.Encoding; } }
 
-        public int MaxVScrollValue { get { return (Document.GetVisibleLine(Document.TotalNumberOfLines - 1) + 1 + TextView.VisibleLineCount * 2 / 3) * TextView.FontHeight; } }
+        public int MaxVScrollValue { get { return (Document.GetVisibleLine(Document.TotalNumberOfLines - 1) + 1 + /*TextView.*/VisibleLineCount * 2 / 3) * /*TextView.*/_FontHeight; } }
 
         public Point VirtualTop
         {
@@ -154,7 +271,7 @@ namespace ICSharpCode.TextEditor
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.Selectable, true);
 
-            TextView = new TextView(this);
+//            TextView = new TextView(this);
 
             GutterMargin = new GutterMargin(this);
             FoldMargin = new FoldMargin(this);
@@ -162,7 +279,7 @@ namespace ICSharpCode.TextEditor
             _leftMargins.AddRange(new IMargin[] { IconBarMargin, GutterMargin, FoldMargin });
             OptionsChanged();
 
-            // From old mouse handlers:
+            // From TextAreaMouseHandler mouse handlers:
             Click += MH_Click;
             MouseMove += MH_MouseMove;
             MouseDown += MH_MouseDown;
@@ -212,29 +329,29 @@ namespace ICSharpCode.TextEditor
 
         public void SetDesiredColumn()
         {
-            Caret.DesiredColumn = TextView.GetDrawingXPos(Caret.Line, Caret.Column) + VirtualTop.X;
+            Caret.DesiredColumn = /*TextView.*/GetDrawingXPos(Caret.Line, Caret.Column) + VirtualTop.X;
         }
 
         public void SetCaretToDesiredColumn()
         {
             FoldMarker dummy;
-            Caret.Position = TextView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
+            Caret.Position = /*TextView.*/GetLogicalColumn(Caret.Line, Caret.DesiredColumn + VirtualTop.X, out dummy);
         }
-
-
-        ////////////////////////////////////////////////////////
-
-
-
-
-
-
 
 
         public void OptionsChanged()
         {
             UpdateMatchingBracket();
-            TextView.OptionsChanged();
+            _lastFont = FontRegistry.GetFont();
+            _FontHeight = GetFontHeight(_lastFont);
+            // use minimum width - in some fonts, space has no width but kerning is used instead
+            // -> DivideByZeroException
+            SpaceWidth = Math.Max(GetWidth(' ', _lastFont), 1);
+            // tab should have the width of 4*'x'
+            WideSpaceWidth = Math.Max(SpaceWidth, GetWidth('x', _lastFont));
+
+            /*TextView.*/
+            //OptionsChanged();
             Caret.RecreateCaret();
             Caret.UpdateCaretPosition();
             Refresh();
@@ -426,22 +543,22 @@ namespace ICSharpCode.TextEditor
         {
             if (!Shared.TEP.ShowMatchingBracket)
             {
-                TextView.Highlight = null;
+                /*TextView.*/Highlight = null;
                 return;
             }
 
             int oldLine1 = -1, oldLine2 = -1;
-            if (TextView.Highlight != null && TextView.Highlight.OpenBrace.Y >= 0 && TextView.Highlight.OpenBrace.Y < Document.TotalNumberOfLines)
+            if (/*TextView.*/Highlight != null && /*TextView.*/Highlight.OpenBrace.Y >= 0 && /*TextView.*/Highlight.OpenBrace.Y < Document.TotalNumberOfLines)
             {
-                oldLine1 = TextView.Highlight.OpenBrace.Y;
+                oldLine1 = /*TextView.*/Highlight.OpenBrace.Y;
             }
 
-            if (TextView.Highlight != null && TextView.Highlight.CloseBrace.Y >= 0 && TextView.Highlight.CloseBrace.Y < Document.TotalNumberOfLines)
+            if (/*TextView.*/Highlight != null && /*TextView.*/Highlight.CloseBrace.Y >= 0 && /*TextView.*/Highlight.CloseBrace.Y < Document.TotalNumberOfLines)
             {
-                oldLine2 = TextView.Highlight.CloseBrace.Y;
+                oldLine2 = /*TextView.*/Highlight.CloseBrace.Y;
             }
 
-            TextView.Highlight = FindMatchingBracketHighlight();
+            /*TextView.*/Highlight = FindMatchingBracketHighlight();
 
             if (oldLine1 >= 0)
                 UpdateLine(oldLine1);
@@ -449,10 +566,10 @@ namespace ICSharpCode.TextEditor
             if (oldLine2 >= 0 && oldLine2 != oldLine1)
                 UpdateLine(oldLine2);
 
-            if (TextView.Highlight != null)
+            if (/*TextView.*/Highlight != null)
             {
-                int newLine1 = TextView.Highlight.OpenBrace.Y;
-                int newLine2 = TextView.Highlight.CloseBrace.Y;
+                int newLine1 = /*TextView.*/Highlight.OpenBrace.Y;
+                int newLine2 = /*TextView.*/Highlight.CloseBrace.Y;
 
                 if (newLine1 != oldLine1 && newLine1 != oldLine2)
                     UpdateLine(newLine1);
@@ -495,7 +612,7 @@ namespace ICSharpCode.TextEditor
             //    if (lineNumber >= 0)
             //    {
             //        lineNumber = Document.GetVisibleLine(lineNumber);
-            //        p.Y = (p.Y - cp.Y) + (lineNumber * TextView.FontHeight) - _virtualTop.Y;
+            //        p.Y = (p.Y - cp.Y) + (lineNumber * /*TextView.*/FontHeight) - _virtualTop.Y;
             //    }
             //    p.Offset(3, 3);
             //    toolTip.Owner = FindForm();
@@ -538,8 +655,8 @@ namespace ICSharpCode.TextEditor
 
         //    _toolTipRectangle = new Rectangle(mousePos.X - 4, mousePos.Y - 4, 8, 8);
 
-        //    TextLocation logicPos = TextView.GetLogicalPosition(mousePos.X - TextView.DrawingPosition.Left, mousePos.Y - TextView.DrawingPosition.Top);
-        //    bool inDocument = TextView.DrawingPosition.Contains(mousePos) && logicPos.Y >= 0 && logicPos.Y < Document.TotalNumberOfLines;
+        //    TextLocation logicPos = /*TextView.*/GetLogicalPosition(mousePos.X - /*TextView.*/DrawingPosition.Left, mousePos.Y - /*TextView.*/DrawingPosition.Top);
+        //    bool inDocument = /*TextView.*/DrawingPosition.Contains(mousePos) && logicPos.Y >= 0 && logicPos.Y < Document.TotalNumberOfLines;
         //    ToolTipRequestEventArgs args = new ToolTipRequestEventArgs(mousePos, logicPos, inDocument);
         //    OnToolTipRequest(args);
         //    if (args.ToolTipShown)
@@ -612,10 +729,10 @@ namespace ICSharpCode.TextEditor
             }
 
             Rectangle textViewArea = new Rectangle(currentXPos, currentYPos, Width - currentXPos, Height - currentYPos);
-            if (textViewArea != TextView.DrawingPosition)
+            if (textViewArea != /*TextView.*/DrawingPosition)
             {
                 adjustScrollBars = true;
-                TextView.DrawingPosition = textViewArea;
+                /*TextView.*/DrawingPosition = textViewArea;
                 // update caret position (but outside of WM_PAINT!)
                 BeginInvoke((MethodInvoker)Caret.UpdateCaretPosition);
             }
@@ -625,7 +742,7 @@ namespace ICSharpCode.TextEditor
                 textViewArea.Intersect(clipRectangle);
                 if (!textViewArea.IsEmpty)
                 {
-                    TextView.Paint(g, textViewArea);
+                    /*TextView.*/_Paint(g, textViewArea);
                 }
             }
 
@@ -676,7 +793,8 @@ namespace ICSharpCode.TextEditor
                             (margin as IDisposable).Dispose();
                     }
 
-                    TextView.Dispose();
+                    ///*TextView.*/Dispose();
+                    _measureCache.Clear();
                 }
             }
         }
@@ -771,9 +889,9 @@ namespace ICSharpCode.TextEditor
                 _lastMouseInMargin = null;
             }
 
-            if (TextView.DrawingPosition.Contains(e.X, e.Y))
+            if (/*TextView.*/DrawingPosition.Contains(e.X, e.Y))
             {
-                TextLocation realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
+                TextLocation realmousepos = /*TextView.*/GetLogicalPosition(e.X - /*TextView.*/DrawingPosition.X, e.Y - /*TextView.*/DrawingPosition.Y);
                 if (SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None)
                 {
                     // mouse is hovering over a selection, so show default mouse
@@ -782,7 +900,7 @@ namespace ICSharpCode.TextEditor
                 else
                 {
                     // mouse is hovering over text area, not a selection, so show the textView cursor
-                    Cursor = TextView.Cursor;
+                    Cursor = /*TextView.*/Cursor;
                 }
                 return;
             }
@@ -809,7 +927,7 @@ namespace ICSharpCode.TextEditor
         {
             // The call to ShowHiddenCursorIfMovedOrLeft is delayed until pending messages have been processed
             // so that it can properly detect whether the TextArea has really lost focus.
-            // For example, the CodeCompletionWindow gets focus when it is shown, but immediately gives back focus to the TextArea.
+            // For example, the CodeCompletionWindow gets focus when it is shown, but immediately gives back focus to the /*TextArea.*/
             BeginInvoke(new MethodInvoker(ShowHiddenCursorIfMovedOrLeft));
         }
 
@@ -818,10 +936,10 @@ namespace ICSharpCode.TextEditor
             Point mousepos;
             mousepos = MousePos;
 
-            if (_clickedOnSelectedText && TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
+            if (_clickedOnSelectedText && /*TextView.*/DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
                 SelectionManager.ClearSelection();
-                TextLocation clickPosition = TextView.GetLogicalPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
+                TextLocation clickPosition = /*TextView.*/GetLogicalPosition(mousepos.X - /*TextView.*/DrawingPosition.X, mousepos.Y - /*TextView.*/DrawingPosition.Y);
                 Caret.Position = clickPosition;
                 SetDesiredColumn();
             }
@@ -893,7 +1011,7 @@ namespace ICSharpCode.TextEditor
                 return;
             }
 
-            if (TextView.DrawingPosition.Contains(MousePos.X, MousePos.Y))
+            if (/*TextView.*/DrawingPosition.Contains(MousePos.X, MousePos.Y))
             {
                 _gotMouseDown = true;
                 SelectionManager.WhereFrom = SelSource.TArea;
@@ -933,7 +1051,7 @@ namespace ICSharpCode.TextEditor
 
                 if (_button == MouseButtons.Left)
                 {
-                    FoldMarker marker = TextView.GetFoldMarkerFromPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                    FoldMarker marker = /*TextView.*/GetFoldMarkerFromPosition(MousePos.X - /*TextView.*/DrawingPosition.X, MousePos.Y - /*TextView.*/DrawingPosition.Y);
                     if (marker != null && marker.IsFolded)
                     {
                         if (SelectionManager.HasSomethingSelected)
@@ -956,7 +1074,7 @@ namespace ICSharpCode.TextEditor
                     }
                     else
                     {
-                        TextLocation realmousepos = TextView.GetLogicalPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                        TextLocation realmousepos = /*TextView.*/GetLogicalPosition(MousePos.X - /*TextView.*/DrawingPosition.X, MousePos.Y - /*TextView.*/DrawingPosition.Y);
                         _clickedOnSelectedText = false;
 
                         int offset = Document.PositionToOffset(realmousepos);
@@ -968,7 +1086,7 @@ namespace ICSharpCode.TextEditor
                         else
                         {
                             SelectionManager.ClearSelection();
-                            if (MousePos.Y > 0 && MousePos.Y < TextView.DrawingPosition.Height)
+                            if (MousePos.Y > 0 && MousePos.Y < /*TextView.*/DrawingPosition.Height)
                             {
                                 TextLocation pos = new TextLocation();
                                 pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
@@ -983,12 +1101,12 @@ namespace ICSharpCode.TextEditor
                 else if (_button == MouseButtons.Right)
                 {
                     // Rightclick sets the cursor to the click position unless the previous selection was clicked
-                    TextLocation realmousepos = TextView.GetLogicalPosition(MousePos.X - TextView.DrawingPosition.X, MousePos.Y - TextView.DrawingPosition.Y);
+                    TextLocation realmousepos = /*TextView.*/GetLogicalPosition(MousePos.X - /*TextView.*/DrawingPosition.X, MousePos.Y - /*TextView.*/DrawingPosition.Y);
                     int offset = Document.PositionToOffset(realmousepos);
                     if (!SelectionManager.HasSomethingSelected || !SelectionManager.IsSelected(offset))
                     {
                         SelectionManager.ClearSelection();
-                        if (MousePos.Y > 0 && MousePos.Y < TextView.DrawingPosition.Height)
+                        if (MousePos.Y > 0 && MousePos.Y < /*TextView.*/DrawingPosition.Height)
                         {
                             TextLocation pos = new TextLocation();
                             pos.Y = Math.Min(Document.TotalNumberOfLines - 1, realmousepos.Y);
@@ -1201,7 +1319,7 @@ namespace ICSharpCode.TextEditor
             //			}
 
             lineBegin = Document.GetVisibleLine(lineBegin);
-            int y = Math.Max(0, lineBegin * TextView.FontHeight);
+            int y = Math.Max(0, lineBegin * /*TextView.*/_FontHeight);
             y = Math.Max(0, y - _virtualTop.Y);
             Rectangle r = new Rectangle(0, y, Width, Height - y);
             Invalidate(r);
@@ -1217,10 +1335,10 @@ namespace ICSharpCode.TextEditor
             UpdateLines(line, line);
         }
 
-        int FirstPhysicalLine()
-        {
-            return VirtualTop.Y / TextView.FontHeight;
-        }
+        //int FirstPhysicalLine()
+        //{
+        //    return VirtualTop.Y / /*TextView.*/_FontHeight;
+        //}
 
         internal void UpdateLines(int xPos, int lineBegin, int lineEnd)
         {
@@ -1228,15 +1346,15 @@ namespace ICSharpCode.TextEditor
             //				return;
             //			}
 
-            InvalidateLines((int)(xPos * TextView.WideSpaceWidth), lineBegin, lineEnd);
+            InvalidateLines((int)(xPos * /*TextView.*/WideSpaceWidth), lineBegin, lineEnd);
         }
 
         void InvalidateLines(int xPos, int lineBegin, int lineEnd)
         {
-            lineBegin = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine());
-            lineEnd = Math.Min(Document.GetVisibleLine(lineEnd), FirstPhysicalLine() + TextView.VisibleLineCount);
-            int y = Math.Max(0, (int)(lineBegin * TextView.FontHeight));
-            int height = Math.Min(TextView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (TextView.FontHeight + 1)));
+            lineBegin = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
+            lineEnd = Math.Min(Document.GetVisibleLine(lineEnd), FirstPhysicalLine + /*TextView.*/VisibleLineCount);
+            int y = Math.Max(0, (int)(lineBegin * /*TextView.*/_FontHeight));
+            int height = Math.Min(/*TextView.*/DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (/*TextView.*/_FontHeight + 1)));
 
             Rectangle r = new Rectangle(0, y - 1 - _virtualTop.Y, Width, height + 3);
             Invalidate(r);
@@ -1251,7 +1369,7 @@ namespace ICSharpCode.TextEditor
         void ExtendSelectionToMouse()
         {
             Point mousepos = MousePos;
-            TextLocation realmousepos = TextView.GetLogicalPosition(Math.Max(0, mousepos.X - TextView.DrawingPosition.X), mousepos.Y - TextView.DrawingPosition.Y);
+            TextLocation realmousepos = /*TextView.*/GetLogicalPosition(Math.Max(0, mousepos.X - /*TextView.*/DrawingPosition.X), mousepos.Y - /*TextView.*/DrawingPosition.Y);
             int y = realmousepos.Y;
             realmousepos = Caret.ValidatePosition(realmousepos);
             TextLocation oldPos = Caret.Position;
@@ -1290,9 +1408,9 @@ namespace ICSharpCode.TextEditor
 
             SelectionManager.ClearSelection();
 
-            if (TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y))
+            if (/*TextView.*/DrawingPosition.Contains(mousepos.X, mousepos.Y))
             {
-                FoldMarker marker = TextView.GetFoldMarkerFromPosition(mousepos.X - TextView.DrawingPosition.X, mousepos.Y - TextView.DrawingPosition.Y);
+                FoldMarker marker = /*TextView.*/GetFoldMarkerFromPosition(mousepos.X - /*TextView.*/DrawingPosition.X, mousepos.Y - /*TextView.*/DrawingPosition.Y);
                 if (marker != null && marker.IsFolded)
                 {
                     marker.IsFolded = false;
@@ -1415,5 +1533,1112 @@ namespace ICSharpCode.TextEditor
 
             return offset;
         }
+
+
+
+
+        ////////////////////// From TextView////////////////////////////
+        // public TextView(TextArea textArea)
+        // {
+        //     TextArea = textArea;
+        //     Cursor = Cursors.IBeam;
+        //     OptionsChanged();
+        // }
+
+        //public void Dispose()
+        //{
+        //    _measureCache.Clear();
+        //    //measureStringFormat.Dispose();
+        //}
+
+        static int GetFontHeight(Font font)
+        {
+            int height1 = TextRenderer.MeasureText("_", font).Height;
+            int height2 = (int)Math.Ceiling(font.GetHeight());
+            return Math.Max(height1, height2) + 1;
+        }
+
+        //public void OptionsChanged()
+        //{
+        //    _lastFont = FontRegistry.GetFont();
+        //    _FontHeight = GetFontHeight(_lastFont);
+        //    // use minimum width - in some fonts, space has no width but kerning is used instead
+        //    // -> DivideByZeroException
+        //    SpaceWidth = Math.Max(GetWidth(' ', _lastFont), 1);
+        //    // tab should have the width of 4*'x'
+        //    WideSpaceWidth = Math.Max(SpaceWidth, GetWidth('x', _lastFont));
+        //}
+
+        #region Paint functions
+        public void _Paint(Graphics g, Rectangle rect)
+        {
+            if (rect.Width <= 0 || rect.Height <= 0)
+            {
+                return;
+            }
+
+            // Just to ensure that fontHeight and char widths are always correct...
+            if (_lastFont != FontRegistry.GetFont())
+            {
+                OptionsChanged();
+                /*TextArea.*/Invalidate();
+            }
+
+            int horizontalDelta = /*TextArea.*/VirtualTop.X;
+            if (horizontalDelta > 0)
+            {
+                g.SetClip(DrawingPosition);
+            }
+
+            for (int y = 0; y < (DrawingPosition.Height + VisibleLineDrawingRemainder) / _FontHeight + 1; ++y)
+            {
+                Rectangle lineRectangle = new Rectangle(DrawingPosition.X - horizontalDelta, DrawingPosition.Top + y * _FontHeight - VisibleLineDrawingRemainder, DrawingPosition.Width + horizontalDelta, _FontHeight);
+
+                if (rect.IntersectsWith(lineRectangle))
+                {
+                    int fvl = /*TextArea.*/Document.GetVisibleLine(FirstVisibleLine);
+                    int currentLine = /*TextArea.*/Document.GetFirstLogicalLine(/*TextArea.*/Document.GetVisibleLine(FirstVisibleLine) + y);
+                    PaintDocumentLine(g, currentLine, lineRectangle); //this redraws everything, twice
+                }
+            }
+
+            DrawMarkerDraw(g);
+
+            if (horizontalDelta > 0)
+            {
+                g.ResetClip();
+            }
+
+            /*TextArea.*/Caret.PaintCaret(g);
+        }
+
+        void PaintDocumentLine(Graphics g, int lineNumber, Rectangle lineRectangle)
+        {
+            //Debug.Assert(lineNumber >= 0);
+            Brush bgColorBrush = GetBgColorBrush(lineNumber);
+            Brush backgroundBrush = /*TextArea.*/Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+
+            if (lineNumber >= /*TextArea.*/Document.TotalNumberOfLines)
+            {
+                g.FillRectangle(backgroundBrush, lineRectangle);
+
+                if (Shared.TEP.ShowInvalidLines)
+                {
+                    DrawInvalidLineMarker(g, lineRectangle.Left, lineRectangle.Top);
+                }
+
+                if (Shared.TEP.ShowVerticalRuler)
+                {
+                    DrawVerticalRuler(g, lineRectangle);
+                }
+
+                //              bgColorBrush.Dispose();
+                return;
+            }
+
+            int physicalXPos = lineRectangle.X;
+            int column = 0;
+            _physicalColumn = 0;
+
+            // Handle folding.
+            if (Shared.TEP.EnableFolding)
+            {
+                // there can't be a folding wich starts in an above line and ends here, because the line is a new one, there must be a return before this line.
+                while (true)
+                {
+                    List<FoldMarker> starts = /*TextArea.*/Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column - 1);
+                    if (starts == null || starts.Count <= 0)
+                    {
+                        // No foldings.
+                        if (lineNumber < /*TextArea.*/Document.TotalNumberOfLines)
+                        {
+                            physicalXPos = PaintLinePart(g, lineNumber, column, /*TextArea.*/Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+                        }
+                        break;
+                    }
+
+                    // search the first starting folding
+                    FoldMarker firstFolding = (FoldMarker)starts[0];
+                    foreach (FoldMarker fm in starts)
+                    {
+                        if (fm.StartColumn < firstFolding.StartColumn)
+                        {
+                            firstFolding = fm;
+                        }
+                    }
+                    starts.Clear();
+
+                    physicalXPos = PaintLinePart(g, lineNumber, column, firstFolding.StartColumn, lineRectangle, physicalXPos);
+                    column = firstFolding.EndColumn;
+                    lineNumber = firstFolding.EndLine;
+                    if (lineNumber >= /*TextArea.*/Document.TotalNumberOfLines)
+                    {
+                        //Debug.Assert(false, "Folding ends after document end");
+                        break;
+                    }
+
+                    ColumnRange selectionRange2 = /*TextArea.*/SelectionManager.GetSelectionAtLine(lineNumber);
+                    bool drawSelected = ColumnRange.WHOLE_COLUMN.Equals(selectionRange2) || firstFolding.StartColumn >= selectionRange2.StartColumn && firstFolding.EndColumn <= selectionRange2.EndColumn;
+
+                    physicalXPos = PaintFoldingText(g, lineNumber, physicalXPos, lineRectangle, firstFolding.FoldText, drawSelected);
+                }
+            }
+            else // simple paint
+            {
+                physicalXPos = PaintLinePart(g, lineNumber, 0, /*TextArea.*/Document.GetLineSegment(lineNumber).Length, lineRectangle, physicalXPos);
+            }
+
+            if (lineNumber < /*TextArea.*/Document.TotalNumberOfLines)
+            {
+                // Paint things after end of line
+                LineSegment currentLine = /*TextArea.*/Document.GetLineSegment(lineNumber);
+                HighlightColor selectionColor = Shared.TEP.SelectionColor;
+                ColumnRange selectionRange = /*TextArea.*/SelectionManager.GetSelectionAtLine(lineNumber);
+
+                bool selectionBeyondEOL = selectionRange.EndColumn > currentLine.Length || ColumnRange.WHOLE_COLUMN.Equals(selectionRange);
+
+                if (Shared.TEP.ShowEOLMarker)
+                {
+                    HighlightColor eolMarkerColor = Shared.TEP.EOLMarkersColor;
+                    physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y);
+                }
+                else
+                {
+                    if (selectionBeyondEOL)
+                    {
+                        g.FillRectangle(BrushRegistry.GetBrush(selectionColor.BackgroundColor), new RectangleF(physicalXPos, lineRectangle.Y, WideSpaceWidth, lineRectangle.Height));
+                        physicalXPos += WideSpaceWidth;
+                    }
+                }
+
+                Brush fillBrush = selectionBeyondEOL && Shared.TEP.AllowCaretBeyondEOL ? bgColorBrush : backgroundBrush;
+                g.FillRectangle(fillBrush, new RectangleF(physicalXPos, lineRectangle.Y, lineRectangle.Width - physicalXPos + lineRectangle.X, lineRectangle.Height));
+            }
+
+            if (Shared.TEP.ShowVerticalRuler)
+            {
+                DrawVerticalRuler(g, lineRectangle);
+            }
+            //          bgColorBrush.Dispose();
+        }
+
+        bool DrawLineMarkerAtLine(int lineNumber)
+        {
+            return lineNumber == /*TextArea.*/Caret.Line && Shared.TEP.LineViewerStyle == LineViewerStyle.FullRow;
+        }
+
+        Brush GetBgColorBrush(int lineNumber)
+        {
+            if (DrawLineMarkerAtLine(lineNumber))
+            {
+                HighlightColor caretLine = Shared.TEP.CaretMarkerColor;
+                return BrushRegistry.GetBrush(caretLine.Color);
+            }
+
+            HighlightColor background = Shared.TEP.DefaultColor;
+            Color bgColor = background.BackgroundColor;
+            return BrushRegistry.GetBrush(bgColor);
+        }
+
+        int PaintFoldingText(Graphics g, int lineNumber, int physicalXPos, Rectangle lineRectangle, string text, bool drawSelected)
+        {
+            HighlightColor selectionColor = Shared.TEP.SelectionColor;
+            Brush bgColorBrush = drawSelected ? BrushRegistry.GetBrush(selectionColor.BackgroundColor) : GetBgColorBrush(lineNumber);
+            Brush backgroundBrush = /*TextArea.*/Enabled ? bgColorBrush : SystemBrushes.InactiveBorder;
+
+            Font font = FontRegistry.GetFont();
+
+            int wordWidth = MeasureStringWidth(g, text, font) + ADDITIONAL_FOLD_TEXT_SIZE;
+            Rectangle rect = new Rectangle(physicalXPos, lineRectangle.Y, wordWidth, lineRectangle.Height - 1);
+
+            g.FillRectangle(backgroundBrush, rect);
+
+            _physicalColumn += text.Length;
+            DrawString(g, text, font, drawSelected ? selectionColor.Color : Color.Gray, rect.X + 1, rect.Y);
+            g.DrawRectangle(BrushRegistry.GetPen(drawSelected ? Color.DarkGray : Color.Gray), rect.X, rect.Y, rect.Width, rect.Height);
+
+            return physicalXPos + wordWidth + 1;
+        }
+
+        void DrawMarker(Graphics g, TextMarker marker, RectangleF drawingRect)
+        {
+            // draw markers later so they can overdraw the following text
+            _markersToDraw.Add(new MarkerToDraw(marker, drawingRect));
+        }
+
+        void DrawMarkerDraw(Graphics g)
+        {
+            foreach (MarkerToDraw m in _markersToDraw)
+            {
+                TextMarker marker = m.marker;
+                RectangleF drawingRect = m.drawingRect;
+                float drawYPos = drawingRect.Bottom - 1;
+                switch (marker.TextMarkerType)
+                {
+                    case TextMarkerType.Underlined:
+                        g.DrawLine(BrushRegistry.GetPen(marker.Color), drawingRect.X, drawYPos, drawingRect.Right, drawYPos);
+                        break;
+                    case TextMarkerType.WaveLine:
+                        int reminder = ((int)drawingRect.X) % 6;
+                        for (float i = (int)drawingRect.X - reminder; i < drawingRect.Right; i += 6)
+                        {
+                            g.DrawLine(BrushRegistry.GetPen(marker.Color), i, drawYPos + 3 - 4, i + 3, drawYPos + 1 - 4);
+                            if (i + 3 < drawingRect.Right)
+                            {
+                                g.DrawLine(BrushRegistry.GetPen(marker.Color), i + 3, drawYPos + 1 - 4, i + 6, drawYPos + 3 - 4);
+                            }
+                        }
+                        break;
+                    case TextMarkerType.SolidBlock:
+                        g.FillRectangle(BrushRegistry.GetBrush(marker.Color), drawingRect);
+                        break;
+                }
+            }
+            _markersToDraw.Clear();
+        }
+
+        /// <summary>Get the marker brush (for solid block markers) at a given position.</summary>
+        /// <param name="offset">The offset.</param>
+        /// <param name="length">The length.</param>
+        /// <param name="markers">All markers that have been found.</param>
+        /// <returns>The Brush or null when no marker was found.</returns>
+        Brush GetMarkerBrushAt(int offset, int length, ref Color foreColor, out IList<TextMarker> markers)
+        {
+            markers = Document.MarkerStrategy.GetMarkers(offset, length);
+            foreach (TextMarker marker in markers)
+            {
+                if (marker.TextMarkerType == TextMarkerType.SolidBlock)
+                {
+                    if (marker.OverrideForeColor)
+                    {
+                        foreColor = marker.ForeColor;
+                    }
+                    return BrushRegistry.GetBrush(marker.Color);
+                }
+            }
+            return null;
+        }
+
+        int PaintLinePart(Graphics g, int lineNumber, int startColumn, int endColumn, Rectangle lineRectangle, int physicalXPos)
+        {
+            bool drawLineMarker = DrawLineMarkerAtLine(lineNumber);
+            Brush backgroundBrush = /*TextArea.*/Enabled ? GetBgColorBrush(lineNumber) : SystemBrushes.InactiveBorder;
+
+            HighlightColor selectionColor = Shared.TEP.SelectionColor;
+            ColumnRange selectionRange = /*TextArea.*/SelectionManager.GetSelectionAtLine(lineNumber);
+            HighlightColor tabMarkerColor = Shared.TEP.TabMarkersColor;
+            HighlightColor spaceMarkerColor = Shared.TEP.SpaceMarkersColor;
+
+            LineSegment currentLine = /*TextArea.*/Document.GetLineSegment(lineNumber);
+
+            Brush selectionBackgroundBrush = BrushRegistry.GetBrush(selectionColor.BackgroundColor);
+
+            if (currentLine.Words == null)
+            {
+                return physicalXPos;
+            }
+
+            int currentWordOffset = 0; // we cannot use currentWord.Offset because it is not set on space words
+            TextWord currentWord;
+            TextWord nextCurrentWord = null;
+
+            for (int wordIdx = 0; wordIdx < currentLine.Words.Count; wordIdx++)
+            {
+                currentWord = currentLine.Words[wordIdx];
+                if (currentWordOffset < startColumn)
+                {
+                    // TODO2-orig: maybe we need to split at startColumn when we support fold markers inside words
+                    currentWordOffset += currentWord.Length;
+                    continue;
+                }
+
+            repeatDrawCurrentWord:
+                //physicalXPos += 10; // leave room between drawn words - useful for debugging the drawing code
+                if (currentWordOffset >= endColumn || physicalXPos >= lineRectangle.Right)
+                {
+                    break;
+                }
+
+                int currentWordEndOffset = currentWordOffset + currentWord.Length - 1;
+                TextWordType currentWordType = currentWord.Type;
+
+                IList<TextMarker> markers;
+                Color wordForeColor;
+                if (currentWordType == TextWordType.Space)
+                    wordForeColor = spaceMarkerColor.Color;
+                else if (currentWordType == TextWordType.Tab)
+                    wordForeColor = tabMarkerColor.Color;
+                else
+                    wordForeColor = currentWord.Color;
+
+                Brush wordBackBrush = GetMarkerBrushAt(currentLine.Offset + currentWordOffset, currentWord.Length, ref wordForeColor, out markers);
+
+                // It is possible that we have to split the current word because a marker/the selection begins/ends inside it
+                if (currentWord.Length > 1)
+                {
+                    int splitPos = int.MaxValue;
+                    if (Highlight != null)
+                    {
+                        // split both before and after highlight
+                        if (Highlight.OpenBrace.Y == lineNumber)
+                        {
+                            if (Highlight.OpenBrace.X >= currentWordOffset && Highlight.OpenBrace.X <= currentWordEndOffset)
+                            {
+                                splitPos = Math.Min(splitPos, Highlight.OpenBrace.X - currentWordOffset);
+                            }
+                        }
+
+                        if (Highlight.CloseBrace.Y == lineNumber)
+                        {
+                            if (Highlight.CloseBrace.X >= currentWordOffset && Highlight.CloseBrace.X <= currentWordEndOffset)
+                            {
+                                splitPos = Math.Min(splitPos, Highlight.CloseBrace.X - currentWordOffset);
+                            }
+                        }
+
+                        if (splitPos == 0)
+                        {
+                            splitPos = 1; // split after highlight
+                        }
+                    }
+
+                    if (endColumn < currentWordEndOffset)   // split when endColumn is reached
+                    {
+                        splitPos = Math.Min(splitPos, endColumn - currentWordOffset);
+                    }
+
+                    if (selectionRange.StartColumn > currentWordOffset && selectionRange.StartColumn <= currentWordEndOffset)
+                    {
+                        splitPos = Math.Min(splitPos, selectionRange.StartColumn - currentWordOffset);
+                    }
+                    else if (selectionRange.EndColumn > currentWordOffset && selectionRange.EndColumn <= currentWordEndOffset)
+                    {
+                        splitPos = Math.Min(splitPos, selectionRange.EndColumn - currentWordOffset);
+                    }
+
+                    foreach (TextMarker marker in markers)
+                    {
+                        int markerColumn = marker.Offset - currentLine.Offset;
+                        int markerEndColumn = marker.EndOffset - currentLine.Offset + 1; // make end offset exclusive
+                        if (markerColumn > currentWordOffset && markerColumn <= currentWordEndOffset)
+                        {
+                            splitPos = Math.Min(splitPos, markerColumn - currentWordOffset);
+                        }
+                        else if (markerEndColumn > currentWordOffset && markerEndColumn <= currentWordEndOffset)
+                        {
+                            splitPos = Math.Min(splitPos, markerEndColumn - currentWordOffset);
+                        }
+                    }
+
+                    if (splitPos != int.MaxValue)
+                    {
+                        if (nextCurrentWord != null)
+                            throw new ApplicationException("split part invalid: first part cannot be splitted further");
+                        nextCurrentWord = TextWord.Split(ref currentWord, splitPos);
+                        goto repeatDrawCurrentWord; // get markers for first word part
+                    }
+                }
+
+                // get colors from selection status:
+                if (ColumnRange.WHOLE_COLUMN.Equals(selectionRange) || (selectionRange.StartColumn <= currentWordOffset && selectionRange.EndColumn > currentWordEndOffset))
+                {
+                    // word is completely selected 
+                    //Debug.WriteLine("YYY :{0}:{1}:{2}:{3}", selectionRange.StartColumn, currentWordOffset, selectionRange.EndColumn, currentWordEndOffset);
+
+                    wordBackBrush = selectionBackgroundBrush;
+                    if (selectionColor.HasForeground)
+                    {
+                        wordForeColor = selectionColor.Color;
+                    }
+                }
+                else if (drawLineMarker)
+                {
+                    wordBackBrush = backgroundBrush;
+                }
+
+                if (wordBackBrush == null)   // use default background if no other background is set
+                {
+                    if (currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground)
+                        wordBackBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
+                    else
+                        wordBackBrush = backgroundBrush;
+                }
+
+                RectangleF wordRectangle;
+
+                if (currentWord.Type == TextWordType.Space)
+                {
+                    ++_physicalColumn;
+
+                    wordRectangle = new RectangleF(physicalXPos, lineRectangle.Y, SpaceWidth, lineRectangle.Height);
+                    g.FillRectangle(wordBackBrush, wordRectangle);
+
+                    if (Shared.TEP.ShowSpaces)
+                    {
+                        DrawSpaceMarker(g, wordForeColor, physicalXPos, lineRectangle.Y);
+                    }
+                    physicalXPos += SpaceWidth;
+                }
+                else if (currentWord.Type == TextWordType.Tab)
+                {
+
+                    _physicalColumn += Shared.TEP.TabIndent;
+                    _physicalColumn = (_physicalColumn / Shared.TEP.TabIndent) * Shared.TEP.TabIndent;
+                    // go to next tabstop
+                    int physicalTabEnd = ((physicalXPos + MIN_TAB_WIDTH - lineRectangle.X)
+                                          / WideSpaceWidth / Shared.TEP.TabIndent)
+                                         * WideSpaceWidth * Shared.TEP.TabIndent + lineRectangle.X;
+                    physicalTabEnd += WideSpaceWidth * Shared.TEP.TabIndent;
+
+                    wordRectangle = new RectangleF(physicalXPos, lineRectangle.Y, physicalTabEnd - physicalXPos, lineRectangle.Height);
+                    g.FillRectangle(wordBackBrush, wordRectangle);
+
+                    if (Shared.TEP.ShowTabs)
+                    {
+                        DrawTabMarker(g, wordForeColor, physicalXPos, lineRectangle.Y);
+                    }
+                    physicalXPos = physicalTabEnd;
+                }
+                else
+                {
+                    int wordWidth = DrawDocumentWord(g, currentWord.Word, new Point(physicalXPos, lineRectangle.Y), currentWord.GetFont(), wordForeColor, wordBackBrush);
+                    wordRectangle = new RectangleF(physicalXPos, lineRectangle.Y, wordWidth, lineRectangle.Height);
+                    physicalXPos += wordWidth;
+                }
+
+                foreach (TextMarker marker in markers)
+                {
+                    if (marker.TextMarkerType != TextMarkerType.SolidBlock)
+                    {
+                        DrawMarker(g, marker, wordRectangle);
+                    }
+                }
+
+                // draw bracket highlight
+                if (Highlight != null)
+                {
+                    if (Highlight.OpenBrace.Y == lineNumber && Highlight.OpenBrace.X == currentWordOffset || Highlight.CloseBrace.Y == lineNumber && Highlight.CloseBrace.X == currentWordOffset)
+                    {
+                        DrawBracketHighlight(g, new Rectangle((int)wordRectangle.X, lineRectangle.Y, (int)wordRectangle.Width - 1, lineRectangle.Height - 1));
+                    }
+                }
+
+                currentWordOffset += currentWord.Length;
+
+                if (nextCurrentWord != null)
+                {
+                    currentWord = nextCurrentWord;
+                    nextCurrentWord = null;
+                    goto repeatDrawCurrentWord;
+                }
+            }
+
+            if (physicalXPos < lineRectangle.Right && endColumn >= currentLine.Length)
+            {
+                // draw markers at line end
+                IList<TextMarker> markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + currentLine.Length);
+                foreach (TextMarker marker in markers)
+                {
+                    if (marker.TextMarkerType != TextMarkerType.SolidBlock)
+                    {
+                        DrawMarker(g, marker, new RectangleF(physicalXPos, lineRectangle.Y, WideSpaceWidth, lineRectangle.Height));
+                    }
+                }
+            }
+
+            return physicalXPos;
+        }
+
+        int DrawDocumentWord(Graphics g, string word, Point position, Font font, Color foreColor, Brush backBrush)
+        {
+            if (word == null || word.Length == 0)
+            {
+                return 0;
+            }
+
+            if (word.Length > MAX_WORD_LEN)
+            {
+                int width = 0;
+                for (int i = 0; i < word.Length; i += MAX_WORD_LEN)
+                {
+                    Point pos = position;
+                    pos.X += width;
+                    if (i + MAX_WORD_LEN < word.Length)
+                        width += DrawDocumentWord(g, word.Substring(i, MAX_WORD_LEN), pos, font, foreColor, backBrush);
+                    else
+                        width += DrawDocumentWord(g, word.Substring(i, word.Length - i), pos, font, foreColor, backBrush);
+                }
+                return width;
+            }
+
+            int wordWidth = MeasureStringWidth(g, word, font);
+
+            //num = ++num % 3;
+            //g.FillRectangle(backBrush, //num == 0 ? Brushes.LightBlue : num == 1 ? Brushes.LightGreen : Brushes.Yellow,
+            //                new RectangleF(position.X, position.Y, wordWidth + 1, _FontHeight));
+            g.FillRectangle(backBrush, new RectangleF(position.X, position.Y, wordWidth + 1, _FontHeight));
+
+            DrawString(g, word, font, foreColor, position.X, position.Y);
+            return wordWidth;
+        }
+
+        int MeasureStringWidth(Graphics g, string word, Font font)
+        {
+            int width;
+
+            if (word == null || word.Length == 0)
+                return 0;
+
+            if (word.Length > MAX_WORD_LEN)
+            {
+                width = 0;
+                for (int i = 0; i < word.Length; i += MAX_WORD_LEN)
+                {
+                    if (i + MAX_WORD_LEN < word.Length)
+                        width += MeasureStringWidth(g, word.Substring(i, MAX_WORD_LEN), font);
+                    else
+                        width += MeasureStringWidth(g, word.Substring(i, word.Length - i), font);
+                }
+                return width;
+            }
+
+            if (_measureCache.TryGetValue(new WordFontPair(word, font), out width))
+            {
+                return width;
+            }
+
+            if (_measureCache.Count > MAX_CACHE_SIZE)
+            {
+                _measureCache.Clear();
+            }
+
+            // This code here provides better results than MeasureString!
+            // Example line that is measured wrong:
+            // txt.GetPositionFromCharIndex(txt.SelectionStart)
+            // (Verdana 10, highlighting makes GetP... bold) -> note the space between 'x' and '('
+            // this also fixes "jumping" characters when selecting in non-monospace fonts
+            // [...]
+            // Replaced GDI+ measurement with GDI measurement: faster and even more exact
+            width = TextRenderer.MeasureText(g, word, font, new Size(short.MaxValue, short.MaxValue), TEXT_FORMAT_FLAGS).Width;
+            _measureCache.Add(new WordFontPair(word, font), width);
+            return width;
+        }
+
+        #endregion
+
+        #region Conversion Functions
+        public int GetWidth(char ch, Font font)
+        {
+            if (!_fontBoundCharWidth.ContainsKey(font))
+            {
+                _fontBoundCharWidth.Add(font, new Dictionary<char, int>());
+            }
+
+            if (!_fontBoundCharWidth[font].ContainsKey(ch))
+            {
+                using (Graphics g = /*TextArea.*/CreateGraphics())
+                {
+                    return GetWidth(g, ch, font);
+                }
+            }
+
+            return _fontBoundCharWidth[font][ch];
+        }
+
+        public int GetWidth(Graphics g, char ch, Font font)
+        {
+            if (!_fontBoundCharWidth.ContainsKey(font))
+            {
+                _fontBoundCharWidth.Add(font, new Dictionary<char, int>());
+            }
+
+            if (!_fontBoundCharWidth[font].ContainsKey(ch))
+            {
+                //Console.WriteLine("Calculate character width: " + ch);
+                _fontBoundCharWidth[font].Add(ch, MeasureStringWidth(g, ch.ToString(), font));
+            }
+
+            return _fontBoundCharWidth[font][ch];
+        }
+
+        public int GetVisualColumn(int logicalLine, int logicalColumn)
+        {
+            int column = 0;
+            using (Graphics g = /*TextArea.*/CreateGraphics())
+            {
+                CountColumns(ref column, 0, logicalColumn, logicalLine, g);
+            }
+
+            return column;
+        }
+
+        public int GetVisualColumnFast(LineSegment line, int logicalColumn)
+        {
+            int lineOffset = line.Offset;
+            int tabIndent = Shared.TEP.TabIndent;
+            int guessedColumn = 0;
+
+            for (int i = 0; i < logicalColumn; ++i)
+            {
+                char ch;
+                if (i >= line.Length)
+                {
+                    ch = ' ';
+                }
+                else
+                {
+                    ch = Document.GetCharAt(lineOffset + i);
+                }
+
+                switch (ch)
+                {
+                    case '\t':
+                        guessedColumn += tabIndent;
+                        guessedColumn = (guessedColumn / tabIndent) * tabIndent;
+                        break;
+
+                    default:
+                        ++guessedColumn;
+                        break;
+                }
+            }
+            return guessedColumn;
+        }
+
+        /// <summary>
+        /// returns line/column for a visual point position
+        /// </summary>
+        public TextLocation GetLogicalPosition(Point mousePosition)
+        {
+            return GetLogicalColumn(GetLogicalLine(mousePosition.Y), mousePosition.X, out FoldMarker dummy);
+        }
+
+        /// <summary>
+        /// returns line/column for a visual point position
+        /// </summary>
+        public TextLocation GetLogicalPosition(int visualPosX, int visualPosY)
+        {
+            return GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out FoldMarker dummy);
+        }
+
+        /// <summary>
+        /// returns line/column for a visual point position
+        /// </summary>
+        public FoldMarker GetFoldMarkerFromPosition(int visualPosX, int visualPosY)
+        {
+            GetLogicalColumn(GetLogicalLine(visualPosY), visualPosX, out FoldMarker foldMarker);
+            return foldMarker;
+        }
+
+        /// <summary>
+        /// returns logical line number for a visual point
+        /// </summary>
+        public int GetLogicalLine(int visualPosY)
+        {
+            int clickedVisualLine = Math.Max(0, (visualPosY + /*TextArea.*/VirtualTop.Y) / _FontHeight);
+            return Document.GetFirstLogicalLine(clickedVisualLine);
+        }
+
+        internal TextLocation GetLogicalColumn(int lineNumber, int visualPosX, out FoldMarker inFoldMarker)
+        {
+            visualPosX += /*TextArea.*/VirtualTop.X;
+
+            inFoldMarker = null;
+            if (lineNumber >= Document.TotalNumberOfLines)
+            {
+                return new TextLocation((int)(visualPosX / WideSpaceWidth), lineNumber);
+            }
+
+            if (visualPosX <= 0)
+            {
+                return new TextLocation(0, lineNumber);
+            }
+
+            int start = 0; // column
+            int posX = 0; // visual position
+
+            int result;
+            using (Graphics g = /*TextArea.*/CreateGraphics())
+            {
+                // call GetLogicalColumnInternal to skip over text,
+                // then skip over fold markers
+                // and repeat as necessary.
+                // The loop terminates once the correct logical column is reached in
+                // GetLogicalColumnInternal or inside a fold marker.
+                while (true)
+                {
+                    LineSegment line = Document.GetLineSegment(lineNumber);
+                    FoldMarker nextFolding = FindNextFoldedFoldingOnLineAfterColumn(lineNumber, start - 1);
+                    int end = nextFolding != null ? nextFolding.StartColumn : int.MaxValue;
+                    result = GetLogicalColumnInternal(g, line, start, end, ref posX, visualPosX);
+
+                    // break when GetLogicalColumnInternal found the result column
+                    if (result < end)
+                        break;
+
+                    // reached fold marker
+                    lineNumber = nextFolding.EndLine;
+                    start = nextFolding.EndColumn;
+                    int newPosX = posX + 1 + MeasureStringWidth(g, nextFolding.FoldText, FontRegistry.GetFont());
+                    if (newPosX >= visualPosX)
+                    {
+                        inFoldMarker = nextFolding;
+                        if (IsNearerToAThanB(visualPosX, posX, newPosX))
+                            return new TextLocation(nextFolding.StartColumn, nextFolding.StartLine);
+                        else
+                            return new TextLocation(nextFolding.EndColumn, nextFolding.EndLine);
+                    }
+
+                    posX = newPosX;
+                }
+            }
+
+            return new TextLocation(result, lineNumber);
+        }
+
+        int GetLogicalColumnInternal(Graphics g, LineSegment line, int start, int end, ref int drawingPos, int targetVisualPosX)
+        {
+            if (start == end)
+                return end;
+            //Debug.Assert(start < end);
+            //Debug.Assert(drawingPos < targetVisualPosX);
+
+            int tabIndent = Shared.TEP.TabIndent;
+
+            /*float spaceWidth = SpaceWidth;
+            float drawingPos = 0;
+            LineSegment currentLine = Document.GetLineSegment(logicalLine);
+            List<TextWord> words = currentLine.Words;
+            if (words == null) return 0;
+            int wordCount = words.Count;
+            int wordOffset = 0;
+            FontContainer fontContainer = TextEditorProperties.FontContainer;
+             */
+
+
+            List<TextWord> words = line.Words;
+            if (words == null) return 0;
+            int wordOffset = 0;
+            for (int i = 0; i < words.Count; i++)
+            {
+                TextWord word = words[i];
+                if (wordOffset >= end)
+                {
+                    return wordOffset;
+                }
+
+                if (wordOffset + word.Length >= start)
+                {
+                    int newDrawingPos;
+                    switch (word.Type)
+                    {
+                        case TextWordType.Space:
+                            newDrawingPos = drawingPos + SpaceWidth;
+                            if (newDrawingPos >= targetVisualPosX)
+                                return IsNearerToAThanB(targetVisualPosX, drawingPos, newDrawingPos) ? wordOffset : wordOffset + 1;
+                            break;
+
+                        case TextWordType.Tab:
+                            // go to next tab position
+                            drawingPos = (int)((drawingPos + MIN_TAB_WIDTH) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
+                            newDrawingPos = drawingPos + tabIndent * WideSpaceWidth;
+                            if (newDrawingPos >= targetVisualPosX)
+                                return IsNearerToAThanB(targetVisualPosX, drawingPos, newDrawingPos) ? wordOffset : wordOffset + 1;
+                            break;
+
+                        case TextWordType.Word:
+                            int wordStart = Math.Max(wordOffset, start);
+                            int wordLength = Math.Min(wordOffset + word.Length, end) - wordStart;
+                            string text = Document.GetText(line.Offset + wordStart, wordLength);
+                            Font font = word.GetFont() ?? FontRegistry.GetFont();
+                            newDrawingPos = drawingPos + MeasureStringWidth(g, text, font);
+                            if (newDrawingPos >= targetVisualPosX)
+                            {
+                                for (int j = 0; j < text.Length; j++)
+                                {
+                                    newDrawingPos = drawingPos + MeasureStringWidth(g, text[j].ToString(), font);
+                                    if (newDrawingPos >= targetVisualPosX)
+                                    {
+                                        if (IsNearerToAThanB(targetVisualPosX, drawingPos, newDrawingPos))
+                                            return wordStart + j;
+                                        else
+                                            return wordStart + j + 1;
+                                    }
+                                    drawingPos = newDrawingPos;
+                                }
+                                return wordStart + text.Length;
+                            }
+                            break;
+
+                        default:
+                            throw new NotSupportedException();
+                    }
+                    drawingPos = newDrawingPos;
+                }
+                wordOffset += word.Length;
+            }
+            return wordOffset;
+        }
+
+        static bool IsNearerToAThanB(int num, int a, int b)
+        {
+            return Math.Abs(a - num) < Math.Abs(b - num);
+        }
+
+        FoldMarker FindNextFoldedFoldingOnLineAfterColumn(int lineNumber, int column)
+        {
+            List<FoldMarker> list = Document.FoldingManager.GetFoldedFoldingsWithStartAfterColumn(lineNumber, column);
+            if (list.Count != 0)
+                return list[0];
+            else
+                return null;
+        }
+
+        float CountColumns(ref int column, int start, int end, int logicalLine, Graphics g)
+        {
+            if (start > end)
+                throw new ArgumentException("start > end");
+            if (start == end)
+                return 0;
+
+            float spaceWidth = SpaceWidth;
+            float drawingPos = 0;
+            int tabIndent = Shared.TEP.TabIndent;
+            LineSegment currentLine = Document.GetLineSegment(logicalLine);
+            List<TextWord> words = currentLine.Words;
+
+            if (words == null)
+                return 0;
+
+            int wordCount = words.Count;
+            int wordOffset = 0;
+
+            for (int i = 0; i < wordCount; i++)
+            {
+                TextWord word = words[i];
+                if (wordOffset >= end)
+                    break;
+                if (wordOffset + word.Length >= start)
+                {
+                    switch (word.Type)
+                    {
+                        case TextWordType.Space:
+                            drawingPos += spaceWidth;
+                            break;
+
+                        case TextWordType.Tab:
+                            // go to next tab position
+                            drawingPos = (int)((drawingPos + MIN_TAB_WIDTH) / tabIndent / WideSpaceWidth) * tabIndent * WideSpaceWidth;
+                            drawingPos += tabIndent * WideSpaceWidth;
+                            break;
+
+                        case TextWordType.Word:
+                            int wordStart = Math.Max(wordOffset, start);
+                            int wordLength = Math.Min(wordOffset + word.Length, end) - wordStart;
+                            string text = Document.GetText(currentLine.Offset + wordStart, wordLength);
+                            drawingPos += MeasureStringWidth(g, text, word.GetFont() ?? FontRegistry.GetFont());
+                            break;
+                    }
+                }
+                wordOffset += word.Length;
+            }
+
+            for (int j = currentLine.Length; j < end; j++)
+            {
+                drawingPos += WideSpaceWidth;
+            }
+
+            // add one pixel in column calculation to account for floating point calculation errors
+            column += (int)((drawingPos + 1) / WideSpaceWidth);
+
+            /* TODO2-orig OLD Code (does not work for fonts like Verdana)
+            for (int j = start; j < end; ++j) {
+                char ch;
+                if (j >= line.Length) {
+                    ch = ' ';
+                } else {
+                    ch = Document.GetCharAt(line.Offset + j);
+                }
+
+                switch (ch) {
+                    case '\t':
+                        int oldColumn = column;
+                        column += tabIndent;
+                        column = (column / tabIndent) * tabIndent;
+                        drawingPos += (column - oldColumn) * spaceWidth;
+                        break;
+                    default:
+                        ++column;
+                        TextWord word = line.GetWord(j);
+                        if (word == null || word.Font == null) {
+                            drawingPos += GetWidth(ch, TextEditorProperties.Font);
+                        } else {
+                            drawingPos += GetWidth(ch, word.Font);
+                        }
+                        break;
+                }
+            }
+            */
+
+            return drawingPos;
+        }
+
+        public int GetDrawingXPos(int logicalLine, int logicalColumn)
+        {
+            List<FoldMarker> foldings = Document.FoldingManager.GetTopLevelFoldedFoldings();
+            int i;
+            FoldMarker f = null;
+
+            // search the last folding that's interresting
+            for (i = foldings.Count - 1; i >= 0; --i)
+            {
+                f = foldings[i];
+                if (f.StartLine < logicalLine || f.StartLine == logicalLine && f.StartColumn < logicalColumn)
+                {
+                    break;
+                }
+
+                FoldMarker f2 = foldings[i / 2];
+                if (f2.StartLine > logicalLine || f2.StartLine == logicalLine && f2.StartColumn >= logicalColumn)
+                {
+                    i /= 2;
+                }
+            }
+
+            int lastFolding = 0;
+            int firstFolding = 0;
+            int column = 0;
+            int tabIndent = Shared.TEP.TabIndent;
+            float drawingPos;
+            Graphics g = /*TextArea.*/CreateGraphics();
+
+            // if no folding is interresting
+            if (f == null || !(f.StartLine < logicalLine || f.StartLine == logicalLine && f.StartColumn < logicalColumn))
+            {
+                drawingPos = CountColumns(ref column, 0, logicalColumn, logicalLine, g);
+                return (int)(drawingPos - /*TextArea.*/VirtualTop.X);
+            }
+
+            // if logicalLine/logicalColumn is in folding
+            if (f.EndLine > logicalLine || f.EndLine == logicalLine && f.EndColumn > logicalColumn)
+            {
+                logicalColumn = f.StartColumn;
+                logicalLine = f.StartLine;
+                --i;
+            }
+            lastFolding = i;
+
+            // search backwards until a new visible line is reched
+            for (; i >= 0; --i)
+            {
+                f = foldings[i];
+                if (f.EndLine < logicalLine)   // reached the begin of a new visible line
+                {
+                    break;
+                }
+            }
+
+            firstFolding = i + 1;
+
+            if (lastFolding < firstFolding)
+            {
+                drawingPos = CountColumns(ref column, 0, logicalColumn, logicalLine, g);
+                return (int)(drawingPos - /*TextArea.*/VirtualTop.X);
+            }
+
+            int foldEnd = 0;
+            drawingPos = 0;
+
+            for (i = firstFolding; i <= lastFolding; ++i)
+            {
+                f = foldings[i];
+                drawingPos += CountColumns(ref column, foldEnd, f.StartColumn, f.StartLine, g);
+                foldEnd = f.EndColumn;
+                column += f.FoldText.Length;
+                drawingPos += ADDITIONAL_FOLD_TEXT_SIZE;
+                drawingPos += MeasureStringWidth(g, f.FoldText, FontRegistry.GetFont());
+            }
+
+            drawingPos += CountColumns(ref column, foldEnd, logicalColumn, logicalLine, g);
+            g.Dispose();
+            return (int)(drawingPos - /*TextArea.*/VirtualTop.X);
+        }
+        #endregion
+
+        #region DrawHelper functions
+        void DrawBracketHighlight(Graphics g, Rectangle rect)
+        {
+            g.FillRectangle(BrushRegistry.GetBrush(Color.FromArgb(50, 0, 0, 255)), rect);
+            g.DrawRectangle(Pens.Blue, rect);
+        }
+
+        void DrawString(Graphics g, string text, Font font, Color color, int x, int y)
+        {
+            TextRenderer.DrawText(g, text, font, new Point(x, y), color, TEXT_FORMAT_FLAGS);
+        }
+
+        void DrawInvalidLineMarker(Graphics g, int x, int y)
+        {
+            HighlightColor invalidLinesColor = Shared.TEP.InvalidLinesColor;
+            DrawString(g, "~", FontRegistry.GetFont(invalidLinesColor.Bold, invalidLinesColor.Italic), invalidLinesColor.Color, x, y);
+        }
+
+        void DrawSpaceMarker(Graphics g, Color color, int x, int y)
+        {
+            HighlightColor spaceMarkerColor = Shared.TEP.SpaceMarkersColor;
+            DrawString(g, "\u00B7", FontRegistry.GetFont(spaceMarkerColor.Bold, spaceMarkerColor.Italic), color, x, y);
+        }
+
+        void DrawTabMarker(Graphics g, Color color, int x, int y)
+        {
+            HighlightColor tabMarkerColor = Shared.TEP.TabMarkersColor;
+            DrawString(g, "\u00BB", FontRegistry.GetFont(tabMarkerColor.Bold, tabMarkerColor.Italic), color, x, y);
+        }
+
+        int DrawEOLMarker(Graphics g, Color color, Brush backBrush, int x, int y)
+        {
+            HighlightColor eolMarkerColor = Shared.TEP.EOLMarkersColor;
+
+            int width = GetWidth('\u00B6', FontRegistry.GetFont(eolMarkerColor.Bold, eolMarkerColor.Italic));
+            g.FillRectangle(backBrush, new RectangleF(x, y, width, _FontHeight));
+
+            DrawString(g, "\u00B6", FontRegistry.GetFont(eolMarkerColor.Bold, eolMarkerColor.Italic), color, x, y);
+            return width;
+        }
+
+        void DrawVerticalRuler(Graphics g, Rectangle lineRectangle)
+        {
+            int xpos = WideSpaceWidth * Shared.TEP.VerticalRulerRow - /*TextArea.*/VirtualTop.X;
+            if (xpos <= 0)
+            {
+                return;
+            }
+
+            HighlightColor vRulerColor = Shared.TEP.VRulerColor;
+            g.DrawLine(BrushRegistry.GetPen(vRulerColor.Color), DrawingPosition.Left + xpos, lineRectangle.Top, DrawingPosition.Left + xpos, lineRectangle.Bottom);
+        }
+        #endregion
+
+
+
+        //TODO2 not used?
+        //public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseDown?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+        //{
+        //    MouseMove?.Invoke(this, mousepos, mouseButtons);
+        //}
+        //public void HandleMouseLeave(EventArgs e)
+        //{
+        //    MouseLeave?.Invoke(this, e);
+        //}
+
+
+
+
+        ////////////////////// end From TextView////////////////////////////
+
     }
 }

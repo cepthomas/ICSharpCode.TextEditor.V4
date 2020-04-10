@@ -149,7 +149,6 @@
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\TextView.cs" />
     <Compile Include="Gui\GutterMargin.cs" />
     <Compile Include="Gui\IMargin.cs" />
     <Compile Include="Undo\IUndoableOperation.cs" />
