@@ -138,14 +138,14 @@ namespace ICSharpCode.TextEditor
             textArea.GotFocus += new EventHandler(GotFocus);
             textArea.LostFocus += new EventHandler(LostFocus);
 
-            // TODO1 clean up caret stuff. Avalon says:
+            // Avalon says:
             // Create Win32 caret so that Windows knows where our managed caret is. This is necessary for
             // features like 'Follow text editing' in the Windows Magnifier.
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
                 _caretImplementation = new ManagedCaret(this);
             else
-                _caretImplementation = new Win32Caret(this); // TODO1 simplify for just windows.
+                _caretImplementation = new Win32Caret(this);
         }
 
         public void Dispose()

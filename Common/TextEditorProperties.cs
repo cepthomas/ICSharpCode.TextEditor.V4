@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Common
         public BracketMatchingStyle BracketMatchingStyle { get; set; } = BracketMatchingStyle.After;
         #endregion
 
-        #region TODOsettings These?
+        #region TODO These?
         public DocumentSelectionMode DocumentSelectionMode { get; set; } = DocumentSelectionMode.Normal;
 
         public int VerticalRulerRow { get; set; } = 80;
@@ -114,11 +114,10 @@ namespace ICSharpCode.TextEditor.Common
         //public bool AutoInsertCurlyBracket { get; set; } = true;
         #endregion
 
-        #region Stuff json or serialization can't handle TODOsettings
+        #region Stuff json or serialization can't handle
         [JsonIgnore]
-        // TODOsettings   ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
+        // TODO ASCIIEncoding UnicodeEncoding UTF32Encoding UTF7Encoding UTF8Encoding
         public Encoding Encoding { get; set; } = Encoding.UTF8;
-        //public Font Font { get { return _font; } set { _font = value; Shared.SetContainerFont(_font); } }
         #endregion
 
         #region Properties that can be overriden per control
@@ -151,7 +150,7 @@ namespace ICSharpCode.TextEditor.Common
         public IndentStyle IndentStyle { get; set; } = IndentStyle.Smart;
         #endregion
 
-        #region Properties for colors TODOsyntax relocated from highlighting environment, put in a style thing when syntax colors get fixed.
+        #region Properties for colors TODO Relocated from highlighting environment, put in a style thing when syntax colors get fixed.
         public HighlightColor DefaultColor { get; set; } = new HighlightColor(SystemColors.WindowText, SystemColors.Window, false, false);
         public HighlightColor CaretMarkerColor { get; set; } = new HighlightColor(Color.WhiteSmoke, false, false); // the selection line
         public HighlightColor SelectionColor { get; set; } = new HighlightColor(SystemColors.HighlightText, SystemColors.Highlight, false, false);

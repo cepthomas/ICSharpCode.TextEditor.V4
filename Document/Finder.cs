@@ -9,7 +9,7 @@ using ICSharpCode.TextEditor.Common;
 
 namespace ICSharpCode.TextEditor.Document
 {
-    public class Finder // TODOsearch debug all - need unit tests
+    public class Finder // TODO Debug all - need unit tests
     {
         #region Enums
         /// <summary>Find modes.</summary>

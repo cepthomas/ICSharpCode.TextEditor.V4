@@ -108,7 +108,7 @@ namespace ICSharpCode.TextEditor.Common
     {
         #region Properties
         /// <summary>Contents of the file.</summary>
-        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } } // TODO1 better way?
+        public List<ControlSpec> ControlSpecs { get { return _ctrlMap.ControlSpecs; } }
         #endregion
 
         #region Fields
@@ -195,7 +195,7 @@ namespace ICSharpCode.TextEditor.Common
                         }
                         else
                         {
-                            // Presumably a user overwrite. TODO2 notify user?
+                            // Presumably a user overwrite. TODO notify user?
                             _keyMap[key] = asp;
                         }
                     }

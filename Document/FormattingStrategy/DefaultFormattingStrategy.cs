@@ -18,7 +18,7 @@ namespace ICSharpCode.TextEditor.Document
     /// </summary>
     public class DefaultFormattingStrategy : IFormattingStrategy
     {
-        static readonly char[] WS_CHARS = { ' ', '\t' }; //TODO1 also a lot of hard-coded char constants.
+        static readonly char[] WS_CHARS = { ' ', '\t' };
 
         /// <summary>
         /// Creates a new instance off <see cref="DefaultFormattingStrategy"/>

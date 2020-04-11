@@ -16,7 +16,7 @@ namespace ICSharpCode.TextEditor.Common
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static string SerializeKey(Keys key) // TODO2 put these in NBOT?
+        public static string SerializeKey(Keys key)
         {
             //string skey = key.ToString();
 

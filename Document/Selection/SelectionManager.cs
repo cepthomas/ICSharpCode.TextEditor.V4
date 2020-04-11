@@ -45,7 +45,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public bool IsValid { get { return StartPosition.IsValid && EndPosition.IsValid; } }
 
-        public string SelectedText //TODO1 test for IsRect - make a list
+        public string SelectedText //TODO test for IsRect - make a list
         {
             get
             {

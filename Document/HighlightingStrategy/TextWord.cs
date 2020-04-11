@@ -24,7 +24,7 @@ namespace ICSharpCode.TextEditor.Document
     /// This class represents single words with color information, two special versions of a word are
     /// spaces and tabs.
     /// </summary>
-    public class TextWord // TODO1 Could use some refactoring.
+    public class TextWord
     {
         #region Fields
         readonly LineSegment _line;

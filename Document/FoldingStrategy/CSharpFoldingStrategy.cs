@@ -35,7 +35,7 @@ namespace ICSharpCode.TextEditor.Document
 
             Stack<int> startLines = new Stack<int>();
 
-            // Create foldmarkers for the whole document. TODO1 could use some cleanup and improvements.
+            // Create foldmarkers for the whole document.
             for (int i = 0; i < document.TotalNumberOfLines; i++)
             {
                 LineSegment seg = document.GetLineSegment(i);

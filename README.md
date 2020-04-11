@@ -35,3 +35,7 @@ Things that have changed from the original (so far):
 - Removed code tools, like completion etc.
 - Removed/refactored lots more dodgy architecture.
 
+# And Now
+Much refactoring and reorganizing later, I realize I need to do some major surgery, such as ripping out folding.
+I don't want to do that to this body so I'm taking the parts I want and moving them into a new project.
+This shall remain here, probably untouched for another five years.

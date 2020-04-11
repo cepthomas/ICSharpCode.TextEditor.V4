@@ -438,7 +438,7 @@ namespace ICSharpCode.TextEditor
             ScrollToCaret();
         }
 
-        //TODO2- orig commented out.
+        //original commented out.
         //public event MouseEventHandler ShowContextMenu;
         //protected override void WndProc(ref Message m)
         //{

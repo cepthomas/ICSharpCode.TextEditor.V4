@@ -91,43 +91,6 @@ namespace ICSharpCode.TextEditor.Common
         }
 
         /// <summary>
-        /// Create a script. TODO1 needs more work. Or usefulness?
-        /// </summary>
-        /// <param name="fn"></param>
-        public void GenScript(string fn)
-        {
-            CompiledAssembly = null;
-            Errors.Clear();
-
-            string sc = File.ReadAllText(fn);
-            string newAssyName = Path.GetFileNameWithoutExtension(fn);
-
-            ScriptState<object> scriptState = null;
-
-            ScriptOptions sopt = ScriptOptions.Default;
-            sopt = sopt.AddReferences("System", "System.Linq");
-
-            var scr = CSharpScript.Create(sc, sopt);
-
-            var compErrs = scr.Compile();
-
-            if (compErrs.Length == 0)
-            {
-                var task = scr.RunAsync();
-                scriptState = task.Result;
-
-                task = scriptState.ContinueWithAsync("new ScriptedClass().HelloWorld");
-            }
-            else
-            {
-                foreach (var diag in compErrs)
-                {
-                    Errors.Add(FormatDiagnostic(diag, fn));
-                }
-            }
-        }
-
-        /// <summary>
         /// Utility formatter.
         /// </summary>
         /// <param name="diag"></param>

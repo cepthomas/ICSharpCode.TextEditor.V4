@@ -166,13 +166,13 @@ namespace ICSharpCode.TextEditor.Document
 
                 DocumentAboutToBeChanged?.Invoke(this, args);
                 TextBuffer.SetContent(value);
-                LineManager.SetContent(value); // TODO2*** 50Mb takes 6 seconds
+                LineManager.SetContent(value);
                 UndoStack.ClearAll();
                 // Notify.
                 DocumentChanged?.Invoke(this, args);
                 TextContentChanged?.Invoke(this, args);
 
-                FoldingManager.UpdateFoldings(); // TODO1 every edit needs to update foldings... see DesDoc.docx
+                FoldingManager.UpdateFoldings(); // TODO every edit needs to update foldings... see DesDoc.docx
             }
         }
         #endregion
@@ -186,7 +186,6 @@ namespace ICSharpCode.TextEditor.Document
 
         public event EventHandler<DocumentEventArgs> DocumentChanged;
 
-        // TODO2 these events?
         //public event EventHandler<DocumentEventArgs> DocumentEventHandler;
 
         //public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged
@@ -410,5 +409,89 @@ namespace ICSharpCode.TextEditor.Document
             UpdateCommited?.Invoke(this, new DocumentEventArgs());
         }
         #endregion
+
+
+        ////////////////////////////////////////////////////////////////////////
+        public int FindNext(int offset, char ch)
+        {
+            LineSegment line = GetLineSegmentForOffset(offset);
+            int endPos = line.Offset + line.Length;
+
+            while (offset < endPos && GetCharAt(offset) != ch)
+            {
+                ++offset;
+            }
+            return offset;
+        }
+
+        bool IsSelectableChar(char ch)
+        {
+            return char.IsLetterOrDigit(ch) || ch == '_';
+        }
+
+        public int FindWordStart(int offset)
+        {
+            LineSegment line = GetLineSegmentForOffset(offset);
+
+            if (offset > 0 && char.IsWhiteSpace(GetCharAt(offset - 1)) && char.IsWhiteSpace(GetCharAt(offset)))
+            {
+                while (offset > line.Offset && char.IsWhiteSpace(GetCharAt(offset - 1)))
+                {
+                    --offset;
+                }
+            }
+            else if (IsSelectableChar(GetCharAt(offset)) || (offset > 0 && char.IsWhiteSpace(GetCharAt(offset)) && IsSelectableChar(GetCharAt(offset - 1))))
+            {
+                while (offset > line.Offset && IsSelectableChar(GetCharAt(offset - 1)))
+                {
+                    --offset;
+                }
+            }
+            else
+            {
+                if (offset > 0 && !char.IsWhiteSpace(GetCharAt(offset - 1)) && !IsSelectableChar(GetCharAt(offset - 1)))
+                {
+                    return Math.Max(0, offset - 1);
+                }
+            }
+            return offset;
+        }
+
+        public int FindWordEnd(int offset)
+        {
+            LineSegment line = GetLineSegmentForOffset(offset);
+            if (line.Length == 0)
+                return offset;
+            int endPos = line.Offset + line.Length;
+            offset = Math.Min(offset, endPos - 1);
+
+            if (IsSelectableChar(GetCharAt(offset)))
+            {
+                while (offset < endPos && IsSelectableChar(GetCharAt(offset)))
+                {
+                    ++offset;
+                }
+            }
+            else if (char.IsWhiteSpace(GetCharAt(offset)))
+            {
+                if (offset > 0 && char.IsWhiteSpace(GetCharAt(offset - 1)))
+                {
+                    while (offset < endPos && char.IsWhiteSpace(GetCharAt(offset)))
+                    {
+                        ++offset;
+                    }
+                }
+            }
+            else
+            {
+                return Math.Max(0, offset + 1);
+            }
+
+            return offset;
+        }
+
+
+
+
     }
 }

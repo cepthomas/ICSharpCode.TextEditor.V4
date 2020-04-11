@@ -172,7 +172,7 @@ namespace ICSharpCode.TextEditor
         public TextAreaControl ActiveTextAreaControl { get; private set; } = null;
         #endregion
 
-        #region Document Properties TODOsettings initialize from TEP when creating control - needs UI for changes
+        #region Document Properties TODO initialize from TEP when creating control.
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool ShowSpaces { get; set; } = false;
@@ -312,7 +312,7 @@ namespace ICSharpCode.TextEditor
                 {
                     _document.HighlightingStrategy = HighlightingManager.Instance.FindHighlighterForFile(fileName);
 
-                    // TODOsyntax this doesn't belong here. I did it because it needed a file/home.
+                    // TODO this doesn't belong here. I did it because it needed a file/home.
                     IFoldingStrategy fs = null;
 
                     if (_document.HighlightingStrategy != null)
@@ -352,7 +352,7 @@ namespace ICSharpCode.TextEditor
                 using (StreamReader reader = new StreamReader(fileName, Encoding))
                 {
                     string s = reader.ReadToEnd();
-                    Document.TextContent = s; // TODO2*** 50Mb takes 6 seconds...
+                    Document.TextContent = s;
                 }
             }
 

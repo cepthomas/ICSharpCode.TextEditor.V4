@@ -17,7 +17,7 @@
 			</Span>
 
 		
-			<!-- TODOsyntax 
+			<!-- TODO syntax 
 
 			<Span name="ScriptTag" rule="JavaScriptSet" bold="false" italic="false" color="SpringGreen" stopateol="false">
 				<Begin>&lt;script&gt;</Begin>
@@ -53,7 +53,7 @@
 
 		</RuleSet>
 		
-		<!-- TODOsyntax reference probably needs to be .js <RuleSet name="JavaScriptSet" reference="JavaScript" /> -->
+		<!-- TODO syntax reference probably needs to be .js <RuleSet name="JavaScriptSet" reference="JavaScript" /> -->
 		
 		<RuleSet name="EntityReferenceSet" ignorecase="false">
 			<KeyWords name = "Entities" bold="false" italic="false" color="Green">

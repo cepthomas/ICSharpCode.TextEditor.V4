@@ -28,7 +28,7 @@ namespace ICSharpCode.TextEditor.Document
 
         public LookupTable NextMarkers { get; } = new LookupTable(false);
 
-        public bool[] Delimiters { get; } = new bool[256]; //TODOsyntax fix this later
+        public bool[] Delimiters { get; } = new bool[256];
 
         public char EscapeCharacter { get; }
 
